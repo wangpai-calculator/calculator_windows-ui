@@ -2,6 +2,9 @@ package org.wangpai.calculator.exception;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @since 2021-7-9
+ */
 public class ZeroDivisorException extends CalculatorException {
     public ZeroDivisorException() {
         super();

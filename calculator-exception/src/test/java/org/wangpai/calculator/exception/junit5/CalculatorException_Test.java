@@ -6,6 +6,9 @@ import org.wangpai.calculator.exception.CalculatorException;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @since 2021-7-19
+ */
 public class CalculatorException_Test {
     private CalculatorException calculatorException = new CalculatorExceptionExtends("测试信息");
     private String msg = "测试信息";

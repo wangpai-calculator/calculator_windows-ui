@@ -8,8 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="calculator-exception" />
-        <module name="calculator" />
+        <module name="calculator-core" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="calculator" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -6,7 +6,7 @@
 
     <properties>
         <project_artifactId>calculator-project</project_artifactId>
-        <project_version>1.0</project_version>
+        <project_version>1.1</project_version>
     </properties>
 
     <groupId>org.wangpai.calculator</groupId>
@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
     <name>${project_artifactId}</name>
     <modules>
-        <module>calculator</module>
+        <module>calculator-core</module>
         <module>calculator-exception</module>
     </modules>
 
@@ -23,7 +23,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.wangpai.calculator</groupId>
-                <artifactId>calculator</artifactId>
+                <artifactId>calculator-core</artifactId>
                 <version>${project_version}</version>
             </dependency>
             <dependency>

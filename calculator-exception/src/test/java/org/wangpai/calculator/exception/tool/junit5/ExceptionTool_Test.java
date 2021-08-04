@@ -7,6 +7,9 @@ import org.wangpai.calculator.exception.tool.ExceptionTool;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @since 2021-7-19
+ */
 class ExceptionTool_Test {
     private String msg="错误：整数不支持除法运算";
     @Test

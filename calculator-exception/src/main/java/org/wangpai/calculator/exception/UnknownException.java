@@ -2,6 +2,9 @@ package org.wangpai.calculator.exception;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @since 2021-7-29
+ */
 public class UnknownException extends CalculatorException {
     public UnknownException() {
         super();

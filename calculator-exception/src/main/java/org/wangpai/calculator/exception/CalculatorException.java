@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @since 2021-7-9
+ */
 public abstract class CalculatorException extends Exception {
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PRIVATE)

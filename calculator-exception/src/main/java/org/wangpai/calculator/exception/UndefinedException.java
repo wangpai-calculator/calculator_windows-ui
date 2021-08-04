@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * 当进行的操作、使用的符号未定义或不支持时，使用该异常
+ *
+ * @since 2021-7-29
  */
 public class UndefinedException extends CalculatorException {
     public UndefinedException() {

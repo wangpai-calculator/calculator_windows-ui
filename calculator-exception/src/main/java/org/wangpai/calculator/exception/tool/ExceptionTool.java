@@ -3,6 +3,9 @@ package org.wangpai.calculator.exception.tool;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.UnknownException;
 
+/**
+ * @since 2021-7-19
+ */
 public class ExceptionTool {
     public static CalculatorException pkgException(Throwable exception) throws UnknownException {
         return pkgException(exception, null);

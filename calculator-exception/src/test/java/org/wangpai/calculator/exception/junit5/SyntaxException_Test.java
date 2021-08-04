@@ -6,6 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.wangpai.calculator.exception.SyntaxException;
 
+/**
+ * @since 2021-7-23
+ */
 public class SyntaxException_Test {
     private String msg = "异常：不符语法";
 
