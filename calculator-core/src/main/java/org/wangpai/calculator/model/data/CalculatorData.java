@@ -3,12 +3,12 @@ package org.wangpai.calculator.model.data;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operand.Decimal;
 import org.wangpai.calculator.model.symbol.operand.Operand;
-import org.wangpai.calculator.model.symbol.operation.Operation;
+import org.wangpai.calculator.model.symbol.operand.RationalNumber;
+import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 import org.wangpai.calculator.model.symbol.operator.Operator;
 
 import java.util.Collections;
@@ -21,17 +21,27 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKE
  * @since 2021-8-1
  */
 public final class CalculatorData implements Operable, Cloneable {
-    // 对于 Stack 定义的栈，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的。
+    /**
+     * 对于 Stack 定义的栈，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的
+     */
 
+    /**
+     * opnds：operand 操作数
+     *
+     * 目前，这个栈里面储存的是有理数。这是由方法 loadOpnd 来决定的
+     */
     @Getter(AccessLevel.PUBLIC)
-    private Stack<Operand> opnds = new Stack<>(); // opnds：operand 操作数
+    private Stack<Operand> opnds = new Stack<>();
 
-    private Stack<Symbol> opndBuff = new Stack<>(); // opndBuff：operand buffer 缓存的操作数的每一位的值
+    // opndBuff：operand buffer 缓存的操作数的每一位的值，包括小数点
+    private Stack<Symbol> opndBuff = new Stack<>();
 
-    private Stack<Operator> optrs = new Stack<>(); // optrs：operator 运算符
+    // optrs：operator 运算符
+    private Stack<Operator> optrs = new Stack<>();
 
+    // exp：expresion 当前整个表达式的状态
     @Getter(AccessLevel.PUBLIC)
-    private Stack<Symbol> exp = new Stack<>(); // inte：integration 当前整个表达式的状态
+    private Stack<Symbol> exp = new Stack<>();
 
     public CalculatorData() {
         super();
@@ -184,45 +194,72 @@ public final class CalculatorData implements Operable, Cloneable {
         return true;
     }
 
-    public void oneTimeCalculation() throws CalculatorException {
+    /**
+     * @since 2021-8-5
+     */
+    public void oneTimeCalculation() throws SyntaxException {
         var optr = this.optrs.pop();
         var opndRight = this.opnds.pop();
         var opndLeft = this.opnds.pop();
 
-        /**
-         * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射
-         */
-        switch (optr.getSymbol()) {
-            case ADD:
-                this.opnds.push(Operation.add(opndLeft, opndRight));
-                break;
-            case SUBTRACT:
-                this.opnds.push(Operation.subtract(opndLeft, opndRight));
-                break;
-            case MULTIPLY:
-                this.opnds.push(Operation.multiply(opndLeft, opndRight));
-                break;
-            case DIVIDE:
-                this.opnds.push(Operation.divide(opndLeft, opndRight));
-                break;
+        if (opndLeft instanceof RationalNumber
+                && opndRight instanceof RationalNumber) {
+            /**
+             * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射
+             */
+            switch (optr.getSymbol()) {
+                case ADD:
+                    this.opnds.push(RationalNumberOperation.add(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
+                    break;
+                case SUBTRACT:
+                    this.opnds.push(RationalNumberOperation.subtract(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
+                    break;
+                case MULTIPLY:
+                    this.opnds.push(RationalNumberOperation.multiply(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
+                    break;
+                case DIVIDE:
+                    this.opnds.push(RationalNumberOperation.divide(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
+    /**
+     * @since 2021-8-5
+     */
     public static Operand oneTimeCalculation(Operand opndLeft, Operator optr, Operand opndRight)
-            throws CalculatorException {
-        /**
-         * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射
-         */
-        switch (optr.getSymbol()) {
-            case ADD:
-                return Operation.add(opndLeft, opndRight);
-            case SUBTRACT:
-                return Operation.subtract(opndLeft, opndRight);
-            case MULTIPLY:
-                return Operation.multiply(opndLeft, opndRight);
-            case DIVIDE:
-                return Operation.divide(opndLeft, opndRight);
+            throws SyntaxException {
+        if (opndLeft instanceof RationalNumber
+                && opndRight instanceof RationalNumber) {
+            /**
+             * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射
+             */
+            switch (optr.getSymbol()) {
+                case ADD:
+                    return RationalNumberOperation.add(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight);
+                case SUBTRACT:
+                    return RationalNumberOperation.subtract(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight);
+                case MULTIPLY:
+                    return RationalNumberOperation.multiply(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight);
+                case DIVIDE:
+                    return RationalNumberOperation.divide(
+                            (RationalNumber) opndLeft, (RationalNumber) opndRight);
+
+                default:
+                    break;
+            }
         }
+
         return null;
     }
 
@@ -231,9 +268,9 @@ public final class CalculatorData implements Operable, Cloneable {
      */
     public CalculatorData clearAllCalData() {
         this.opnds.clear(); // 清空 opnd 原来的 Stack
-        this.opndBuff.clear(); // 清空 this.opndBuff 原来的 Stack
+        this.opndBuff.clear(); // 清空 opndBuff 原来的 Stack
         this.optrs.clear(); // 清空 optr 原来的 Stack
-        this.exp.clear();// 清空 inte 原来的 Stack
+        this.exp.clear(); // 清空 exp 原来的 Stack
 
         return this;
     }

@@ -20,23 +20,38 @@ public abstract class Operation {
      * 容易导致在动态调用方法时找不到目标方法。
      * 如果在子类也定义了这种方法，将会使用编译器的静态检查失效，
      * 加剧调用非法方法的风险
+     *
+     * @deprecated 2021-8-5
      */
-    public final static Operand add(Operand first, Operand second)
+    @Deprecated
+    protected final static Operand add(Operand first, Operand second)
             throws CalculatorException {
         return callBestOperation("add", first, second);
     }
 
-    public final static Operand subtract(Operand first, Operand second)
+    /**
+     * @deprecated 2021-8-5
+     */
+    @Deprecated
+    protected final static Operand subtract(Operand first, Operand second)
             throws CalculatorException {
         return callBestOperation("subtract", first, second);
     }
 
-    public final static Operand multiply(Operand first, Operand second)
+    /**
+     * @deprecated 2021-8-5
+     */
+    @Deprecated
+    protected final static Operand multiply(Operand first, Operand second)
             throws CalculatorException {
         return callBestOperation("multiply", first, second);
     }
 
-    public final static Operand divide(Operand first, Operand second)
+    /**
+     * @deprecated 2021-8-5
+     */
+    @Deprecated
+    protected final static Operand divide(Operand first, Operand second)
             throws CalculatorException {
         return callBestOperation("divide", first, second);
     }
@@ -48,9 +63,12 @@ public abstract class Operation {
      * 最佳函数指它的第一个形参正好是这两个形参中的子类对象，而第二个形参类型固定为 Operand 类型
      *
      * 这个方法的完成的工作是：
-     *   > 1. 检查形参是否有误。
-     *   > 2. 将形参按照继承关系进行排列，然后调用一个最佳函数
+     * - 1. 检查形参是否有误。
+     * - 2. 将形参按照继承关系进行排列，然后调用一个最佳函数
+     *
+     * @deprecated 2021-8-5
      */
+    @Deprecated
     protected final static Operand callBestOperation(String methodName, Operand first, Operand second)
             throws CalculatorException {
         preliminaryCheck(first, second);
@@ -84,9 +102,6 @@ public abstract class Operation {
         }
 
         return result;
-
-//        return (Operand) operationClass.getMethod(methodName, subObj.getClass(), Operand.class)
-//                .invoke(null, subObj, superObj);
     }
 
     /**
@@ -97,7 +112,6 @@ public abstract class Operation {
     private final static void preliminaryCheck(Operand... operands)
             throws SyntaxException {
         var nullPointerRecords = new HashSet<Integer>();
-//        var typeExceptionRecords = new HashSet<Integer>();
 
         final var operandNum = operands.length;
 
@@ -105,9 +119,6 @@ public abstract class Operation {
             if (operands[order] == null) {
                 nullPointerRecords.add(order + 1);
             }
-//            else if (!(operands[order] instanceof Operand)) {
-//                typeExceptionRecords.add(order + 1);
-//            }
         }
 
         boolean hasException = false;
@@ -159,7 +170,6 @@ public abstract class Operation {
         }
         return new Object[]{subObj, superObj, hasSwap};
     }
-
 
     private static StringBuilder generateExceptionString(HashSet<Integer> exceptionRecords) {
         StringBuilder exceptionInfo = new StringBuilder();

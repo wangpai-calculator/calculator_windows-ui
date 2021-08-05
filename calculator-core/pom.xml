@@ -9,7 +9,8 @@
     <parent>
         <artifactId>calculator-project</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>1.1</version>
+        <!-- 此处不能使用父 pom 中的 ${project_version} 来代替。原因是必须要先指定它的父 pom，才能进行继承 -->
+        <version>1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

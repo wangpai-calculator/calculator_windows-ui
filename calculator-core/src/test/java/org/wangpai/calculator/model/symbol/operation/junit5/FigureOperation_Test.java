@@ -21,21 +21,6 @@ class FigureOperation_Test {
     private int secondInt = 2341;
 
     @Test
-    void methodNavigation() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        // 交换标志为 false
-        assertEquals(new Figure(firstInt - secondInt),
-                FigureOperation.methodNavigation(
-                        "subtract", new Figure(firstInt),
-                        new Figure(secondInt), false));
-
-        // 交换标志为 true
-        assertEquals(new Figure(secondInt - firstInt),
-                FigureOperation.methodNavigation(
-                        "subtract", new Figure(firstInt),
-                        new Figure(secondInt), true));
-    }
-
-    @Test
     void templateOperation() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(firstInt - secondInt),
                 templateOperation("subtract",
@@ -195,7 +180,7 @@ class FigureOperation_Test {
      */
     Figure findLcm_forTest(Figure first, Figure second)
             throws NoSuchMethodException, IllegalAccessException, CalculatorException, CloneNotSupportedException, InvocationTargetException {
-        return (Figure) Operation.multiply(first,
+        return (Figure) FigureOperation.multiply(first,
                 FigureOperation.subtract(
                         second, findGcd_forTest(first, second)));
     }
@@ -298,6 +283,5 @@ class FigureOperation_Test {
     }
 
     /****************模拟的原生待测方法****************/
-
 
 }

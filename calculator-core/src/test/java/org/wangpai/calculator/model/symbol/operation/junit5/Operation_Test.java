@@ -22,41 +22,6 @@ class Operation_Test {
     private int secondInt = 2;
 
     @Test
-    void add_Fraction()
-            throws InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException, CalculatorException {
-        // 测试整数加法
-        assertEquals(new Figure(firstInt + secondInt),
-                Operation.add(new Figure(firstInt), new Figure(secondInt)));
-    }
-
-    @Test
-    void subtract_Fraction()
-            throws InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException, CalculatorException {
-        // 测试整数减法
-        assertEquals(new Figure(firstInt - secondInt),
-                Operation.subtract(new Figure(firstInt), new Figure(secondInt)));
-    }
-
-    @Test
-    void multiply_Fraction() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(firstInt * secondInt),
-                Operation.multiply(new Figure(firstInt), new Figure(secondInt)));
-    }
-
-    @Test
-    void divide_Fraction() {
-        Throwable throwable = assertThrows(SyntaxException.class,
-                () -> Operation.divide(new Figure(firstInt), new Figure(secondInt)));
-        assertEquals("错误：整数不支持除法运算", throwable.getMessage());
-    }
-
-    @Test
-    void divide_RationalNumber() {
-    }
-
-    @Test
     void callBestOperation_Figure() throws CalculatorException {
         assertEquals(new Figure(firstInt + secondInt),
                 callBestOperation_native("add",
@@ -169,7 +134,7 @@ class Operation_Test {
         return result;
     }
 
-    StringBuilder generateExceptionString_native(HashSet<Integer> exceptionRecords){
+    StringBuilder generateExceptionString_native(HashSet<Integer> exceptionRecords) {
         StringBuilder result = null;
         try {
             var methodToBeTested = Operation.class

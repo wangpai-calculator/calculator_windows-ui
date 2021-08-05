@@ -39,7 +39,7 @@ class Figure_Test {
     @Test
     void getFraction() {
         assertEquals(BigInteger.valueOf(numForTest),
-                new Figure(numForTest).getFigure());
+                new Figure(numForTest).getInteger());
     }
 
     @Test
@@ -52,11 +52,11 @@ class Figure_Test {
     void setFigure() {
         // 测试 public Fraction setFraction(BigInteger fraction)
         assertEquals(new Figure(numForTest),
-                new Figure().setFigure(BigInteger.valueOf(numForTest)));
+                new Figure().setInteger(BigInteger.valueOf(numForTest)));
 
         //  测试 public Fraction setFraction(long num)
         assertEquals(new Figure(numForTest),
-                new Figure().setFigure(numForTest));
+                new Figure().setInteger(numForTest));
     }
 
     @Test
@@ -70,7 +70,7 @@ class Figure_Test {
 
     @Test
     void toString_test() {
-        assertEquals(new Figure(numForTest).getFigure().toString(),
+        assertEquals(new Figure(numForTest).getInteger().toString(),
                 new Figure(numForTest).toString());
     }
 

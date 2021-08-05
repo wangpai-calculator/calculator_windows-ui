@@ -1,7 +1,7 @@
 package org.wangpai.calculator.view.control;
 
+import lombok.SneakyThrows;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.view.CalculatorMainPanel;
 
@@ -16,7 +16,6 @@ import java.util.List;
  * @since 2021-8-1
  */
 public final class ButtonGroup extends JPanel {
-
     private CalculatorMainPanel parentPanel;
 
     /**
@@ -41,7 +40,7 @@ public final class ButtonGroup extends JPanel {
          * 规定：第一排按钮为功能键
          */
         final String[][] labels = new String[][]{
-                {"←", "→", "F2", "☒"},
+                {"❮", "❯", "☑", "☒"},
                 {Symbol.SEVEN.toString(),
                         Symbol.EIGHT.toString(),
                         Symbol.NINE.toString(),
@@ -103,44 +102,40 @@ public final class ButtonGroup extends JPanel {
 
         for (var button : buttonGroup.functionButtons) {
             button.addActionListener(new ActionListener() {
+                @SneakyThrows // 此处不能简写为 lambda 表达式
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     String str = event.getActionCommand();
-                    try { // 因为方法 actionPerformed 不能抛出异常，所以这里要捕获
-                        switch (str) {
-                            case "←":
-                                buttonGroup.parentPanel.send(new Url("/view/inputbox/leftshift"), str);
-                                break;
-                            case "→":
-                                buttonGroup.parentPanel.send(new Url("/view/inputbox/rightshift"), str);
-                                break;
-                            case "☒":
-                                buttonGroup.parentPanel.send(new Url("/view/inputbox/deletecursorchar"), str);
-                                break;
-
-
-                        }
-
-                    } catch (SyntaxException exception) {
-                        // 敬请期待
+                    switch (str) {
+                        case "❮":
+                            buttonGroup.parentPanel.send(new Url("/view/inputbox/leftshift"), str);
+                            break;
+                        case "❯":
+                            buttonGroup.parentPanel.send(new Url("/view/inputbox/rightshift"), str);
+                            break;
+                        case "☑":
+                            buttonGroup.parentPanel.send(new Url("/view/inputbox/selectall"), str);
+                            break;
+                        case "☒":
+                            buttonGroup.parentPanel.send(new Url("/view/inputbox/delete"), str);
+                            break;
                     }
                     System.out.println(event.getActionCommand());
                 }
             });
-        }
+        } // for-each
 
         for (var button : buttonGroup.practicalButton) {
             button.addActionListener(new ActionListener() {
+                @SneakyThrows // 此处不能简写为 lambda 表达式
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     String str = event.getActionCommand();
-                    try { // 因为方法 actionPerformed 不能抛出异常，所以这里要捕获
-                        buttonGroup.parentPanel.send(new Url("/view/inputbox/addcursorstr"), str);
-                    } catch (SyntaxException exception) {
-                        // 敬请期待
-                    }
+                    buttonGroup.parentPanel.send(new Url("/view/inputbox/insert"), str);
                     System.out.println(event.getActionCommand());
                 }
             });
-        }
+        }// for-each
 
         return buttonGroup;
     }

@@ -6,7 +6,6 @@ import org.wangpai.calculator.exception.UnknownException;
 import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
-import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,8 +22,12 @@ public final class FigureOperation extends Operation {
     /**
      * 此函数将用于导航到最终的运算函数。
      * 最终的运算函数指的是每个操作数的类型均与方法签名中标明的一致的函数
+     *
+     * @deprecated 2021-8-5
+     * 此方法为使用了反射，为废弃方法，仅基类可以调用
      */
-    public final static Figure methodNavigation(
+    @Deprecated
+    protected final static Figure methodNavigation(
             String methodName, Figure first,
             Operand second, boolean hasSwap)
             throws CalculatorException {
@@ -94,18 +97,21 @@ public final class FigureOperation extends Operation {
         }
 
         return result;
-
     }
 
     /**
      * 注意：此处的 methodName 是 Figure 底层的字段类型 BigInteger 的运算函数名，
      * 不是 FigureOperation 的运算函数名
+     *
+     * @deprecated 2021-8-5
+     * 此方法为使用了反射，为废弃方法
      */
-    public static Figure templateOperation(
+    @Deprecated
+    private static Figure templateOperation(
             String methodName, Figure first, Figure second)
             throws CalculatorException {
-        var firstValue = first.getFigure();
-        var secondValue = second.getFigure();
+        var firstValue = first.getInteger();
+        var secondValue = second.getInteger();
         var className = BigInteger.class;
 
         BigInteger result = null;
@@ -129,42 +135,34 @@ public final class FigureOperation extends Operation {
     }
 
     /**
-     *      * 这种形参类型可以协变的方法不能定义为 public。
-     *      * 原因是子类可以继承这些方法，但不会去覆盖这些方法。
-     *      * 这将可能导致方法的形参匹配到不能
+     * @since 2021-8-5
      */
-    /**
-     * add 的最终的运算函数
-     */
-    public static Figure add(Figure first, Figure second)
-            throws CalculatorException {
-        return templateOperation("add", first, second);
+    public static Figure add(Figure first, Figure second) {
+        return new Figure(first.getInteger().add(second.getInteger()));
     }
 
     /**
-     * subtract 的最终的运算函数
+     * @since 2021-8-5
      */
-    public static Figure subtract(Figure first, Figure second)
-            throws CalculatorException {
-        return templateOperation("subtract", first, second);
+    public static Figure subtract(Figure first, Figure second) {
+        return new Figure(first.getInteger().subtract(second.getInteger()));
     }
 
     /**
-     * multiply 的最终的运算函数
-     *
-     * @since 2021-8-4
+     * @since 2021-8-5
      */
-    public static Figure multiply(Figure first, Figure second)
-            throws CalculatorException {
-        return templateOperation("multiply", first, second);
+    public static Figure multiply(Figure first, Figure second) {
+        return new Figure(first.getInteger().multiply(second.getInteger()));
     }
 
 
     /**
      * 占位空方法
+     *
+     * @since before 2021-8-5
      */
-    public final static Figure divide(
-            Figure first, Figure second) throws SyntaxException {
+    public final static Figure divide(Figure first, Figure second)
+            throws SyntaxException {
         throw new SyntaxException("错误：整数不支持除法运算");
     }
 
@@ -174,8 +172,8 @@ public final class FigureOperation extends Operation {
      * @return 返回的数组中，0 号元素代表商，1 号元素代表余数
      */
     public static Figure[] divideAndRemainder(Figure first, Figure second) {
-        BigInteger[] quotientAndRemainder = first.getFigure()
-                .divideAndRemainder(second.getFigure());
+        BigInteger[] quotientAndRemainder = first.getInteger()
+                .divideAndRemainder(second.getInteger());
         Figure[] result = new Figure[quotientAndRemainder.length];
         for (int index = 0; index < quotientAndRemainder.length; ++index) {
             result[index] = new Figure(quotientAndRemainder[index]);
@@ -216,14 +214,19 @@ public final class FigureOperation extends Operation {
 
     /**
      * 求相反数
+     *
+     * 算法：将形参乘以 -1
+     *
+     * @since before 2021-8-5
      */
-    public final static Figure getOpposite(Figure rationalNumber)
-            throws CalculatorException {
+    public final static Figure getOpposite(Figure rationalNumber) {
         return multiply(rationalNumber, new Figure(-1));
     }
 
-    public final static Figure getOpposite(long num)
-            throws CalculatorException {
+    /**
+     * @since before 2021-8-5
+     */
+    public final static Figure getOpposite(long num) {
         return getOpposite(new Figure(num));
     }
 
@@ -235,54 +238,45 @@ public final class FigureOperation extends Operation {
      * > 当这两个数只有一个为 0 时，结果为另一个数的绝对值。
      * > 特别地，当这两个数均为 0 时，结果为 0。
      * > 其它情况下，结果为正数
+     *
+     * @since before 2021-8-5
      */
     public static Figure findGcd(Figure first, Figure second) {
-        /** // 这是我之前自己编写的实现，后来发现 BigInteger 中已经有了这种方法了。
-         *
-         * 注意：如果这两个数都是负数，则公约数也为负数。
-         *      如果只有一个为负，则公约数有可能为负，有可能为正
-        var firstClone = first.clone();
-        var secondClone = second.clone();
-        while (!secondClone.isZero()) {
-            var middleResult = mod(firstClone, secondClone);
-            firstClone = second;
-            secondClone = middleResult;
-        }
-
-        return firstClone;
-         */
-
-        return new Figure(first.clone().getFigure()
-                .gcd(second.clone().getFigure()));
+        return new Figure(first.clone().getInteger()
+                .gcd(second.clone().getInteger()));
     }
 
     /**
      * 求两个数的最小公倍数。LCM：Least Common Multiple
      *
-     * 算法如下：先得出这两个数的最大公约数，
-     *         然后将其中一个数除以最大公约数，得到其中一个质因子（prime factor）
-     *         最后将该质因子另外一个没有除以过公约数的数相乘
+     * 算法如下：
+     * 先得出这两个数的最大公约数，
+     * 然后将其中一个数除以最大公约数，得到其中一个质因子（prime factor）
+     * 最后将该质因子另外一个没有除以过公约数的数相乘
+     *
+     * @since before 2021-8-5
      */
-    public static Figure findLcm(Figure first, Figure second)
-            throws CalculatorException {
+    public static Figure findLcm(Figure first, Figure second) {
         return multiply(first, subtract(second, findGcd(first, second)));
     }
 
 
     /**
      * 整数的乘方
+     *
+     * @since before 2021-8-5
      */
     public static Figure power(Figure base, Figure exponent)
-            throws CalculatorException {
+            throws SyntaxException {
         if (base.isZero()) {
             throw new SyntaxException("错误：0 不能作为乘方的底数");
         }
 
-        return new Figure(base.getFigure().pow(exponent.getFigure().intValue()));
+        return new Figure(base.getInteger().pow(exponent.getInteger().intValue()));
     }
 
     public static Figure power(long base, long exponent)
-            throws CalculatorException {
+            throws SyntaxException {
         return FigureOperation.power(new Figure(base), new Figure(exponent));
     }
 

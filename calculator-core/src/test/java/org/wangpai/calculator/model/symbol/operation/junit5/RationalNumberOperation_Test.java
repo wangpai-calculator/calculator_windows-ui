@@ -19,34 +19,19 @@ class RationalNumberOperation_Test {
     private int firstInt = 234234;
     private int secondInt = 2341;
 
-    RationalNumberOperation_Test() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    RationalNumberOperation_Test() {
     }
 
     @Test
-    void methodNavigation() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
-        // 交换标志为 false
-        assertEquals(new RationalNumber(1, secondInt),
-                RationalNumberOperation.methodNavigation(
-                        "divide", new RationalNumber(1, 1),
-                        new RationalNumber(secondInt, 1), false));
-
-        // 交换标志为 true
-        assertEquals(new RationalNumber(firstInt, 1),
-                RationalNumberOperation.methodNavigation(
-                        "divide", new RationalNumber(1, 1),
-                        new RationalNumber(firstInt, 1), true));
-    }
-
-    @Test
-    void add_R() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void add_R() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         // 3/4 = 5/7 + 1/28
-        assertEquals(new RationalNumber(3,4),
-                add(new RationalNumber(5,7),
-                        new RationalNumber(1,28)));
+        assertEquals(new RationalNumber(3, 4),
+                add(new RationalNumber(5, 7),
+                        new RationalNumber(1, 28)));
     }
 
     @Test
-    void subtract_R() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void subtract_R() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         // 1/6 = 1/2 - 1/3
         assertEquals(new RationalNumber(1, 6),
                 subtract(new RationalNumber(1, 2),
@@ -54,7 +39,7 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void multiply_R() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void multiply_R() throws CalculatorException {
         // 1/3 = 5/6 x 2/5
         assertEquals(new RationalNumber(1, 3),
                 multiply(new RationalNumber(5, 6),
@@ -62,14 +47,14 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void multiply_long() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void multiply_long() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         // 5/3 = 1/6 x 10
         assertEquals(new RationalNumber(5, 3),
                 multiply(new RationalNumber(1, 6), 10));
     }
 
     @Test
-    void divide_R() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void divide_R() throws CalculatorException {
         // 5/6 = 1/3 / 2/5
         assertEquals(new RationalNumber(5, 6),
                 divide(new RationalNumber(1, 3),
@@ -83,14 +68,14 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void getOpposite() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void getOpposite() throws CalculatorException {
         assertEquals(new RationalNumber(-firstInt, secondInt),
                 RationalNumberOperation.getOpposite
                         (new RationalNumber(firstInt, secondInt)));
     }
 
     @Test
-    void getReciprocal() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    void getReciprocal() throws CalculatorException {
         assertEquals(new RationalNumber(secondInt, firstInt),
                 RationalNumberOperation.getReciprocal
                         (new RationalNumber(firstInt, secondInt)));
@@ -99,7 +84,7 @@ class RationalNumberOperation_Test {
     /*---------------模拟的原生待测方法---------------*/
 
     RationalNumber add(RationalNumber first, RationalNumber second)
-            throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+            throws CalculatorException {
         RationalNumber result;
         try {
             var methodToBeTested = RationalNumberOperation.class
@@ -118,7 +103,7 @@ class RationalNumberOperation_Test {
     }
 
     RationalNumber subtract(RationalNumber first, RationalNumber second)
-            throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+            throws CalculatorException {
         RationalNumber result;
         try {
             var methodToBeTested = RationalNumberOperation.class
@@ -137,7 +122,7 @@ class RationalNumberOperation_Test {
     }
 
     RationalNumber multiply(RationalNumber first, RationalNumber second)
-            throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+            throws CalculatorException {
         RationalNumber result;
         try {
             var methodToBeTested = RationalNumberOperation.class
@@ -156,7 +141,7 @@ class RationalNumberOperation_Test {
     }
 
     RationalNumber multiply(RationalNumber first, long second)
-            throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+            throws CalculatorException {
         RationalNumber result;
         try {
             var methodToBeTested = RationalNumberOperation.class

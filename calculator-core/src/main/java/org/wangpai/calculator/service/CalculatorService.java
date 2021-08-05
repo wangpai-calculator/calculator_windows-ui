@@ -4,15 +4,19 @@ import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
+import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.data.CalculatorData;
+import org.wangpai.calculator.model.data.OutputStream;
 import org.wangpai.calculator.model.data.SymbolOutputStream;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operator.Operator;
+
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
 
 import lombok.SneakyThrows;
+
 import java.util.Collections;
 import java.util.Stack;
 import java.util.regex.Pattern;
@@ -21,7 +25,6 @@ import java.util.regex.Pattern;
  * @since 2021-8-1
  */
 public final class CalculatorService {
-    private SymbolOutputStream outputStream;
     private TerminalController controller;
 
     private static int calculationTimes = 0;
@@ -60,7 +63,7 @@ public final class CalculatorService {
     /**
      * @since 2021-8-4
      */
-    public void readExpression(final String expression) throws CalculatorException {
+    public void readExpression(final String expression) {
         CalculatorData calData = new CalculatorData();
 
         // 对原表达式进行静态检查和动态检查。如果检查不通过，向提示框发送异常信息，本算法结束
@@ -91,25 +94,8 @@ public final class CalculatorService {
                 return;
             }
 
-            var result = calData.getOpnds().peek();
-            String resultStr;
-            if (result instanceof RationalNumber) {
-                resultStr = Double.toString(((RationalNumber) result).toDouble());
-            } else {
-                resultStr = result.toString();
-            }
-            StringBuilder prompMsg = new StringBuilder();
-            prompMsg.append(System.lineSeparator())
-                    .append(System.lineSeparator())
-                    .append("自动计算的结果为：")
-                    .append(System.lineSeparator())
-                    .append(this.generateExpressionData(calData.getExp()))
-                    .append(" ")
-                    .append(resultStr)
-                    .append(System.lineSeparator())
-                    .append(System.lineSeparator())
-                    .append("（输入等号可显示计算过程）");
-            this.sendPromptMsg(prompMsg.toString());
+            // 自动计算并发送计算结果
+            this.sendAutoCalculationResult(calData);
             return;
         }
 
@@ -117,16 +103,8 @@ public final class CalculatorService {
             if (calData.opndsIsEmpty()) {
                 return;
             } else {
-                StringBuilder prompMsg = new StringBuilder();
-                prompMsg.append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append("----------------------")
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append("【" + (++CalculatorService.calculationTimes) + "】下面是计算过程：")
-                        .append(System.lineSeparator());
-
-                this.sendCalculationResult(prompMsg + this.generateProcess(calData));
+                // 生成计算过程，并发送
+                this.sendProcessResult(calData);
             }
         } else { // 如果用户输入的是一个不完整但没有语法错误的一个表达式
             this.clearPromptMsg();
@@ -134,21 +112,69 @@ public final class CalculatorService {
     }
 
     /**
+     * 等号补齐之后的自动计算
+     * <p>
+     * 此方法调用之前，必须已经计算完表达式
+     *
+     * @since 2021-8-5
+     */
+    private void sendAutoCalculationResult(CalculatorData calData) {
+        var result = calData.getOpnds().peek();
+        String resultStr;
+        if (result instanceof RationalNumber) {
+            resultStr = Double.toString(((RationalNumber) result).toDouble());
+        } else {
+            resultStr = result.toString();
+        }
+        StringBuilder prompMsg = new StringBuilder();
+        prompMsg.append(System.lineSeparator())
+                .append(System.lineSeparator())
+                .append("自动计算的结果为：")
+                .append(System.lineSeparator())
+                .append(this.generateExpressionData(calData.getExp()))
+                .append(" ")
+                .append(resultStr)
+                .append(System.lineSeparator())
+                .append(System.lineSeparator())
+                .append("（输入等号可显示计算过程）");
+        this.sendPromptMsg(prompMsg.toString());
+    }
+
+    /**
+     * 生成计算过程，并发送
+     *
+     * @since 2021-8-5
+     */
+    private void sendProcessResult(CalculatorData calData) {
+        StringBuilder prompMsg = new StringBuilder();
+        prompMsg.append(System.lineSeparator())
+                .append(System.lineSeparator())
+                .append("----------------------")
+                .append(System.lineSeparator())
+                .append(System.lineSeparator())
+                .append("【" + (++CalculatorService.calculationTimes) + "】下面是计算过程：")
+                .append(System.lineSeparator());
+
+        this.sendCalculationResult(prompMsg + this.generateProcess(calData));
+    }
+
+    /**
      * 表达式检查
      * <p>
      * 当这个方法正常结束时，操作数栈将储存表达式的运算结果，运算符栈将储存等号，已读取字符栈将储存整个表达式
      */
-    private void expressionCheck(CalculatorData calData, String expression) throws CalculatorException {
-        this.outputStream = new SymbolOutputStream().init(expression);
+    private void expressionCheck(CalculatorData calData, String expression)
+            throws SyntaxException, UndefinedException {
+        var outputStream = new SymbolOutputStream().init(expression);
         Symbol symbolEntered;
         calData.clearAllCalData(); // 读取一个表达式之前先重置数据
 
         // 此循环的后两个条件指的是，当等号之前的表达式时计算完时，运算符栈一定只剩下等号
-        while (this.outputStream.hasNext() &&
+        while (outputStream.hasNext() &&
                 (calData.optrsIsEmpty() || calData.peekFromOptrs().getSymbol() != EQUAL)) {
-            symbolEntered = this.outputStream.next();
+            symbolEntered = outputStream.next();
             this.syntaxCheck(calData, symbolEntered);
-            this.readSymbol(calData, symbolEntered);
+            this.readSymbol(outputStream, calData, symbolEntered);
         }
     }
 
@@ -274,52 +300,7 @@ public final class CalculatorService {
         }
     }
 
-    /**
-     * 单个字符的输入处理。此方法调用前必须输入字符语法上的正确性
-     */
-    public void readSymbol(CalculatorData calData, Symbol symbolEntered)
-            throws CalculatorException {
-        if (symbolEntered == Symbol.EQUAL && calData.optrsIsEmpty()) {
-            calData.loadOpnd();
-            calData.pushSymbol(symbolEntered); // 此处让 “=” 入栈的目的是为了下次能结束循环
-            this.outputStream.rollback(); // 让下次读取到的依然是 “=”
-            return;
-        } else if (symbolEntered.isDigit() || symbolEntered == DOT) {
-            // 如果是数字或小数点的话，入操作数临时栈
-            calData.pushSymbol(symbolEntered);
-            return;
-        } else {
-            calData.loadOpnd();
-
-            if (calData.optrsIsEmpty()) {
-                // 如果运算符栈里什么也没有，该运算符就直接入栈
-                calData.pushSymbol(symbolEntered);
-                return;
-            }
-
-            switch (this.precede(calData.peekFromOptrs(), new Operator(symbolEntered))) {
-                case "<":
-                    calData.pushSymbol(symbolEntered);
-                    return;
-                case ">":
-                    this.judgeZeroDivisor(calData);
-
-                    calData.oneTimeCalculation();
-                    this.outputStream.rollback();
-                    return;
-                case "=":
-                    /**
-                     * 运行到此 case，说明最近的两个运算符是一对括号，
-                     * 此时应该将这一对括号从运算符栈弹出，然后将右括号加入 inte 栈
-                     */
-                    calData.popFromOptrs();
-                    calData.pushToExp(symbolEntered);
-                    return;
-            } // switch
-        } // else
-    }
-
-    private void judgeZeroDivisor(CalculatorData calData) throws SyntaxException {
+    private void judgeZeroDivisor(CalculatorData calData, OutputStream outputStream) throws SyntaxException {
         /**
          * 如果最近一个运算符是除号，最近一个操作数是 0
          */
@@ -342,7 +323,7 @@ public final class CalculatorService {
                 /**
                  * 如果此 0 属于运算的中间结果。当此情况发生时，只能放弃整个表达式
                  */
-                var ERROR_INFO = "\n中间有的算式让除数为 0，计算失败";
+                var ERROR_INFO = "\n中间有算式让除数为 0，计算失败";
                 System.out.println(ERROR_INFO);
 
                 throw new SyntaxException(ERROR_INFO, outputStream.getOriginInput());
@@ -350,7 +331,59 @@ public final class CalculatorService {
         } // 外层 if
     } // 本方法的右括号
 
-    public String generateProcess(CalculatorData calculatorData) throws CalculatorException {
+    /**
+     * 单个字符的输入处理。此方法调用前必须输入字符语法上的正确性
+     */
+    public void readSymbol(OutputStream outputStream, CalculatorData calData, Symbol symbolEntered)
+            throws SyntaxException {
+        if (symbolEntered == Symbol.EQUAL && calData.optrsIsEmpty()) {
+            calData.loadOpnd();
+            calData.pushSymbol(symbolEntered); // 此处让 “=” 入栈的目的是为了下次能结束循环
+            outputStream.rollback(); // 让下次读取到的依然是 “=”
+            return;
+        } else if (symbolEntered.isDigit() || symbolEntered == DOT) {
+            // 如果是数字或小数点的话，入操作数临时栈
+            calData.pushSymbol(symbolEntered);
+            return;
+        } else {
+            calData.loadOpnd();
+
+            if (calData.optrsIsEmpty()) {
+                // 如果运算符栈里什么也没有，该运算符就直接入栈
+                calData.pushSymbol(symbolEntered);
+                return;
+            }
+
+            switch (this.precede(calData.peekFromOptrs(), new Operator(symbolEntered))) {
+                case "<":
+                    calData.pushSymbol(symbolEntered);
+                    return;
+                case ">":
+                    this.judgeZeroDivisor(calData, outputStream);
+
+                    calData.oneTimeCalculation();
+                    outputStream.rollback();
+                    return;
+                case "=":
+                    /**
+                     * 运行到此 case，说明最近的两个运算符是一对括号，
+                     * 此时应该将这一对括号从运算符栈弹出，然后将右括号加入 inte 栈
+                     */
+                    calData.popFromOptrs();
+                    calData.pushToExp(symbolEntered);
+                    return;
+            } // switch
+        } // else
+    }
+
+    /**
+     * 由于计算表达式与在计算表达式的过程中显示过程是两个不同的行为，
+     * 因此建议不要合并
+     *
+     * @since before 2021-8-5
+     */
+    @SneakyThrows
+    public String generateProcess(CalculatorData calculatorData) {
         if (calculatorData.inteIsEmpty()) {
             return "";
         }
@@ -368,50 +401,48 @@ public final class CalculatorService {
             result.append(generateExpressionData(inteTemp));
         }
 
-        // antiInte：anti inte inte的反转。代表待读取的输入表达式
-        var antiInte = (Stack<Symbol>) calculatorData.getExp().clone();
-        Collections.reverse(antiInte);
-        var inteOfShow = new Stack<Symbol>();
+        // antiExp：anti Exp，Exp 的反转。代表待读取的输入表达式
+        var antiExp = (Stack<Symbol>) calculatorData.getExp().clone();
+        Collections.reverse(antiExp);
+        var expOfShow = new Stack<Symbol>();
 
         var calData = new CalculatorData();
 
-//        calData.clearAllCalData();
+        var input = antiExp.pop();
 
-        var input = antiInte.pop();
-
-        while (!antiInte.empty() || inteOfShow.empty() || EQUAL != inteOfShow.peek()) {
+        while (!antiExp.empty() || expOfShow.empty() || EQUAL != expOfShow.peek()) {
             boolean needInput = true;
 
             // 如果循环对等号前面的操作已处理完毕
             if (EQUAL == input && calData.optrsIsEmpty()) {
                 if (calData.loadOpnd()) {
-                    inteOfShow.push(F1);// '#'为转换符，以后如在inteOfShow遇到此符，说明此处是操作数，需要去别处寻找
+                    expOfShow.push(F1); // F1 为转换符，以后如在 expOfShow 遇到此符，说明此处是操作数，需要去别处寻找
                 }
 
                 /**
-                 * 这是为了跳过下面的input输入，因为能执行这个代码块，
-                 * 说明表达式已到尽头，不需要新的输入而直接将“=”入栈能马上跳出该循环
+                 * 这是为了跳过下面的 input 输入，因为能执行这个代码块，
+                 * 说明表达式已到尽头，不需要新的输入而直接将 “=” 入栈能马上跳出该循环
                  */
                 calData.pushToOptrs(new Operator(input));
 
-                inteOfShow.push(input);
+                expOfShow.push(input);
                 needInput = false;
             } else if (input.isDigit() || DOT == input) {
                 // 如果是数字或小数点的话，入操作数临时栈
                 calData.pushToBuff(input);
             } else {
                 if (calData.loadOpnd()) {
-                    inteOfShow.push(F1);// F1 为转换符，以后如在 inteOfShow 遇到此符，说明此处是操作数，需要去别处寻找
+                    expOfShow.push(F1);// F1 为转换符，以后如在 expOfShow 遇到此符，说明此处是操作数，需要去别处寻找
                 }
 
                 if (calData.optrsIsEmpty()) {
                     calData.pushToOptrs(new Operator(input));
-                    inteOfShow.push(input);
+                    expOfShow.push(input);
                 } else {
                     switch (precede(calData.peekFromOptrs(), new Operator(input))) {
                         case "<":
                             calData.pushToOptrs(new Operator(input));
-                            inteOfShow.push(input);
+                            expOfShow.push(input);
                             break;
                         case ">":
                             var aOptr = calData.popFromOptrs();
@@ -419,25 +450,25 @@ public final class CalculatorService {
                             var opndLeft = calData.popFromOpnds();
 
                             for (int i = 1; i <= 3; ++i) {
-                                inteOfShow.pop();// 弹出两个操作数、一个运算符，共三个字符
+                                expOfShow.pop();// 弹出两个操作数、一个运算符，共三个字符
                             }
                             // medResult：intermediate result 中间结果
                             Operand medResult = CalculatorData.oneTimeCalculation(opndLeft, aOptr, opndRight);
                             calData.pushToOpnds(medResult);
-                            inteOfShow.push(F1);// F1 为转换符，遇到此符，说明此处是操作数，需要去别处寻找
+                            expOfShow.push(F1);// F1 为转换符，遇到此符，说明此处是操作数，需要去别处寻找
 
                             /**
-                             * 下面将显示表达式本步运算的相关内容。这需要同时显示前面已经计算的操作 inteOfShow、
-                             * 当前的运算符 input、以及待读取的输入表达式 antiInte
+                             * 下面将显示表达式本步运算的相关内容。这需要同时显示前面已经计算的操作 expOfShow、
+                             * 当前的运算符 input、以及待读取的输入表达式 antiExp
                              */
 
-                            // 因为show的传参要求的顺序与inte是一致的，所以这里要对antinte进行倒序
-                            var restExp = (Stack<Symbol>) antiInte.clone(); // 待读取的输入表达式antinte中剩余的部分
+                            // 因为方法 generateExpressionData 的传参要求的顺序与 exp 是一致的，所以这里要对 antiRest 进行倒序
+                            var restExp = (Stack<Symbol>) antiExp.clone(); // 待读取的输入表达式 antinte 中剩余的部分
                             restExp.push(input);
                             var antiRest = (Stack<Symbol>) restExp.clone();
                             Collections.reverse(antiRest);
 
-                            var fulExp = (Stack<Symbol>) inteOfShow.clone(); // fulExp：full expression 完整表达式
+                            var fulExp = (Stack<Symbol>) expOfShow.clone(); // fulExp：full expression 完整表达式
                             fulExp.addAll((Stack<Symbol>) antiRest.clone());
 
                             System.out.println("");
@@ -453,21 +484,21 @@ public final class CalculatorService {
                             break;
                         case "=": // 如果两个括号之间没有其他运算符，就只有一个操作数
                             calData.popFromOptrs(); // 弹出运算符栈的左括号
-                            var opndTemp = inteOfShow.peek();
+                            var opndTemp = expOfShow.peek();
                             /**
-                             * 现在弹出的不是左括号，因为 inteOfShow 中的左括号离栈顶还有一个操作数。
+                             * 现在弹出的不是左括号，因为 expOfShow 中的左括号离栈顶还有一个操作数。
                              * 而两个括号之间的操作数不是我们想要弹出的，因此要先保存该操作数
                              */
-                            inteOfShow.pop();
-                            inteOfShow.pop(); // 弹出左括号
-                            inteOfShow.push(opndTemp); // 将前面被迫先暂时弹出的操作数再加入栈中
+                            expOfShow.pop();
+                            expOfShow.pop(); // 弹出左括号
+                            expOfShow.push(opndTemp); // 将前面被迫先暂时弹出的操作数再加入栈中
                             break;
                     }
                 }
             } // else的右括号
 
             if (needInput) {
-                input = antiInte.pop();
+                input = antiExp.pop();
             }
         }
 
@@ -631,7 +662,3 @@ public final class CalculatorService {
         }
     }
 }
-
-
-
-

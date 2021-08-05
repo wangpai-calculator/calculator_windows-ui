@@ -1,6 +1,8 @@
 package org.wangpai.calculator.model.symbol.operator;
 
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
@@ -9,6 +11,7 @@ import org.wangpai.calculator.model.symbol.enumeration.Symbol;
  * @since 2021-7-28
  */
 public class Operator {
+    @Getter(AccessLevel.PUBLIC)
     protected Symbol symbol;
 
     public Operator() {
@@ -22,10 +25,6 @@ public class Operator {
             throw new SyntaxException("异常：误将操作数当成操作符");
         }
         this.symbol = operator;
-    }
-
-    public Symbol getSymbol() {
-        return symbol;
     }
 
     /**

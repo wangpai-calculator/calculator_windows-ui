@@ -1,5 +1,7 @@
 package org.wangpai.calculator.model.symbol.operand;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
@@ -9,20 +11,21 @@ import org.wangpai.calculator.model.symbol.operation.FigureOperation;
 import org.wangpai.calculator.model.symbol.operation.Operation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 
-import java.math.BigInteger;
-
 /**
  * @since 2021-8-1
  */
-public class RationalNumber extends Figure {
+public class RationalNumber implements Operand {
+    @Getter(AccessLevel.PUBLIC)
     private Figure numerator; // 分子
+
+    @Getter(AccessLevel.PUBLIC)
     private Figure denominator; // 分母
 
     public RationalNumber() {
         super();
     }
 
-    public RationalNumber(RationalNumber other) throws CalculatorException {
+    public RationalNumber(RationalNumber other) {
         super();
         this.numerator = other.numerator;
         this.denominator = other.denominator;
@@ -35,7 +38,7 @@ public class RationalNumber extends Figure {
      * @param denominator 分母
      */
     public RationalNumber(Figure numerator, Figure denominator)
-            throws CalculatorException {
+            throws SyntaxException {
         super();
         if (denominator.isZero()) {
             throw new SyntaxException("错误：0 不能作分母");
@@ -73,6 +76,7 @@ public class RationalNumber extends Figure {
      *
      * @since 2021-8-3
      */
+    @Deprecated
     public RationalNumber(Operand other) throws CalculatorException {
         super();
 
@@ -104,19 +108,10 @@ public class RationalNumber extends Figure {
     }
 
     @Override
+    @Deprecated
     public Class<? extends Operation> getBindingOperation() {
         return RationalNumberOperation.class;
     }
-
-    @Override
-    public RationalNumber clone() {
-        RationalNumber cloned = new RationalNumber();
-        cloned.numerator = this.numerator.clone();
-        cloned.denominator = this.denominator.clone();
-
-        return cloned;
-    }
-
 
     @Override
     public boolean isZero() {
@@ -138,8 +133,60 @@ public class RationalNumber extends Figure {
     }
 
     @Override
+    public RationalNumber clone() {
+        RationalNumber cloned = new RationalNumber();
+        cloned.numerator = this.numerator.clone();
+        cloned.denominator = this.denominator.clone();
+
+        return cloned;
+    }
+
+    /**
+     * 因为这个方法是重写方法，所以这个方法不能抛出异常
+     * <p>
+     * 注意：other 不可能为基本类型
+     *
+     * @since 2021-8-5
+     */
+    @Override
     public boolean equals(Object other) {
-        return super.equals(other);
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+
+        if (other instanceof Operand) {
+            if (other instanceof RationalNumber) {
+                return this.equals((RationalNumber) other);
+            }
+            if (other instanceof Figure) {
+                return this.equals(new RationalNumber((Figure) other));
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 算法：相减结果为 0 即为相等
+     *
+     * @since 2021-8-5
+     */
+    public boolean equals(RationalNumber other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+
+        try {
+            return RationalNumberOperation.subtract(this, other).isZero();
+        } catch (Exception exception) {
+            return false;  // 只要此处抛出了异常，均视为相等判断失败
+        }
     }
 
     @Override
@@ -156,16 +203,20 @@ public class RationalNumber extends Figure {
          * 将分子、分母中较小的那个数转换为类型 double 来运算
          */
         if (this.isProperFraction()) {
-            return ((double) this.numerator.getFigure().longValueExact())
-                    / this.denominator.getFigure().longValueExact();
+            return ((double) this.numerator.getInteger().longValueExact())
+                    / this.denominator.getInteger().longValueExact();
         } else {
-            return this.numerator.getFigure().longValueExact()
-                    / ((double) this.denominator.getFigure().longValueExact());
+            return this.numerator.getInteger().longValueExact()
+                    / ((double) this.denominator.getInteger().longValueExact());
         }
     }
 
     /**
      * 是否是真分数
+     *
+     * 算法：如果分子与分母小，说明是真分数，反之不是
+     *
+     * @since 2021-8-5
      */
     public boolean isProperFraction() {
         try {
@@ -176,8 +227,8 @@ public class RationalNumber extends Figure {
                 return false;
             }
 
-            if (((Figure) FigureOperation.subtract(
-                    this.numerator, this.denominator))
+            if (FigureOperation.subtract(
+                    this.numerator, this.denominator)
                     .isNegative()) {
                 return true;
             } else {
@@ -189,30 +240,27 @@ public class RationalNumber extends Figure {
     }
 
     /**
-     * 约分。约分后，分母恒为正数
+     * 约分
+     *
+     * 约分后，分母恒为正数
+     *
+     * 算法：
+     * 1. 求分子、分母的最大公约数
+     * 2. 将分子、分母分别除以最大公约数
+     * 3. 如果结果公母为负数，将分子、分母同时取反
+     *
+     * @since before 2021-8-5
      */
-    public RationalNumber reduceFraction() throws UnknownException {
-        try {
-            Figure commonDivisor = FigureOperation.findGcd(this.numerator, this.denominator);
-            this.numerator = FigureOperation.modsQuotient(this.numerator, commonDivisor);
-            this.denominator = FigureOperation.modsQuotient(this.denominator, commonDivisor);
+    public RationalNumber reduceFraction() {
+        Figure commonDivisor = FigureOperation.findGcd(this.numerator, this.denominator);
+        this.numerator = FigureOperation.modsQuotient(this.numerator, commonDivisor);
+        this.denominator = FigureOperation.modsQuotient(this.denominator, commonDivisor);
 
-            if (this.denominator.isNegative()) {
-                this.denominator = FigureOperation.getOpposite(this.denominator);
-                this.numerator = FigureOperation.getOpposite(this.numerator);
-            }
-        } catch (Exception exception) {
-            ExceptionTool.pkgException(exception);
+        if (this.denominator.isNegative()) {
+            this.denominator = FigureOperation.getOpposite(this.denominator);
+            this.numerator = FigureOperation.getOpposite(this.numerator);
         }
 
         return this;
-    }
-
-    public Figure getNumerator() {
-        return numerator;
-    }
-
-    public Figure getDenominator() {
-        return denominator;
     }
 }

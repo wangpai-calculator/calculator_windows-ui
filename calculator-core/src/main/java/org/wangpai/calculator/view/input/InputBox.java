@@ -12,6 +12,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalScrollBarUI;
 import javax.swing.plaf.metal.MetalScrollButton;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 
 /**
@@ -111,13 +112,13 @@ public class InputBox extends JPanel {
 
     public InputBox setText(String msg) {
         this.textArea.setText(msg);
-        this.textArea.requestFocus(); // 焦点转移到文本区
+        this.requestFocus(); // 焦点转移到文本区
         return this;
     }
 
     public InputBox append(String msg) {
         this.textArea.append(msg);
-        this.textArea.requestFocus(); // 焦点转移到文本区
+        this.requestFocus(); // 焦点转移到文本区
         return this;
     }
 
@@ -142,6 +143,11 @@ public class InputBox extends JPanel {
         return this.setCaretPosition(this.getCaretPosition() + 1);
     }
 
+    /**
+     * 在光标后添加字符
+     *
+     * @since before 2021-8-5
+     */
     public InputBox addCursorStr(String str) {
         var caretPosition = this.getCaretPosition();
         var originText = this.getText();
@@ -151,6 +157,11 @@ public class InputBox extends JPanel {
         return this.setText(result).setCaretPosition(caretPosition + str.length());
     }
 
+    /**
+     * 删除光标所在位置之前最近的一个字符
+     *
+     * @since before 2021-8-5
+     */
     public InputBox deleteCursorChar() {
         var caretPosition = this.getCaretPosition();
 
@@ -164,6 +175,78 @@ public class InputBox extends JPanel {
         var result = originText.substring(0, caretPosition - 1)
                 + originText.substring(caretPosition);
         return this.setText(result).setCaretPosition(caretPosition - 1);
+    }
+
+    /**
+     * 删除选中文本。如果没有选中文本，不会发生任何效果，也不会引发异常
+     *
+     * 算法：
+     * 1. 获得选中文本的首尾坐标。
+     * 2. 根据此坐标截取文本框中选中文本左边和右边的文本。
+     * 3. 将截取到的这两部分文本拼接并设置在文本框中
+     * 4. 将光标设置为选中文本的首部坐标
+     *
+     * @since 2021-8-5
+     */
+    @SneakyThrows
+    public InputBox deleteSelectedText() {
+        var coordinate = this.getSelectedCoordinate();
+        var frontText = this.textArea.getText(0, coordinate[0]);
+        var endText = this.textArea.getText(coordinate[1],
+                this.textArea.getText().length() - coordinate[1]);
+        return this.setText(frontText + endText).setCaretPosition(coordinate[0]);
+    }
+
+    /**
+     * 删除选中文本并用指它字符替换。如果没有选中文本，不会发生任何效果，也不会引发异常
+     *
+     * 算法：
+     * 1. 获得选中文本的首尾坐标。
+     * 2. 根据此坐标截取文本框中选中文本左边和右边的文本。
+     * 3. 将截取到的这两部分文本中间加上指定文本合并并设置在文本框中
+     * 4. 将光标设置在指定文本的尾端
+     *
+     * @since 2021-8-5
+     */
+    @SneakyThrows
+    public InputBox replaceSelectedText(String str) {
+        var coordinate = this.getSelectedCoordinate();
+        var frontText = this.textArea.getText(0, coordinate[0]);
+        var endText = this.textArea.getText(coordinate[1],
+                this.textArea.getText().length() - coordinate[1]);
+        return this.setText(frontText + str + endText)
+                .setCaretPosition(coordinate[0] + str.length());
+    }
+
+    /**
+     * 删除选中文本或光标所在位置之前最近的一个字符
+     *
+     * @since 2021-8-5
+     */
+    public InputBox delete() {
+        if (this.getSelectedText() == null) {
+            return this.deleteCursorChar();
+        } else {
+            return this.deleteSelectedText();
+        }
+    }
+
+    /**
+     * 删除选中字符，并插入指它字符
+     *
+     * @since 2021-8-5
+     */
+    public InputBox insert(String str) {
+        if (this.getSelectedText() == null) {
+            return this.addCursorStr(str);
+        } else {
+            return this.replaceSelectedText(str);
+        }
+    }
+
+    public void selectAll(){
+        this.requestFocus(); // 焦点转移到文本区
+        this.textArea.selectAll();
     }
 
     /**
@@ -182,7 +265,37 @@ public class InputBox extends JPanel {
      */
     @Override
     public void requestFocus() {
+        System.out.println("getSelectedText："+getSelectedText());
+        for(var i:this.getSelectedCoordinate()){
+            System.out.println("getSelectedCoordinate："+i);
+        }
+
+        try {
+            System.out.println("getText："+this.textArea.getText(1, 3));
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+
         this.textArea.requestFocus();
+    }
+
+    /**
+     * @since 2021-8-5
+     */
+    public String getSelectedText() {
+        return this.textArea.getSelectedText();
+    }
+
+    /**
+     * @return 返回选中文本的首尾坐标。
+     * 起点坐标为第一个被选中的文本坐标，从 0 开始。
+     * 终点坐标为第一个没有被选中的文本坐标
+     * 如果没有选中文本，这两个坐标将设置为光标的坐标
+     * @since 2021-8-5
+     */
+    public int[] getSelectedCoordinate() {
+        return new int[]{this.textArea.getSelectionStart(),
+                this.textArea.getSelectionEnd()};
     }
 
     /**

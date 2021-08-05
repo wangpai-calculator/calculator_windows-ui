@@ -6,7 +6,7 @@
 
     <properties>
         <project_artifactId>calculator-project</project_artifactId>
-        <project_version>1.1</project_version>
+        <project_version>1.2</project_version>
     </properties>
 
     <groupId>org.wangpai.calculator</groupId>

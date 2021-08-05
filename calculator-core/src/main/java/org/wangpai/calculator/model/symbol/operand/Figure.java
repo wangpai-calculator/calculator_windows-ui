@@ -21,7 +21,7 @@ public class Figure implements Operand {
      * 因此这里不使用注解 @Setter，而手动编写该方法
      */
     @Getter(AccessLevel.PUBLIC)
-    private BigInteger figure;
+    private BigInteger integer;
 
     public Figure() {
         super();
@@ -33,7 +33,7 @@ public class Figure implements Operand {
      * @since 2021-8-3
      */
     public Figure(Figure other) {
-        this(other.figure);
+        this(other.integer);
     }
 
     /**
@@ -43,11 +43,11 @@ public class Figure implements Operand {
      */
     public Figure(BigInteger num) {
         super();
-        this.figure = Figure.cloneBigInteger(num);
+        this.integer = Figure.cloneBigInteger(num);
     }
 
     public Figure(long num) {
-        this.figure = BigInteger.valueOf(num);
+        this.integer = BigInteger.valueOf(num);
     }
 
     /**
@@ -55,6 +55,7 @@ public class Figure implements Operand {
      *
      * @since 2021-8-3
      */
+    @Deprecated
     public Figure(Operand other) throws UndefinedException {
         super();
 
@@ -78,30 +79,26 @@ public class Figure implements Operand {
         }
 
         // 将 temp 浅拷贝至 this
-        this.figure = temp.figure;
+        this.integer = temp.integer;
     }
 
     @Override
+    @Deprecated
     public Class<? extends Operation> getBindingOperation() {
         return FigureOperation.class;
-    }
-
-    public BigInteger getFigure() {
-        return figure;
     }
 
     public static Figure valueOf(long num) {
         return new Figure(BigInteger.valueOf(num));
     }
 
-    public Figure setFigure(BigInteger figure) {
-        this.figure = figure;
+    public Figure setInteger(BigInteger integer) {
+        this.integer = integer;
         return this;
     }
 
-    public Figure setFigure(long num) {
-        this.figure = BigInteger.valueOf(num);
-        return this;
+    public Figure setInteger(long num) {
+        return this.setInteger(BigInteger.valueOf(num));
     }
 
     private static BigInteger cloneBigInteger(BigInteger other) {
@@ -111,17 +108,21 @@ public class Figure implements Operand {
     @Override
     public Figure clone() {
         Figure cloned = new Figure();
-        cloned.figure = cloneBigInteger(this.figure);
+        cloned.integer = cloneBigInteger(this.integer);
         return cloned;
     }
 
     @Override
     public String toString() {
-        return figure.toString();
+        return integer.toString();
     }
 
     /**
      * 因为这个方法是重写方法，所以这个方法不能抛出异常
+     *
+     * 注意：other 不可能为基本类型
+     *
+     * @since 2021-8-5
      */
     @Override
     public boolean equals(Object other) {
@@ -131,27 +132,40 @@ public class Figure implements Operand {
         if (other == null) {
             return false;
         }
-        if (!(other instanceof Operand)) {
-            return false;
+
+        if (other instanceof Operand) {
+            if (other instanceof Figure) {
+                return this.equals((Figure) other);
+            }
         }
 
-        Operand result;
+        return false;
+    }
+
+    /**
+     * 算法：相减结果为 0 即为相等
+     *
+     * @since 2021-8-5
+     */
+    public boolean equals(Figure other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
 
         try {
-            /**
-             * 只要此处抛出了异常，均视为相等判断失败
-             */
-            result = Operation.subtract(this, (Operand) other);
+            return FigureOperation.subtract(this, other).isZero();
         } catch (Exception exception) {
-            return false;
+            return false;  // 只要此处抛出了异常，均视为相等判断失败
         }
-
-        return result.isZero();
     }
+
 
     @Override
     public boolean isZero() {
-        return this.figure.equals(BigInteger.ZERO);
+        return this.integer.equals(BigInteger.ZERO);
     }
 
     public boolean isNegative() {
@@ -161,7 +175,7 @@ public class Figure implements Operand {
          *   > 0：代表 0
          *   > -1：代表 负数
          */
-        if (this.figure.signum() == -1) {
+        if (this.integer.signum() == -1) {
             return true;
         }
 

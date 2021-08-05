@@ -92,7 +92,6 @@ public final class Decimal extends Figure {
      * @since 2021-8-3
      */
     @SneakyThrows
-    @Deprecated
     public RationalNumber toRationalNumber() {
         RationalNumber result = new RationalNumber(0);
         int integerLength = this.integerPart.length;
@@ -104,11 +103,12 @@ public final class Decimal extends Figure {
          */
         for (int order = integerLength - 1; order >= 0; --order) {
             digit = new Figure(Integer.valueOf(this.integerPart[order].toString()));
-            // FIXME
             // 下面表达式指的是：result = result + digit * pow(10, digit 对应的整数的位数 -1)
-            result = (RationalNumber) RationalNumberOperation.add(result,
+            result = RationalNumberOperation.add(result,
                     RationalNumberOperation.multiply(digit,
-                            FigureOperation.power(10, integerLength - order - 1)));
+                            FigureOperation.power(
+                                    10,
+                                    integerLength - order - 1)));
         }
 
         /**
@@ -116,11 +116,11 @@ public final class Decimal extends Figure {
          */
         for (int order = 0; order < decimalLength; ++order) {
             digit = new Figure(Integer.valueOf(this.decimalPart[order].toString()));
-            // FIXME
             // 下面表达式指的是：result = result + digit / pow(10, digit 对应的小数的位数)
-            result = (RationalNumber) RationalNumberOperation.add(result,
+            result = RationalNumberOperation.add(result,
                     RationalNumberOperation.divide(digit,
-                            FigureOperation.power(10, order + 1)));
+                            FigureOperation.power(10,
+                                    order + 1)));
         }
 
         if (this.sign) {

@@ -45,11 +45,7 @@ public class ComputingCenter implements TerminalController, MiddleController {
     private void receive(Url url, String str) {
         switch (url.getFirstLevelDirectory()) {
             case "expression":
-                try {
-                    new CalculatorService(this).readExpression(str);
-                } catch (CalculatorException exception) {
-                }
-
+                new CalculatorService(this).readExpression(str);
                 break;
         }
     }

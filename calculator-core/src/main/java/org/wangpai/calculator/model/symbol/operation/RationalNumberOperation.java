@@ -1,5 +1,6 @@
 package org.wangpai.calculator.model.symbol.operation;
 
+import lombok.SneakyThrows;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
@@ -21,8 +22,11 @@ public class RationalNumberOperation extends Operation {
     /**
      * 此函数将用于导航到最终的运算函数。
      * 最终的运算函数指的是每个操作数的类型均与方法签名中标明的一致的函数
+     *
+     * @deprecated 2021-8-5
+     * 此方法为使用了反射，为废弃方法，仅基类可以调用
      */
-    public final static RationalNumber methodNavigation(
+    protected final static RationalNumber methodNavigation(
             String methodName, RationalNumber first,
             Operand second, boolean hasSwap)
             throws CalculatorException {
@@ -89,6 +93,9 @@ public class RationalNumberOperation extends Operation {
                 case "divide":
                     result = RationalNumberOperation.getReciprocal(result);
                     break;
+                /**
+                 * 加法、乘法不需要进行补充运算
+                 */
                 case "add":
                 case "multiply":
                     break;
@@ -101,14 +108,16 @@ public class RationalNumberOperation extends Operation {
     }
 
     /**
-     * add 的最终的运算函数
+     * 算法如下：
+     * 先得出两个分母的最大公约数，然后将这两个分母分别除以最大公约数，得到两个质因子（prime factor）
+     * 最终的分子为：第一个分子乘以第二个分母的质因子，第二个分子乘以第一个分母的质因子，然后把得到的结果相加
+     * 最终的分母为：其中一个分母乘以另一个分母的质因子（也即这两个分母的最小公倍数）
      *
-     * 算法如下：先得出两个分母的最大公约数，然后将这两个分母分别除以最大公约数，得到两个质因子（prime factor）
-     *         最终的分子为：第一个分子乘以第二个分母的质因子，第二个分子乘以第一个分母的质因子，然后把得到的结果相加
-     *         最终的分母为：其中一个分母乘以另一个分母的质因子（也即这两个分母的最小公倍数）
+     * @since before 2021-8-5
      */
+    @SneakyThrows
     public static RationalNumber add(RationalNumber first, RationalNumber second)
-            throws CalculatorException {
+             {
         final var firstNumerator = first.getNumerator();
         final var firstDenominator = first.getDenominator();
         final var secondNumerator = second.getNumerator();
@@ -128,18 +137,21 @@ public class RationalNumberOperation extends Operation {
     }
 
     /**
-     * subtract 的最终的运算函数
+     * 算法：第一个数加上第二个数的相反数
+     *
+     * @since before 2021-8-5
      */
-    public static RationalNumber subtract(RationalNumber first, RationalNumber second)
-            throws CalculatorException {
-        return add(first, getOpposite(second));
+    public static RationalNumber subtract(RationalNumber first, RationalNumber second) {
+        return RationalNumberOperation.add(first, getOpposite(second));
     }
 
     /**
-     * multiply 的最终的运算函数
+     * 算法：两个数的分子、分母分别相乘
+     *
+     * @since before 2021-8-5
      */
-    public static RationalNumber multiply(RationalNumber first, RationalNumber second)
-            throws CalculatorException {
+    @SneakyThrows
+    public static RationalNumber multiply(RationalNumber first, RationalNumber second) {
         return new RationalNumber(
                 FigureOperation.multiply(first.getNumerator(), second.getNumerator()),
                 FigureOperation.multiply(first.getDenominator(), second.getDenominator()))
@@ -147,10 +159,12 @@ public class RationalNumberOperation extends Operation {
     }
 
     /**
-     * multiply 的一个直接运算函数
+     * 算法：将第二个整数与第一个有理数的分子相乘
+     *
+     * @since before 2021-8-5
      */
-    public static RationalNumber multiply(RationalNumber first, Figure second)
-            throws CalculatorException {
+    @SneakyThrows
+    public static RationalNumber multiply(RationalNumber first, Figure second) {
         return new RationalNumber(
                 FigureOperation.multiply(first.getNumerator(), second),
                 first.getDenominator())
@@ -158,50 +172,55 @@ public class RationalNumberOperation extends Operation {
     }
 
     /**
-     * multiply 的一个直接运算函数
+     * @since before 2021-8-5
      */
-    public static RationalNumber multiply(RationalNumber first, long second)
-            throws CalculatorException {
+    public static RationalNumber multiply(RationalNumber first, long second) {
         return RationalNumberOperation.multiply(first, new Figure(second));
     }
 
     /**
-     * multiply 的一个直接运算函数
+     * 算法：两个整数直接相乘
+     *
+     * @since before 2021-8-5
      */
-    public static RationalNumber multiply(Figure first, Figure second) throws CalculatorException {
+    public static RationalNumber multiply(Figure first, Figure second) {
         return new RationalNumber(FigureOperation.multiply(first, second));
     }
 
     /**
-     * divide 的最终的运算函数
+     * 算法：第一个数乘以第二个数的倒数
+     *
+     * @since before 2021-8-5
      */
     public static RationalNumber divide(RationalNumber first, RationalNumber second)
-            throws CalculatorException {
+            throws SyntaxException {
         if (second.isZero()) {
             throw new SyntaxException("错误：0 不能作除数");
         }
-        return multiply(first, getReciprocal(second));
+        return RationalNumberOperation.multiply(first, getReciprocal(second));
     }
 
     /**
-     * divide 的最终的运算函数
+     * @since before 2021-8-5
      */
     public static RationalNumber divide(Figure first, Figure second)
-            throws CalculatorException {
+            throws SyntaxException {
         if (second.isZero()) {
             throw new SyntaxException("错误：0 不能作除数");
         }
-        return multiply(new RationalNumber(first), getReciprocal(new RationalNumber(second)));
+        return RationalNumberOperation.multiply(new RationalNumber(first),
+                RationalNumberOperation.getReciprocal(new RationalNumber(second)));
     }
-
 
     /****************加减乘除基本运算****************/
 
     /**
      * 求相反数
+     *
+     * @since before 2021-8-5
      */
-    public static RationalNumber getOpposite(RationalNumber rationalNumber)
-            throws CalculatorException {
+    @SneakyThrows
+    public static RationalNumber getOpposite(RationalNumber rationalNumber) {
         return new RationalNumber(
                 FigureOperation.getOpposite(rationalNumber.getNumerator()),
                 rationalNumber.getDenominator().clone());
@@ -209,20 +228,32 @@ public class RationalNumberOperation extends Operation {
 
     /**
      * 求倒数
+     *
+     * @since before 2021-8-5
      */
     public static RationalNumber getReciprocal(RationalNumber rationalNumber)
-            throws CalculatorException {
+            throws SyntaxException {
         if (rationalNumber.isZero()) {
             throw new SyntaxException("错误：0 没有倒数");
         }
-        return new RationalNumber(
-                rationalNumber.getDenominator().clone(),
-                rationalNumber.getNumerator().clone());
+
+        try {
+            return new RationalNumber(
+                    rationalNumber.getDenominator().clone(),
+                    rationalNumber.getNumerator().clone());
+        } catch (SyntaxException ignored) {
+            return null; // 仅用于占位
+        }
     }
 
+    /**
+     * 占位空方法
+     *
+     * @since before 2021-8-5
+     */
     public static RationalNumber power(RationalNumber base, RationalNumber exponent)
-            throws CalculatorException {
-        throw new UndefinedException("错误：有理数不支持乘方");
+            throws SyntaxException {
+        throw new SyntaxException("错误：有理数不支持乘方");
     }
 
 }

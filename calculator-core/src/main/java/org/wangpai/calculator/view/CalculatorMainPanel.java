@@ -84,8 +84,8 @@ public final class CalculatorMainPanel extends JPanel implements TerminalControl
          * 这实际上并不能减少代码量
          */
         switch (url.getFirstLevelDirectory()) {
-            case "addcursorstr":
-                this.inputPanel.addCursorStr(str);
+            case "insert":
+                this.inputPanel.insert(str);
                 break;
             case "leftshift":
                 this.inputPanel.leftShift();
@@ -93,8 +93,11 @@ public final class CalculatorMainPanel extends JPanel implements TerminalControl
             case "rightshift":
                 this.inputPanel.rightShift();
                 break;
-            case "deletecursorchar":
-                this.inputPanel.deleteCursorChar();
+            case "delete":
+                this.inputPanel.delete();
+                break;
+            case "selectall":
+                this.inputPanel.selectAll();
                 break;
             case "settext":
                 this.inputPanel.setText(str);
