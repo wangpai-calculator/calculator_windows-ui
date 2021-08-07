@@ -1,8 +1,5 @@
 package org.wangpai.calculator.model.data;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.SneakyThrows;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operand.Decimal;
@@ -10,6 +7,12 @@ import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 import org.wangpai.calculator.model.symbol.operator.Operator;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.Stack;
@@ -20,6 +23,8 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKE
 /**
  * @since 2021-8-1
  */
+@Scope("singleton")
+@Repository("calculatorData")
 public final class CalculatorData implements Operable, Cloneable {
     /**
      * 对于 Stack 定义的栈，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的
@@ -124,7 +129,6 @@ public final class CalculatorData implements Operable, Cloneable {
 
     public boolean optrsIsEmpty() {
         return this.optrs.empty();
-
     }
 
     public boolean opndsIsEmpty() {
@@ -172,10 +176,10 @@ public final class CalculatorData implements Operable, Cloneable {
             }
         }
 
-        // 如果最后pares为空，说明左右括号相等
+        // 如果最后 pares 为空，说明左右括号相等
         if (pares.empty()) {
             return 0;
-        } else { // 如果最后pares不为空，说明左括号数量多于右括号
+        } else { // 如果最后 pares 不为空，说明左括号数量多于右括号
             return 1;
         }
     }

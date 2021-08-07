@@ -1,15 +1,14 @@
 package org.wangpai.calculator.model.symbol.operation;
 
-import lombok.SneakyThrows;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
-import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.exception.UnknownException;
 import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 
+import lombok.SneakyThrows;
 
 import java.lang.reflect.InvocationTargetException;
 

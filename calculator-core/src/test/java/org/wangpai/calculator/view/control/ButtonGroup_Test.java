@@ -21,12 +21,16 @@ class ButtonGroup_Test {
     static class TestFrame extends JFrame {
         public TestFrame() {
             super();
-            CalculatorMainPanel mockPanel= (CalculatorMainPanel) CalculatorMainPanel.create();
+//
+//            ButtonGroup buttonGroup = new ButtonGroup();
+//            buttonGroup.afterPropertiesSet();
 
-            JPanel buttonGroup = (JPanel) ButtonGroup.create(mockPanel);
-            super.setLayout(new BorderLayout());
-            super.add(buttonGroup);
-            pack();
+//            CalculatorMainPanel mockPanel = new CalculatorMainPanel();
+//            JPanel buttonGroup = (JPanel) ButtonGroup.create(mockPanel);
+
+//            super.setLayout(new BorderLayout());
+//            super.add(buttonGroup);
+//            pack();
         }
 
     }

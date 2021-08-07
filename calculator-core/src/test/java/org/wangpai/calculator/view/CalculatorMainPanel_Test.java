@@ -19,15 +19,15 @@ class CalculatorMainPanel_Test {
 
     static class TestFrame extends JFrame {
         public TestFrame() {
-            super();
-
-            JPanel buttonGroup = (JPanel) CalculatorMainPanel.create();
-            super.setLayout(new BorderLayout());
-            super.add(buttonGroup);
-
-            this.setPreferredSize(new Dimension(1000, 600));
-
-            pack();
+//            super();
+//
+//            JPanel buttonGroup = (JPanel) CalculatorMainPanel.create();
+//            super.setLayout(new BorderLayout());
+//            super.add(buttonGroup);
+//
+//            this.setPreferredSize(new Dimension(1000, 600));
+//
+//            pack();
         }
     }
 }

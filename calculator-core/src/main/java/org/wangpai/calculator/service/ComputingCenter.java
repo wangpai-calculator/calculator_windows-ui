@@ -3,12 +3,19 @@ package org.wangpai.calculator.service;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import javax.annotation.Resource;
 
 /**
  * @since 2021-8-1
  */
+@Scope("singleton")
+@Controller("computingCenter")
 public class ComputingCenter implements TerminalController, MiddleController {
+    @Resource(name = "dispatcher")
     private MiddleController upperController;
 
     @Override
@@ -21,10 +28,6 @@ public class ComputingCenter implements TerminalController, MiddleController {
      */
     @Override
     public void sendDown(Url url, Object data, MiddleController upperController) {
-        if (this.upperController == null) {
-            this.upperController = upperController;
-        }
-
         receive(url, data); // 注意：此处不使用 url.generateLowerUrl()
     }
 
@@ -46,6 +49,9 @@ public class ComputingCenter implements TerminalController, MiddleController {
         switch (url.getFirstLevelDirectory()) {
             case "expression":
                 new CalculatorService(this).readExpression(str);
+                break;
+
+            default:
                 break;
         }
     }

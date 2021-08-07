@@ -5,7 +5,6 @@ import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 

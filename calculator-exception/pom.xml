@@ -2,29 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <properties>
-        <project_artifactId>calculator-exception</project_artifactId>
-    </properties>
+    <modelVersion>4.0.0</modelVersion>
 
+    <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <parent>
         <artifactId>calculator-project</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <!-- 此处不能使用父 pom 中的 ${project_version} 来代替。原因是必须要先指定它的父 pom，才能进行继承 -->
         <version>1.2</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>${project_artifactId}</artifactId>
-    <name>${project_artifactId}</name>
+    <artifactId>calculator-exception</artifactId>
+    <name>calculator-exception</name>
 
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

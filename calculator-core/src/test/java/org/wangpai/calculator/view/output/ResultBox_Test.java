@@ -23,13 +23,13 @@ class ResultBox_Test {
     static class TestFrame extends JFrame {
         public TestFrame() {
             super();
-            CalculatorMainPanel mockPanel= (CalculatorMainPanel) CalculatorMainPanel.create();
-            ResultBox panel = ResultBox.create(mockPanel);
-            super.setLayout(new BorderLayout());
-            super.add(panel);
-            pack();
-
-            panel.setText("hello, my world.");
+//            CalculatorMainPanel mockPanel= (CalculatorMainPanel) CalculatorMainPanel.create();
+//            ResultBox panel = ResultBox.create(mockPanel);
+//            super.setLayout(new BorderLayout());
+//            super.add(panel);
+//            pack();
+//
+//            panel.setText("hello, my world.");
 
         }
 

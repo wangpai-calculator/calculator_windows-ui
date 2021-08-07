@@ -14,6 +14,15 @@ package org.wangpai.calculator.controller;
  */
 public interface MiddleController extends Controller {
     /**
+     * 实现了此接口，但没有同时实现接口 TerminalController 的类
+     * 还需要创建两种字段：上层控制器、下层控制器。
+     * 同时实现了此接口和接口 TerminalController 的类不需要创建字段下层控制器
+     *
+     * 由于现在使用了 Spring 进行依赖注入，
+     * 所以这些方法的控制器形参现在可能是多余的了
+     */
+
+    /**
      * 此函数只能由下层控制器的方法 sendUp，或本层终端控制器的方法 send 来调用。
      * 对于最高层控制器，此方法只能调用自己的方法 sendDown
      * 对于终端控制器，调用本方法传入的第三个实参应为 null

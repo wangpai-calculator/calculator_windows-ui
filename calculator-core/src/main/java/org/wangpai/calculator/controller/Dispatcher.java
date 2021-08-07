@@ -1,32 +1,44 @@
 package org.wangpai.calculator.controller;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 import org.wangpai.calculator.service.ComputingCenter;
 import org.wangpai.calculator.view.CalculatorMainPanel;
+
+import javax.annotation.Resource;
 
 /**
  * @since 2021-7-27
  */
+@Scope("singleton")
+@Controller("dispatcher")
 public class Dispatcher implements MiddleController {
-    private CalculatorMainPanel singletonController;
+    @Resource(name = "calculatorMainPanel")
+    private MiddleController calculatorMainPanel;
+
+    @Resource(name = "computingCenter")
+    private MiddleController computingCenter;
 
     @Override
     public void sendUp(Url url, Object data, MiddleController lowerController) {
-        if (this.singletonController == null
-                && lowerController.getClass() == CalculatorMainPanel.class) {
-            this.singletonController = (CalculatorMainPanel) lowerController;
-        }
-
         this.sendDown(url, data, null);
     }
 
+    /**
+     * @since 2021-7-27
+     * @lastModified 2021-8-8
+     */
     @Override
     public void sendDown(Url url, Object data, MiddleController upperController) {
         switch (url.getFirstLevelDirectory()) {
             case "view":
-                this.singletonController.sendDown(url.generateLowerUrl(), data, this);
+                this.calculatorMainPanel.sendDown(url.generateLowerUrl(), data, this);
                 break;
             case "service":
-                new ComputingCenter().sendDown(url.generateLowerUrl(), data, this);
+                this.computingCenter.sendDown(url.generateLowerUrl(), data, this);
+                break;
+
+            default:
                 break;
         }
     }

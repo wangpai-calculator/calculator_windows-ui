@@ -24,12 +24,12 @@ class InputBox_Test {
 
     static class TestFrame extends JFrame {
         public TestFrame() {
-            super();
-            CalculatorMainPanel mockPanel= (CalculatorMainPanel) CalculatorMainPanel.create();
-            JPanel buttonGroup = (JPanel) InputBox.create(mockPanel);
-            super.setLayout(new BorderLayout());
-            super.add(buttonGroup);
-            pack();
+//            super();
+//            CalculatorMainPanel mockPanel= (CalculatorMainPanel) CalculatorMainPanel.create();
+//            JPanel buttonGroup = (JPanel) InputBox.create(mockPanel);
+//            super.setLayout(new BorderLayout());
+//            super.add(buttonGroup);
+//            pack();
         }
     }
 }

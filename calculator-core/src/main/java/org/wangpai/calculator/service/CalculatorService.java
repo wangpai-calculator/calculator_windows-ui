@@ -13,18 +13,24 @@ import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operator.Operator;
 
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
-
 import lombok.SneakyThrows;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
+
 /**
  * @since 2021-8-1
  */
+@Scope("singleton")
+@Service("calculatorService")
 public final class CalculatorService {
+    @Resource(name = "computingCenter")
     private TerminalController controller;
 
     private static int calculationTimes = 0;
@@ -392,29 +398,27 @@ public final class CalculatorService {
         boolean hasCalculation = false;
         StringBuilder result = new StringBuilder();
 
+        /**
+         * 先将等号前面的原表达式输出
+         */
         var inteTemp = (Stack<Symbol>) calculatorData.getExp().clone();
-        if (EQUAL == inteTemp.peek()) {
-            inteTemp.pop();
-            result.append(generateExpressionData(inteTemp));
-            inteTemp.push(EQUAL);
-        } else {
-            result.append(generateExpressionData(inteTemp));
-        }
+        inteTemp.pop();
+        result.append(generateExpressionData(inteTemp));
+        inteTemp.push(EQUAL);
 
         // antiExp：anti Exp，Exp 的反转。代表待读取的输入表达式
         var antiExp = (Stack<Symbol>) calculatorData.getExp().clone();
         Collections.reverse(antiExp);
+
         var expOfShow = new Stack<Symbol>();
-
         var calData = new CalculatorData();
-
         var input = antiExp.pop();
 
-        while (!antiExp.empty() || expOfShow.empty() || EQUAL != expOfShow.peek()) {
+        while (!antiExp.empty() || expOfShow.empty() || expOfShow.peek() != EQUAL) {
             boolean needInput = true;
 
             // 如果循环对等号前面的操作已处理完毕
-            if (EQUAL == input && calData.optrsIsEmpty()) {
+            if (input == EQUAL && calData.optrsIsEmpty()) {
                 if (calData.loadOpnd()) {
                     expOfShow.push(F1); // F1 为转换符，以后如在 expOfShow 遇到此符，说明此处是操作数，需要去别处寻找
                 }
@@ -443,6 +447,17 @@ public final class CalculatorService {
                         case "<":
                             calData.pushToOptrs(new Operator(input));
                             expOfShow.push(input);
+                            break;
+                        case "=": // 如果两个括号之间没有其他运算符，就只有一个操作数
+                            calData.popFromOptrs(); // 弹出运算符栈的左括号
+                            var opndTemp = expOfShow.peek();
+                            /**
+                             * 现在弹出的不是左括号，因为 expOfShow 中的左括号离栈顶还有一个操作数。
+                             * 而两个括号之间的操作数不是我们想要弹出的，因此要先保存该操作数
+                             */
+                            expOfShow.pop();
+                            expOfShow.pop(); // 弹出左括号
+                            expOfShow.push(opndTemp); // 将前面被迫先暂时弹出的操作数再加入栈中
                             break;
                         case ">":
                             var aOptr = calData.popFromOptrs();
@@ -480,18 +495,6 @@ public final class CalculatorService {
                              * 说明 input 的优先级比较低，因此尚未入栈（未经过处理），所以不需要新的输入
                              */
                             needInput = false;
-
-                            break;
-                        case "=": // 如果两个括号之间没有其他运算符，就只有一个操作数
-                            calData.popFromOptrs(); // 弹出运算符栈的左括号
-                            var opndTemp = expOfShow.peek();
-                            /**
-                             * 现在弹出的不是左括号，因为 expOfShow 中的左括号离栈顶还有一个操作数。
-                             * 而两个括号之间的操作数不是我们想要弹出的，因此要先保存该操作数
-                             */
-                            expOfShow.pop();
-                            expOfShow.pop(); // 弹出左括号
-                            expOfShow.push(opndTemp); // 将前面被迫先暂时弹出的操作数再加入栈中
                             break;
                     }
                 }
@@ -513,7 +516,9 @@ public final class CalculatorService {
         return result.toString();
     }
 
-    // 展示整个表达式。对于 expression，要求表达式中靠近等于号的部分靠近栈顶
+    /**
+     * 展示整个表达式。对于 expression，要求表达式中靠近等于号的部分靠近栈顶
+     */
     @Deprecated
     private String generateExpressionData(Stack<Symbol> expression) {
         if (expression.empty()) {
@@ -549,6 +554,8 @@ public final class CalculatorService {
     }
 
     /**
+     * 展示整个表达式。对于 expression，要求表达式中靠近等于号的部分靠近栈顶
+     *
      * @param delimiter  这里 delimiter 有默认参数，默认参数为#，当其为其他符号时，意味着可能将输出最后的定界符前置
      * @param expression 对于expression、medResults，要求表达式中靠近等于号的部分靠近栈顶
      * @param medResults 见{@code expression}

@@ -23,11 +23,24 @@ public final class SymbolOutputStream extends OutputStream<Symbol> {
 
     /**
      * 将 index 恢复到刚初始化之后的状态
+     *
+     * @since 2021-8-5
      */
     @Override
     public OutputStream<Symbol> resetIndex() {
         super.index = 0;
         return this;
+    }
+
+    /**
+     * @since 2021-8-5
+     */
+    @Override
+    protected Object clone() {
+        var cloned = (SymbolOutputStream) super.clone();
+        cloned.sSInfo = this.sSInfo;
+        cloned.ifSuperInitCalled = this.ifSuperInitCalled;
+        return super.clone();
     }
 
     /**

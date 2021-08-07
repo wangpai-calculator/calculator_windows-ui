@@ -1,12 +1,11 @@
 package org.wangpai.calculator.model.symbol.operand;
 
-import lombok.SneakyThrows;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
-import org.wangpai.calculator.model.symbol.operation.Operation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
+
+import lombok.SneakyThrows;
 
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
 

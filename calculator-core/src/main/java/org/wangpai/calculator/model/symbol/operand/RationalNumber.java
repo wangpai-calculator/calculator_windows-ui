@@ -1,15 +1,14 @@
 package org.wangpai.calculator.model.symbol.operand;
 
-import lombok.AccessLevel;
-import lombok.Getter;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
-import org.wangpai.calculator.exception.UnknownException;
-import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
 import org.wangpai.calculator.model.symbol.operation.Operation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 /**
  * @since 2021-8-1

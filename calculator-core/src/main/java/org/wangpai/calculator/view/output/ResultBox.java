@@ -1,86 +1,65 @@
 package org.wangpai.calculator.view.output;
 
 import org.wangpai.calculator.view.CalculatorMainPanel;
-import org.wangpai.calculator.view.control.Gbc;
+import org.wangpai.calculator.view.base.TextBox;
 
-import javax.swing.*;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import javax.annotation.Resource;
+
 import java.awt.*;
 
 /**
  * @since 2021-7-24
  */
-public final class ResultBox extends JPanel {
-    public static final int TEXT_ROWS = 10;
-    public static final int TEXT_COLUMNS = 40;
-
+@Scope("singleton")
+@Component("resultBox")
+public final class ResultBox extends TextBox implements InitializingBean {
+    @Resource(name = "calculatorMainPanel")
     private CalculatorMainPanel parentPanel;
 
     /**
-     * 不要将这些字段在类对象被创建时就进行含 new 的初始化，
-     * 因为这样可能导致生成子类不需要的数据
+     * 因为构造器被执行将优先于依赖注入发生，
+     * 所以构造器中不能使用任何需依赖注入的字段
+     *
+     * Spring 的注入不受访问权限的限制，
+     * 因此这里可以使用 protected
+     *
+     * @since 2021-8-7
      */
-    private JTextArea textArea;
-    private JScrollPane scrollPane;
-    private GridBagLayout gb;
-
     protected ResultBox() {
         super();
     }
 
-    public static ResultBox create(CalculatorMainPanel mainPanel) {
-        var resultPanel = new ResultBox();
-
-        resultPanel.parentPanel = mainPanel;
-        resultPanel.textArea = new JTextArea(TEXT_ROWS, TEXT_COLUMNS);
-        resultPanel.textArea.setFont(new Font("Dialog", 0, 18));
-        resultPanel.textArea.setEnabled(true);
-        resultPanel.textArea.setLineWrap(true);
-        resultPanel.textArea.setEditable(false);
-
-        int insets = 10;
-        // 设置内边距：文字与文本边界之间的间距
-        resultPanel.textArea.setMargin(new Insets(insets, insets, insets, insets));
-
-        resultPanel.scrollPane = new JScrollPane(resultPanel.textArea);
-
-        resultPanel.gb = new GridBagLayout();
-        resultPanel.gb.setConstraints(resultPanel.scrollPane,
-                new Gbc(0, 0)
-                        .setWeight(400, 800) // Weight 在此处可以随意取值，但是不能不设置
-                        .setFill(Gbc.BOTH));
-
-        resultPanel.setLayout(resultPanel.gb);
-        resultPanel.add(resultPanel.scrollPane);
-
-        return resultPanel;
+    /**
+     * Bean 的初始化方法
+     *
+     * @since 2021-8-7
+     */
+    @Override
+    public void afterPropertiesSet() {
+        super.textArea.setFont(new Font("Dialog", 0, 18));
+        super.textArea.setEditable(false);
     }
 
     /**
-     * 将滚动条设置在底部
+     * @since 2021-8-7
      */
-    public ResultBox setBarAtTheBottom(){
-        this.textArea.setSelectionStart(this.textArea.getText().length());
-        return this;
-    }
-
-    public String getText() {
-        return this.textArea.getText();
-    }
-
+    @Override
     public ResultBox setText(String msg) {
-        this.textArea.setText(msg);
-        this.setBarAtTheBottom();
+        super.setText(msg);
+        this.setBarAtTheBottom(); // 将滚动条拨到最下
         return this;
     }
 
+    /**
+     * @since 2021-8-7
+     */
+    @Override
     public ResultBox append(String msg) {
-        this.textArea.append(msg);
-        this.setBarAtTheBottom();
+        super.append(msg);
+        this.setBarAtTheBottom(); // 将滚动条拨到最下
         return this;
     }
-
-    public ResultBox cleanAllContent(String msg) {
-        return this.setText(null);
-    }
-
 }

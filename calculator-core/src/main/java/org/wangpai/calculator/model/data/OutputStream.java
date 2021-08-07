@@ -1,18 +1,18 @@
 package org.wangpai.calculator.model.data;
 
+import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.calculator.exception.UndefinedException;
+
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import org.wangpai.calculator.exception.CalculatorException;
-import org.wangpai.calculator.exception.SyntaxException;
-import org.wangpai.calculator.exception.UndefinedException;
+import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 
 /**
  * @since 2021-8-1
  */
-public abstract class OutputStream<T> {
+public abstract class OutputStream<T> implements Cloneable{
     protected ArrayList<T> outputStream;
     protected int length;
 
@@ -33,6 +33,20 @@ public abstract class OutputStream<T> {
      * @since 2021-8-5
      */
     public abstract OutputStream<T> resetIndex();
+
+    /**
+     * @since 2021-8-5
+     */
+    @SneakyThrows
+    @Override
+    protected Object clone() {
+        var cloned = (OutputStream<T>) super.clone();
+        cloned.outputStream = (ArrayList<T>) this.outputStream.clone();
+        cloned.length = this.length;
+        cloned.index = this.index;
+        cloned.originInput = this.originInput;
+        return cloned;
+    }
 
     /**
      * 这个方法需要抛出异常，且需要子类重写

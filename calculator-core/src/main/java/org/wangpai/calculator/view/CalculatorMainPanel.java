@@ -1,13 +1,20 @@
 package org.wangpai.calculator.view;
 
-import org.wangpai.calculator.controller.*;
-import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.calculator.controller.Dispatcher;
+import org.wangpai.calculator.controller.MiddleController;
+import org.wangpai.calculator.controller.TerminalController;
+import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-import org.wangpai.calculator.view.control.ButtonGroup;
 import org.wangpai.calculator.view.control.Gbc;
 import org.wangpai.calculator.view.input.InputBox;
 import org.wangpai.calculator.view.output.PromptMsgBox;
 import org.wangpai.calculator.view.output.ResultBox;
+import org.wangpai.calculator.exception.CalculatorException;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import javax.annotation.Resource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,64 +23,85 @@ import java.util.Stack;
 /**
  * @since 2021-8-1
  */
-public final class CalculatorMainPanel extends JPanel implements TerminalController, MiddleController {
-    private JPanel buttonGroup;
-    private InputBox inputPanel;
-    private ResultBox resultPanel;
-    private PromptMsgBox promptPanel;
-    private GridBagLayout gb;
+@Scope("singleton")
+@Controller("calculatorMainPanel")
+public final class CalculatorMainPanel extends JPanel
+        implements TerminalController, MiddleController, InitializingBean {
+    @Resource(name = "dispatcher")
     private MiddleController upperController;
 
+    @Resource(name = "buttonGroup")
+    private JPanel buttonGroup;
+
+    @Resource(name = "inputBox")
+    private InputBox inputPanel;
+
+    @Resource(name = "resultBox")
+    private ResultBox resultPanel;
+
+    @Resource(name = "promptMsgBox")
+    private PromptMsgBox promptPanel;
+
+    private GridBagLayout gb;
+
+    /**
+     * 因为构造器被执行将优先于依赖注入发生，
+     * 所以构造器中不能使用任何需依赖注入的字段
+     *
+     * Spring 的注入不受访问权限的限制，
+     * 因此这里可以使用 protected
+     *
+     * @since 2021-8-7
+     */
     protected CalculatorMainPanel() {
         super();
     }
 
-    public static CalculatorMainPanel create() {
-        var mainPanel = new CalculatorMainPanel();
-        mainPanel.gb = new GridBagLayout();
-        mainPanel.setLayout(mainPanel.gb);
+    /**
+     * Bean 的初始化方法
+     *
+     * @since 2021-8-7
+     */
+    @Override
+    public void afterPropertiesSet() {
+        this.gb = new GridBagLayout();
+        this.setLayout(this.gb);
 
-        mainPanel.setBackground(Color.WHITE);
+        this.setBackground(Color.WHITE);
 
-        mainPanel.inputPanel = InputBox.create(mainPanel);
-        mainPanel.gb.setConstraints(mainPanel.inputPanel,
+        this.gb.setConstraints(this.inputPanel,
                 new Gbc(0, 0, 4, 2)
                         .setWeight(400, 100)
                         .setInsets(5) // 控制组件之间的间隙
                         .setAnchor(Gbc.NORTHWEST)
                         .setFill(Gbc.BOTH)); // 此值如果不设置，则组件会萎缩
-        mainPanel.add(mainPanel.inputPanel);
+        this.add(this.inputPanel);
 
-        mainPanel.buttonGroup = ButtonGroup.create(mainPanel);
-        mainPanel.gb.setConstraints(mainPanel.buttonGroup,
+        this.gb.setConstraints(this.buttonGroup,
                 new Gbc(0, 10, 4, 2)
                         .setWeight(100, 100)
                         .setInsets(5) // 控制组件之间的间隙
                         .setAnchor(Gbc.SOUTHWEST)
                         .setFill(Gbc.BOTH)); // 此值如果不设置，则组件会萎缩
-        mainPanel.add(mainPanel.buttonGroup);
+        this.add(this.buttonGroup);
 
-        mainPanel.resultPanel = ResultBox.create(mainPanel);
-        mainPanel.gb.setConstraints(mainPanel.resultPanel,
+        this.gb.setConstraints(this.resultPanel,
                 new Gbc(4, 0, 15, 18)
                         .setWeight(800, 800)
                         .setIpad(200,0) // 额外增加控件的组内大小
                         .setInsets(5) // 控制组件之间的间隙
                         .setAnchor(Gbc.CENTER)
                         .setFill(Gbc.BOTH)); // 此值如果不设置，则组件会萎缩
-        mainPanel.add(mainPanel.resultPanel);
+        this.add(this.resultPanel);
 
-        mainPanel.promptPanel = PromptMsgBox.create(mainPanel);
-        mainPanel.gb.setConstraints(mainPanel.promptPanel,
+        this.gb.setConstraints(this.promptPanel,
                 new Gbc(20, 0, 10, 18)
                         .setWeight(800, 200)
                         .setIpad(50,0) // 额外增加控件的组内大小
                         .setInsets(5) // 控制组件之间的间隙
                         .setAnchor(Gbc.EAST)
                         .setFill(Gbc.BOTH)); // 此值如果不设置，则组件会萎缩
-        mainPanel.add(mainPanel.promptPanel);
-
-        return mainPanel;
+        this.add(this.promptPanel);
     }
 
     private void send2InputBox(Url url, String str){
@@ -108,26 +136,6 @@ public final class CalculatorMainPanel extends JPanel implements TerminalControl
         }
     }
 
-    private void send2PromptMsgBox(Url url, String str){
-        /**
-         * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射。
-         * 因反射的危险性带来的复杂性指的是：
-         * 反射调用方法时，对应方法可能不存在，因此还需要编写相应事先检验函数，
-         * 这实际上并不能减少代码量
-         */
-        switch (url.getFirstLevelDirectory()) {
-            case "append":
-                this.promptPanel.append(str);
-                break;
-            case "settext":
-                this.promptPanel.setText(str);
-                break;
-            case "cleanallcontent":
-                this.promptPanel.cleanAllContent(str);
-                break;
-        }
-    }
-
     private void send2ResultBox(Url url, String str){
         /**
          * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射。
@@ -144,6 +152,26 @@ public final class CalculatorMainPanel extends JPanel implements TerminalControl
                 break;
             case "cleanallcontent":
                 this.resultPanel.cleanAllContent(str);
+                break;
+        }
+    }
+
+    private void send2PromptMsgBox(Url url, String str){
+        /**
+         * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射。
+         * 因反射的危险性带来的复杂性指的是：
+         * 反射调用方法时，对应方法可能不存在，因此还需要编写相应事先检验函数，
+         * 这实际上并不能减少代码量
+         */
+        switch (url.getFirstLevelDirectory()) {
+            case "append":
+                this.promptPanel.append(str);
+                break;
+            case "settext":
+                this.promptPanel.setText(str);
+                break;
+            case "cleanallcontent":
+                this.promptPanel.cleanAllContent(str);
                 break;
         }
     }
