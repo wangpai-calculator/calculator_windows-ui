@@ -1,6 +1,7 @@
 package org.wangpai.calculator.model.data;
 
 import org.wangpai.calculator.exception.SyntaxException;
+import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operand.Decimal;
 import org.wangpai.calculator.model.symbol.operand.Operand;
@@ -27,15 +28,15 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKE
 @Repository("calculatorData")
 public final class CalculatorData implements Operable, Cloneable {
     /**
-     * 对于 Stack 定义的栈，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的
+     * 注意：对于 Stack，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的
      */
 
     /**
      * opnds：operand 操作数
-     *
+     * <p>
      * 目前，这个栈里面储存的是有理数。这是由方法 loadOpnd 来决定的
      */
-    @Getter(AccessLevel.PUBLIC)
+    @Getter(AccessLevel.PUBLIC) // FIXME
     private Stack<Operand> opnds = new Stack<>();
 
     // opndBuff：operand buffer 缓存的操作数的每一位的值，包括小数点
@@ -44,14 +45,21 @@ public final class CalculatorData implements Operable, Cloneable {
     // optrs：operator 运算符
     private Stack<Operator> optrs = new Stack<>();
 
-    // exp：expresion 当前整个表达式的状态
-    @Getter(AccessLevel.PUBLIC)
+    // exp：expresion 当前已读取的表达式
+    @Getter(AccessLevel.PUBLIC) // FIXME
     private Stack<Symbol> exp = new Stack<>();
+
+    // 对已读取的表达式进行计算后的表达式。其中，此表达式可为操作数或运算符
+    private Stack<Object> calculatedExp = new Stack<>();
 
     public CalculatorData() {
         super();
     }
 
+    /**
+     * @lastModified 2021-8-8
+     * @since 2021-8-1
+     */
     @SneakyThrows
     @Override
     protected Object clone() {
@@ -61,22 +69,25 @@ public final class CalculatorData implements Operable, Cloneable {
         cloned.opndBuff = (Stack<Symbol>) this.opndBuff.clone();
         cloned.optrs = (Stack<Operator>) this.optrs.clone();
         cloned.exp = (Stack<Symbol>) this.exp.clone();
+        cloned.calculatedExp = (Stack<Object>) this.calculatedExp.clone();
 
         return cloned;
     }
 
+    /**
+     * @lastModified 2021-8-8
+     * @since 2021-8-1
+     */
+    @SneakyThrows
     public void pushSymbol(Symbol symbol) {
         if (symbol.isDigit() || symbol == DOT) {
             this.opndBuff.push(symbol);
-            this.exp.push(symbol);
         } else {
-            try {
-                this.optrs.push(new Operator(symbol));
-            } catch (SyntaxException exception) {
-                // 上面的 try 块并不会抛出异常
-            }
-            this.exp.push(symbol);
+            var operator = new Operator(symbol);
+            this.optrs.push(operator);
+            this.calculatedExp.push(operator);
         }
+        this.exp.push(symbol);
     }
 
     public void pushToExp(Symbol symbol) {
@@ -139,7 +150,7 @@ public final class CalculatorData implements Operable, Cloneable {
         return this.opndBuff.empty();
     }
 
-    public boolean inteIsEmpty() {
+    public boolean expIsEmpty() {
         return this.exp.empty();
     }
 
@@ -160,7 +171,6 @@ public final class CalculatorData implements Operable, Cloneable {
 
         while (!antiOptrs.empty()) {
             var tempOptr = antiOptrs.pop().getSymbol();
-
             switch (tempOptr) {
                 case LEFT_BRACKET:
                     pares.push(tempOptr);
@@ -185,6 +195,7 @@ public final class CalculatorData implements Operable, Cloneable {
     }
 
     /**
+     * @lastModified 2021-8-8
      * @since 2021-8-4
      */
     public boolean loadOpnd() {
@@ -192,54 +203,38 @@ public final class CalculatorData implements Operable, Cloneable {
             return false;
         }
 
-        var symbols = this.opndBuff.toArray(Symbol[]::new);
-        this.opnds.push(new Decimal(symbols).toRationalNumber());
+        var rn = new Decimal(this.opndBuff.toArray(Symbol[]::new)).toRationalNumber();
+        this.opnds.push(rn);
+        this.calculatedExp.push(rn);
         this.opndBuff.clear();
         return true;
     }
 
     /**
      * @since 2021-8-5
+     * @lastModified 2021-8-8
      */
-    public void oneTimeCalculation() throws SyntaxException {
+    public void oneTimeCalculation() throws SyntaxException, UndefinedException {
         var optr = this.optrs.pop();
         var opndRight = this.opnds.pop();
         var opndLeft = this.opnds.pop();
-
-        if (opndLeft instanceof RationalNumber
-                && opndRight instanceof RationalNumber) {
-            /**
-             * 介于可读性及因反射的危险性带来的复杂性，此处不要使用反射
-             */
-            switch (optr.getSymbol()) {
-                case ADD:
-                    this.opnds.push(RationalNumberOperation.add(
-                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
-                    break;
-                case SUBTRACT:
-                    this.opnds.push(RationalNumberOperation.subtract(
-                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
-                    break;
-                case MULTIPLY:
-                    this.opnds.push(RationalNumberOperation.multiply(
-                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
-                    break;
-                case DIVIDE:
-                    this.opnds.push(RationalNumberOperation.divide(
-                            (RationalNumber) opndLeft, (RationalNumber) opndRight));
-                    break;
-
-                default:
-                    break;
-            }
+        for (int i = 1; i <= 3; ++i) {
+            this.calculatedExp.pop(); // 弹出两个操作数、一个运算符，共三个元素
         }
+
+        Operand result = CalculatorData.oneTimeCalculation(opndLeft, optr, opndRight);
+        this.opnds.push(result);
+        this.calculatedExp.push(result);
     }
 
     /**
+     * 当遇到此方法不能处理的运算，均会抛出异常
+     *
      * @since 2021-8-5
+     * @lastModified 2021-8-8
      */
     public static Operand oneTimeCalculation(Operand opndLeft, Operator optr, Operand opndRight)
-            throws SyntaxException {
+            throws SyntaxException, UndefinedException {
         if (opndLeft instanceof RationalNumber
                 && opndRight instanceof RationalNumber) {
             /**
@@ -260,23 +255,60 @@ public final class CalculatorData implements Operable, Cloneable {
                             (RationalNumber) opndLeft, (RationalNumber) opndRight);
 
                 default:
-                    break;
+                    throw new UndefinedException("异常：不支持这种运算");
             }
         }
 
-        return null;
+        throw new UndefinedException("异常：含有不支持的运算符");
     }
 
     /**
      * @since 2021-8-4
      */
     public CalculatorData clearAllCalData() {
-        this.opnds.clear(); // 清空 opnd 原来的 Stack
-        this.opndBuff.clear(); // 清空 opndBuff 原来的 Stack
-        this.optrs.clear(); // 清空 optr 原来的 Stack
-        this.exp.clear(); // 清空 exp 原来的 Stack
+        this.opnds.clear();
+        this.opndBuff.clear();
+        this.optrs.clear();
+        this.exp.clear();
+        this.calculatedExp.clear();
 
         return this;
     }
 
+
+    /**
+     * @since 2021-8-9
+     */
+    public String expToString() {
+        StringBuilder sb = new StringBuilder();
+        for (var symbol : this.exp) {
+            sb.append(symbol);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @since 2021-8-9
+     */
+    public String calculatedExpToString() {
+        StringBuilder sb = new StringBuilder();
+        for (var ele : this.calculatedExp) {
+            sb.append(ele);
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * 因为此方法的含义模糊，所以尽量不要使用此方法
+     *
+     * 此方法显示的是 this.exp 的信息，不是 this.calculatedExp 的信息
+     *
+     * @since 2021-8-9
+     */
+    @Deprecated
+    @Override
+    public String toString() {
+        return this.expToString();
+    }
 }

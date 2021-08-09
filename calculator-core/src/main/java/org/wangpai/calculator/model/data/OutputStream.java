@@ -6,27 +6,51 @@ import org.wangpai.calculator.exception.UndefinedException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @since 2021-8-1
  */
-public abstract class OutputStream<T> implements Cloneable{
+public abstract class OutputStream<T> implements Cloneable {
+    /**
+     * 为了减少子类设计的工作量，
+     * 不要将此字段的类型改为 List<T>
+     */
     protected ArrayList<T> outputStream;
+
+    @Getter(AccessLevel.PUBLIC)
     protected int length;
 
     /**
      * 指向当前最近一个没有输出的字符。
      * 序号越小的元素越先输出
      */
-    protected int index;
-
     @Getter(AccessLevel.PUBLIC)
-    protected Object originInput;
+    protected int index;
 
     public OutputStream() {
         super();
+    }
+
+    /**
+     * @since 2021-8-9
+     */
+    public OutputStream(OutputStream<T> other) {
+        super();
+        this.init(other);
+    }
+
+    /**
+     * @since 2021-8-9
+     */
+    public OutputStream(ArrayList<T> other) {
+        super();
+        this.init(other);
     }
 
     /**
@@ -35,6 +59,7 @@ public abstract class OutputStream<T> implements Cloneable{
     public abstract OutputStream<T> resetIndex();
 
     /**
+     * @lastModified 2021-8-9
      * @since 2021-8-5
      */
     @SneakyThrows
@@ -44,22 +69,23 @@ public abstract class OutputStream<T> implements Cloneable{
         cloned.outputStream = (ArrayList<T>) this.outputStream.clone();
         cloned.length = this.length;
         cloned.index = this.index;
-        cloned.originInput = this.originInput;
         return cloned;
     }
 
     /**
-     * 这个方法需要抛出异常，且需要子类重写
+     * 此方法会带来危险，因此不对外提供
      *
-     * 注意：此方法自带清空以往数据的副作用
-     * <p>
+     * @lastModified 2021-8-9
      * @since 2021-8-5
      */
-    public OutputStream<T> init(Object obj) throws CalculatorException {
-        this.originInput = obj;
+    @Deprecated
+    protected abstract OutputStream<T> init(Object obj) throws CalculatorException;
 
-        return this;
-    }
+    public abstract OutputStream<T> init(OutputStream<T> other);
+
+    public abstract OutputStream<T> init(ArrayList<T> other);
+
+    public abstract OutputStream<T> init(List<T> other);
 
     public T next() {
         return this.outputStream.get(this.index++);
@@ -105,11 +131,48 @@ public abstract class OutputStream<T> implements Cloneable{
         return this;
     }
 
+    /**
+     * 获取已输出部分的流
+     *
+     * @since 2021-8-9
+     */
+    public OutputStream<T> getRead() {
+        return ((OutputStream<T>) this.clone()).init(this.outputStream.subList(0, this.index));
+
+    }
+
+    /**
+     * 获取未输出部分的流
+     *
+     * @since 2021-8-9
+     */
+    public OutputStream<T> getRest() {
+        return ((OutputStream<T>) this.clone()).init(this.outputStream.subList(this.index, this.length));
+
+    }
+
     public OutputStream<T> clear() {
         this.outputStream = null;
         this.index = -1;
         this.length = 0;
 
         return this;
+    }
+
+    /**
+     * @since 2021-8-9
+     */
+    public List<T> toList() {
+        return (List<T>) this.outputStream.clone();
+    }
+
+    @Override
+    public String toString() {
+        var sb = new StringBuffer();
+        for (var output : this.outputStream) {
+            sb.append(output.toString());
+        }
+
+        return sb.toString();
     }
 }

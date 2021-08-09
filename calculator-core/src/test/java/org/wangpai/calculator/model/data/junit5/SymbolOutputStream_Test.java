@@ -6,6 +6,7 @@ import org.wangpai.calculator.model.data.SymbolOutputStream;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
 
 /**
  * @since 2021-7-29
@@ -22,23 +23,23 @@ class SymbolOutputStream_Test {
     void associationTest() throws UndefinedException {
         outputStream.init(str);
         assertTrue(outputStream.hasNext());
-        assertEquals(Symbol.getEnum("1") , outputStream.next());
+        assertEquals(Symbol.getEnum("1"), outputStream.next());
         assertTrue(outputStream.hasNext());
 
-        assertEquals(Symbol.getEnum("2") , outputStream.peek());
-        assertEquals(Symbol.getEnum("2") , outputStream.next());
+        assertEquals(Symbol.getEnum("2"), outputStream.peek());
+        assertEquals(Symbol.getEnum("2"), outputStream.next());
 
         outputStream.rollback();
-        assertEquals(Symbol.getEnum("2") , outputStream.next());
+        assertEquals(Symbol.getEnum("2"), outputStream.next());
 
         outputStream.rollback(Symbol.getEnum("-"));
-        assertEquals(Symbol.getEnum("-") , outputStream.next());
+        assertEquals(Symbol.getEnum("-"), outputStream.next());
 
         outputStream.clear();
         assertFalse(outputStream.hasNext());
         outputStream.init("+-X/");
         assertTrue(outputStream.hasNext());
-        assertEquals(Symbol.getEnum("+") , outputStream.next());
+        assertEquals(Symbol.getEnum("+"), outputStream.next());
 
 
         Throwable throwable = assertThrows(UndefinedException.class,
@@ -47,7 +48,67 @@ class SymbolOutputStream_Test {
     }
 
     @Test
-    void preInitCheck_String(){
+    void getRead() throws UndefinedException {
+        outputStream.init(str);
+
+        // 测试初始情况
+        assertEquals("", outputStream.getRead().toString());
+
+        // 测试中间状态下的情况
+        int readSymbolNum = str.length() / 2;
+        for (int times = 1; times <= readSymbolNum; ++times) {
+            outputStream.next();
+        }
+        assertEquals(str.substring(0, readSymbolNum), outputStream.getRead().toString());
+
+        // 测试流已读完下的情况
+        outputStream.resetIndex();
+        while (outputStream.hasNext()) {
+            outputStream.next();
+        }
+        assertEquals(str, outputStream.getRead().toString());
+    }
+
+    @Test
+    void getRest() throws UndefinedException {
+        outputStream.init(str);
+
+        // 测试初始情况
+        assertEquals(str, outputStream.getRest().toString());
+
+        // 测试中间状态下的情况
+        int readSymbolNum = str.length() / 2;
+        for (int times = 1; times <= readSymbolNum; ++times) {
+            outputStream.next();
+        }
+        assertEquals(str.substring(readSymbolNum), outputStream.getRest().toString());
+
+        // 测试流已读完下的情况
+        outputStream.resetIndex();
+        while (outputStream.hasNext()) {
+            outputStream.next();
+        }
+        assertEquals("", outputStream.getRest().toString());
+    }
+
+    @Test
+    void toArray() throws UndefinedException {
+        SymbolOutputStream symbolOutputStream = new SymbolOutputStream();
+        symbolOutputStream.init("123");
+
+        assertArrayEquals(new Symbol[]{ONE, TWO, THREE},
+                symbolOutputStream.toArray());
+    }
+
+    @Test
+    void toString_test() throws UndefinedException {
+        outputStream.init(str);
+
+        assertEquals(str, outputStream.toString());
+    }
+
+    @Test
+    void preInitCheck_String() {
         assertNull(SymbolOutputStream.preInitCheck("123456"));
 
         assertEquals("123",

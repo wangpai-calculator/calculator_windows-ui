@@ -78,9 +78,13 @@ public class Operator {
         return false;
     }
 
+    /**
+     * @since 2021-7-28
+     * @lastModified 2021-8-9
+     */
     @Override
     public String toString() {
-        return super.toString();
+        return this.symbol.toString();
     }
 
     @Override
