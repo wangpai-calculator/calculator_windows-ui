@@ -1,11 +1,11 @@
 package org.wangpai.calculator.model.symbol.operation.junit5;
 
-import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @since 2021-7-22
  */
-class RationalNumberOperation_Test {
+public class RationalNumberOperation_Test {
     private int firstInt = 234234;
     private int secondInt = 2341;
 
@@ -23,7 +23,7 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void add_R() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_add_R() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         // 3/4 = 5/7 + 1/28
         assertEquals(new RationalNumber(3, 4),
                 add(new RationalNumber(5, 7),
@@ -31,7 +31,7 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void subtract_R() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_subtract_R() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         // 1/6 = 1/2 - 1/3
         assertEquals(new RationalNumber(1, 6),
                 subtract(new RationalNumber(1, 2),
@@ -39,7 +39,7 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void multiply_R() throws CalculatorException {
+    public void test_multiply_R() throws CalculatorException {
         // 1/3 = 5/6 x 2/5
         assertEquals(new RationalNumber(1, 3),
                 multiply(new RationalNumber(5, 6),
@@ -47,14 +47,14 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void multiply_long() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_multiply_long() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         // 5/3 = 1/6 x 10
         assertEquals(new RationalNumber(5, 3),
                 multiply(new RationalNumber(1, 6), 10));
     }
 
     @Test
-    void divide_R() throws CalculatorException {
+    public void test_divide_R() throws CalculatorException {
         // 5/6 = 1/3 / 2/5
         assertEquals(new RationalNumber(5, 6),
                 divide(new RationalNumber(1, 3),
@@ -68,14 +68,14 @@ class RationalNumberOperation_Test {
     }
 
     @Test
-    void getOpposite() throws CalculatorException {
+    public void test_getOpposite() throws CalculatorException {
         assertEquals(new RationalNumber(-firstInt, secondInt),
                 RationalNumberOperation.getOpposite
                         (new RationalNumber(firstInt, secondInt)));
     }
 
     @Test
-    void getReciprocal() throws CalculatorException {
+    public void test_getReciprocal() throws CalculatorException {
         assertEquals(new RationalNumber(secondInt, firstInt),
                 RationalNumberOperation.getReciprocal
                         (new RationalNumber(firstInt, secondInt)));

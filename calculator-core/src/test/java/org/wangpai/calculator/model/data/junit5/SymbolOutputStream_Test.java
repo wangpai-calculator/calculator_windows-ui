@@ -1,26 +1,38 @@
 package org.wangpai.calculator.model.data.junit5;
 
-import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.data.SymbolOutputStream;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
+import org.junit.jupiter.api.Test;
+
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ONE;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.THREE;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.TWO;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since 2021-7-29
  */
-class SymbolOutputStream_Test {
+public class SymbolOutputStream_Test {
     private String str = "123456789";
     private SymbolOutputStream outputStream = new SymbolOutputStream();
 
     /**
+     * 联合测试
+     * <p>
      * 这个方法同时测试了被测试类的如下方法：
      * init、hasNext、next、peek、rollback、clear
      */
     @Test
-    void associationTest() throws UndefinedException {
+    public void test_associationTest() throws UndefinedException {
         outputStream.init(str);
         assertTrue(outputStream.hasNext());
         assertEquals(Symbol.getEnum("1"), outputStream.next());
@@ -48,7 +60,7 @@ class SymbolOutputStream_Test {
     }
 
     @Test
-    void getRead() throws UndefinedException {
+    public void test_getRead() throws UndefinedException {
         outputStream.init(str);
 
         // 测试初始情况
@@ -70,7 +82,7 @@ class SymbolOutputStream_Test {
     }
 
     @Test
-    void getRest() throws UndefinedException {
+    public void test_getRest() throws UndefinedException {
         outputStream.init(str);
 
         // 测试初始情况
@@ -92,7 +104,7 @@ class SymbolOutputStream_Test {
     }
 
     @Test
-    void toArray() throws UndefinedException {
+    public void test_toArray() throws UndefinedException {
         SymbolOutputStream symbolOutputStream = new SymbolOutputStream();
         symbolOutputStream.init("123");
 
@@ -101,14 +113,14 @@ class SymbolOutputStream_Test {
     }
 
     @Test
-    void toString_test() throws UndefinedException {
+    public void test_toString() throws UndefinedException {
         outputStream.init(str);
 
         assertEquals(str, outputStream.toString());
     }
 
     @Test
-    void preInitCheck_String() {
+    public void test_preInitCheck_String() {
         assertNull(SymbolOutputStream.preInitCheck("123456"));
 
         assertEquals("123",
@@ -119,5 +131,4 @@ class SymbolOutputStream_Test {
         // 如果输入给方法 preInitCheck 的字符串在一开始就有错误，则应该返回空串，而不是 null
         assertNotNull(SymbolOutputStream.preInitCheck("abc456"));
     }
-
 }

@@ -25,6 +25,7 @@ public class RationalNumberOperation extends Operation {
      * @deprecated 2021-8-5
      * 此方法为使用了反射，为废弃方法，仅基类可以调用
      */
+    @Deprecated
     protected final static RationalNumber methodNavigation(
             String methodName, RationalNumber first,
             Operand second, boolean hasSwap)

@@ -2,8 +2,6 @@ package org.wangpai.calculator.controller;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.wangpai.calculator.service.ComputingCenter;
-import org.wangpai.calculator.view.CalculatorMainPanel;
 
 import javax.annotation.Resource;
 

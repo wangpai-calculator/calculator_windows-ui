@@ -6,11 +6,8 @@ import org.wangpai.calculator.exception.UndefinedException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

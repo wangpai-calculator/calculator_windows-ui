@@ -154,7 +154,6 @@ public final class FigureOperation extends Operation {
         return new Figure(first.getInteger().multiply(second.getInteger()));
     }
 
-
     /**
      * 占位空方法
      *
@@ -229,7 +228,6 @@ public final class FigureOperation extends Operation {
         return getOpposite(new Figure(num));
     }
 
-
     /**
      * 求两个数的最大公约数。GCD：Greatest Common Divisor
      *
@@ -258,7 +256,6 @@ public final class FigureOperation extends Operation {
     public static Figure findLcm(Figure first, Figure second) {
         return multiply(first, subtract(second, findGcd(first, second)));
     }
-
 
     /**
      * 整数的乘方

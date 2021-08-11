@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
-import java.awt.*;
+import java.awt.Font;
 
 /**
  * @since 2021-7-24

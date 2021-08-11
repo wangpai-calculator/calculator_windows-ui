@@ -1,11 +1,11 @@
 package org.wangpai.calculator;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.wangpai.calculator.view.CalculatorFrame;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.swing.JFrame;
 import java.awt.EventQueue;
-import java.util.Arrays;
 
 /**
  * 程序启动入口
@@ -23,9 +23,6 @@ public class CalculatorApplication {
             frame.setTitle("TestFrame");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
-
-            System.out.println("已加载的 Bean：" +
-                    Arrays.toString(ctx.getBeanDefinitionNames()));
         });
     }
 }

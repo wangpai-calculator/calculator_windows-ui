@@ -1,16 +1,16 @@
 package org.wangpai.calculator.model.data.junit5;
 
-import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.data.CalculatorData;
 import org.wangpai.calculator.model.data.SymbolOutputStream;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-class CalculatorData_Test {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CalculatorData_Test {
     @Test
-    void toString_test() throws UndefinedException {
+    public void test_toString() throws UndefinedException {
         var str = "123456";
         var calData = new CalculatorData();
         var outputStream = new SymbolOutputStream().init(str);

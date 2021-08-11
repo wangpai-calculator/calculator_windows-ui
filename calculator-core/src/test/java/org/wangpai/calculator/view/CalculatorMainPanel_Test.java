@@ -1,7 +1,7 @@
 package org.wangpai.calculator.view;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.EventQueue;
 
 /**
  * @since 2021-8-1

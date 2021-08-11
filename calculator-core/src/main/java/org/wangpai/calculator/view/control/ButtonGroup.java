@@ -10,8 +10,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -138,7 +141,6 @@ public final class ButtonGroup extends JPanel implements InitializingBean {
                             parentPanel.send(new Url("/view/inputbox/delete"), str);
                             break;
                     }
-                    System.out.println(event.getActionCommand());
                 }
             });
         } // for-each
@@ -150,7 +152,6 @@ public final class ButtonGroup extends JPanel implements InitializingBean {
                 public void actionPerformed(ActionEvent event) {
                     String str = event.getActionCommand();
                     parentPanel.send(new Url("/view/inputbox/insert"), str);
-                    System.out.println(event.getActionCommand());
                 }
             });
         }// for-each

@@ -1,6 +1,6 @@
 package org.wangpai.calculator.model.symbol.operation.junit5;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
@@ -8,40 +8,56 @@ import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.Operation;
 
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @since 2021-7-24
  */
-class Operation_Test {
+public class Operation_Test {
     private int firstInt = 1;
     private int secondInt = 2;
 
+    /**
+     * 注意：JUnit 的注解对 Maven 不起作用。
+     * 尽管使用了注解 @Disabled，但这不能保证 Maven 不会运行这个方法。
+     * 将去掉方法的访问修饰符 public 就能阻止 Maven 运行此方法
+     */
+    @Deprecated
+    @Disabled
     @Test
-    void callBestOperation_Figure() throws CalculatorException {
+    void test_callBestOperation_Figure() throws CalculatorException {
         assertEquals(new Figure(firstInt + secondInt),
                 callBestOperation_native("add",
                         new Figure(firstInt), new Figure(secondInt)));
     }
 
+    @Deprecated
+    @Disabled
     @Test
-    void preliminaryCheck_normal() throws SyntaxException {
+    void test_preliminaryCheck_normal() {
         assertDoesNotThrow(() -> preliminaryCheck_native(new Figure(), new Figure()));
     }
 
+    @Deprecated
+    @Disabled
     @Test
-    void preliminaryCheck_exception() {
+    void test_preliminaryCheck_exception() {
         Throwable throwable = assertThrows(SyntaxException.class,
                 () -> preliminaryCheck_native(new Figure(), null, null));
         assertEquals("错误：第 2 、3 个操作数为 null。", throwable.getMessage());
     }
 
+    @Deprecated
+    @Disabled
     @Test
-    void sortByInheritance_normal() throws CalculatorException {
+    void test_sortByInheritance_normal() throws CalculatorException {
         // 方法调用时，发生了对形参的交换
         Object[] sortResult = sortByInheritance_native(new Figure(), new RationalNumber());
         assertEquals(RationalNumber.class, sortResult[0].getClass());
@@ -55,8 +71,10 @@ class Operation_Test {
         assertEquals(false, sortResult[2]);
     }
 
+    @Deprecated
+    @Disabled
     @Test
-    void sortByInheritance_exception() {
+    void test_sortByInheritance_exception() {
         var first = new Figure() {
         };
         var second = new Figure() {
@@ -66,8 +84,10 @@ class Operation_Test {
         assertEquals("错误：这两个操作数之间没有继承关系", throwable.getMessage());
     }
 
+    @Deprecated
+    @Disabled
     @Test
-    void generateExceptionString() {
+    void test_generateExceptionString() {
         HashSet<Integer> exceptionRecords = new HashSet<>();
         for (int order = 1; order < 10; ++order) {
             exceptionRecords.add(order);

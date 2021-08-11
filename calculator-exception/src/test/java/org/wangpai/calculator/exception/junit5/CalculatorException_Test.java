@@ -1,12 +1,19 @@
 package org.wangpai.calculator.exception.junit5;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
+
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
+ * 注意：Maven 的测试插件默认只会测试如下的类方法：
+ * > 类的访问权限为 public，且类名含 test
+ * > 类的默认构造器的访问权限为 public
+ * > 方法的访问权限为 public，且方法名的前缀为 test
+ *
  * @since 2021-7-19
  */
 public class CalculatorException_Test {
@@ -16,12 +23,12 @@ public class CalculatorException_Test {
     /**
      * 这个方法可以声明为 default，因为测试方法实际上是由该测试类的子类来调用的，这是因为测试类含有测试注解
      */
-    CalculatorException_Test() {
+    public CalculatorException_Test() {
         super();
     }
 
     @Test
-    void exceptionCause() {
+    public void test_exceptionCause() {
         /**
          * 函数 assertEquals 内部会使用类 Object 的函数 equals 来比较，所以无需担心
          */
@@ -29,7 +36,7 @@ public class CalculatorException_Test {
     }
 
     @Test
-    void getInstance()
+    public void test_getInstance()
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         var calculatorExceptionInstance = ((CalculatorExceptionExtends) this.calculatorException).getInstance(this.msg);
 

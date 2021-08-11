@@ -6,9 +6,9 @@ import org.wangpai.calculator.view.base.TextBox;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.Resource;
-import java.awt.*;
+
+import java.awt.Font;
 
 /**
  * @since 2021-8-1

@@ -2,9 +2,8 @@ package org.wangpai.calculator.view;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.EventQueue;
 import java.util.Arrays;
 
 /**

@@ -1,6 +1,5 @@
 package org.wangpai.calculator.model.symbol.operand.junit5;
 
-import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
@@ -10,15 +9,21 @@ import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.Operation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 
+import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since 2021-7-31
  */
-class RationalNumber_Test {
+public class RationalNumber_Test {
     private final int numeratorForTest = 10;
     private final int denominatorForTest = 20;
     private final RationalNumber rationalNumber =
@@ -29,14 +34,14 @@ class RationalNumber_Test {
      *
      * @since 2021-8-3
      */
-    RationalNumber_Test() throws CalculatorException {
+    public RationalNumber_Test() throws CalculatorException {
     }
 
     /**
      * @since 2021-8-3
      */
     @Test
-    void RationalNumber_Operand() {
+    public void test_RationalNumber_Operand() {
         assertDoesNotThrow(() -> new RationalNumber((Operand) rationalNumber));
 
         assertThrows(UndefinedException.class,
@@ -54,13 +59,13 @@ class RationalNumber_Test {
     }
 
     @Test
-    void getBindingOperation() {
+    public void test_getBindingOperation() {
         assertEquals(RationalNumberOperation.class,
                 new RationalNumber().getBindingOperation());
     }
 
     @Test
-    void clone_test() {
+    public void test_clone() {
         var cloned = rationalNumber.clone();
 
         assertEquals(rationalNumber, cloned); // 意义上相等
@@ -68,7 +73,7 @@ class RationalNumber_Test {
     }
 
     @Test
-    void isZero() throws CalculatorException, CloneNotSupportedException, NoSuchMethodException, IllegalAccessException {
+    public void test_isZero() {
         assertTrue(new RationalNumber(0).isZero());
 
         assertFalse(new RationalNumber(1).isZero());
@@ -76,7 +81,7 @@ class RationalNumber_Test {
     }
 
     @Test
-    void isNegative() throws CalculatorException, CloneNotSupportedException, NoSuchMethodException, IllegalAccessException {
+    public void test_isNegative() throws CalculatorException {
         assertTrue(new RationalNumber(-1).isNegative());
         assertFalse(new RationalNumber(0).isNegative());
         assertFalse(new RationalNumber(1).isNegative());
@@ -90,7 +95,7 @@ class RationalNumber_Test {
     }
 
     @Test
-    void equals_test() throws CalculatorException, CloneNotSupportedException, NoSuchMethodException, IllegalAccessException {
+    public void test_equals() {
         // 自身比较返回 true
         assertTrue(rationalNumber.equals(rationalNumber));
 
@@ -121,7 +126,7 @@ class RationalNumber_Test {
     }
 
     @Test
-    void toString_test() throws SyntaxException, CloneNotSupportedException {
+    public void test_toString() {
         assertEquals(rationalNumber.getNumerator().toString()
                         + "/" + rationalNumber.getDenominator().toString(),
                 rationalNumber.toString());
@@ -129,13 +134,13 @@ class RationalNumber_Test {
 
 
     @Test
-    void isProperFraction() throws CalculatorException {
-        assertTrue(new RationalNumber(2,8).isProperFraction());
-        assertFalse(new RationalNumber(16,8).isProperFraction());
+    public void test_isProperFraction() throws CalculatorException {
+        assertTrue(new RationalNumber(2, 8).isProperFraction());
+        assertFalse(new RationalNumber(16, 8).isProperFraction());
     }
 
     @Test
-    void toDouble() throws CalculatorException {
+    public void test_toDouble() throws CalculatorException {
         /**
          * 一般来说，浮点数是不能直接比较大小的，但不知为何，此处可以进行符合直觉的比较。
          * 个人猜测，这可能是将浮点数智能转化为字符串类型来比较的
@@ -160,7 +165,7 @@ class RationalNumber_Test {
     }
 
     @Test
-    void reduceFraction() throws NoSuchMethodException, CalculatorException, IllegalAccessException, CloneNotSupportedException {
+    public void test_reduceFraction() throws CalculatorException {
         // 测试分子
         assertEquals(new Figure(-10), new RationalNumber(100, -10).reduceFraction().getNumerator());
         // 测试分母
@@ -168,13 +173,13 @@ class RationalNumber_Test {
     }
 
     @Test
-    void getNumerator() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    public void test_getNumerator() throws CalculatorException {
         assertEquals(new Figure(3),
                 new RationalNumber(21, 28).getNumerator());
     }
 
     @Test
-    void getDenominator() throws NoSuchMethodException, IllegalAccessException, CloneNotSupportedException, CalculatorException {
+    public void test_getDenominator() throws CalculatorException {
         assertEquals(new Figure(4),
                 new RationalNumber(21, 28).getDenominator());
     }

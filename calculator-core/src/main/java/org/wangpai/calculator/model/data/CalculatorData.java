@@ -20,6 +20,7 @@ import java.util.Stack;
 
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKET;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACKET;
 
 /**
  * @since 2021-8-1
@@ -36,7 +37,7 @@ public final class CalculatorData implements Operable, Cloneable {
      * <p>
      * 目前，这个栈里面储存的是有理数。这是由方法 loadOpnd 来决定的
      */
-    @Getter(AccessLevel.PUBLIC) // FIXME
+    @Getter(AccessLevel.PUBLIC)
     private Stack<Operand> opnds = new Stack<>();
 
     // opndBuff：operand buffer 缓存的操作数的每一位的值，包括小数点
@@ -46,7 +47,7 @@ public final class CalculatorData implements Operable, Cloneable {
     private Stack<Operator> optrs = new Stack<>();
 
     // exp：expresion 当前已读取的表达式
-    @Getter(AccessLevel.PUBLIC) // FIXME
+    @Getter(AccessLevel.PUBLIC)
     private Stack<Symbol> exp = new Stack<>();
 
     // 对已读取的表达式进行计算后的表达式。其中，此表达式可为操作数或运算符
@@ -54,60 +55,6 @@ public final class CalculatorData implements Operable, Cloneable {
 
     public CalculatorData() {
         super();
-    }
-
-    /**
-     * @lastModified 2021-8-8
-     * @since 2021-8-1
-     */
-    @SneakyThrows
-    @Override
-    protected Object clone() {
-        var cloned = (CalculatorData) super.clone();
-
-        cloned.opnds = (Stack<Operand>) this.opnds.clone();
-        cloned.opndBuff = (Stack<Symbol>) this.opndBuff.clone();
-        cloned.optrs = (Stack<Operator>) this.optrs.clone();
-        cloned.exp = (Stack<Symbol>) this.exp.clone();
-        cloned.calculatedExp = (Stack<Object>) this.calculatedExp.clone();
-
-        return cloned;
-    }
-
-    /**
-     * @lastModified 2021-8-8
-     * @since 2021-8-1
-     */
-    @SneakyThrows
-    public void pushSymbol(Symbol symbol) {
-        if (symbol.isDigit() || symbol == DOT) {
-            this.opndBuff.push(symbol);
-        } else {
-            var operator = new Operator(symbol);
-            this.optrs.push(operator);
-            this.calculatedExp.push(operator);
-        }
-        this.exp.push(symbol);
-    }
-
-    public void pushToExp(Symbol symbol) {
-        this.exp.push(symbol);
-    }
-
-    public void pushToOptrs(Operator operator) {
-        this.optrs.push(operator);
-    }
-
-    public void pushToBuff(Symbol symbol) {
-        this.opndBuff.push(symbol);
-    }
-
-    public void pushToOpnds(Operand operand) {
-        this.opnds.push(operand);
-    }
-
-    public int searchFromBuff(Symbol symbol) {
-        return this.opndBuff.search(symbol);
     }
 
     public Symbol peekFromBuff() {
@@ -126,18 +73,6 @@ public final class CalculatorData implements Operable, Cloneable {
         return this.exp.peek();
     }
 
-    public Operator popFromOptrs() {
-        return this.optrs.pop();
-    }
-
-    public Operand popFromOpnds() {
-        return this.opnds.pop();
-    }
-
-    public Symbol popFromExp() {
-        return this.exp.pop();
-    }
-
     public boolean optrsIsEmpty() {
         return this.optrs.empty();
     }
@@ -154,10 +89,62 @@ public final class CalculatorData implements Operable, Cloneable {
         return this.exp.empty();
     }
 
+    public void pushToOptrs(Operator operator) {
+        this.optrs.push(operator);
+    }
+
+    public void pushToExp(Symbol symbol) {
+        this.exp.push(symbol);
+    }
+
+    public Operator popFromOptrs() {
+        return this.optrs.pop();
+    }
+
+    public Symbol popFromExp() {
+        return this.exp.pop();
+    }
+
     public int opndBuffSize() {
         return this.opndBuff.size();
     }
 
+    public int searchFromBuff(Symbol symbol) {
+        return this.opndBuff.search(symbol);
+    }
+
+    /**
+     * @lastModified 2021-8-8
+     * @since 2021-8-1
+     */
+    @SneakyThrows
+    public void pushSymbol(Symbol symbol) {
+        if (symbol.isDigit() || symbol == DOT) {
+            this.opndBuff.push(symbol);
+        } else if (symbol == RIGHT_BRACKET) {
+            /**
+             * 执行到此处，说明遇到成对的括号，且此对括号中就只包含一个操作数。
+             * 此时应该将前面的左括号弹出
+             */
+
+            this.optrs.pop();
+
+            /**
+             * 因为需要弹出的是左括号，而不是左括号右边的操作数。
+             * 因此先需要将左括号右边的操作数先暂时弹出，
+             * 等左括号弹出之后再弹入
+             */
+            var temp = this.calculatedExp.pop();
+            this.calculatedExp.pop();
+            this.calculatedExp.push(temp);
+        } else {
+            var operator = new Operator(symbol);
+            this.optrs.push(operator);
+            this.calculatedExp.push(operator);
+        }
+
+        this.exp.push(symbol);
+    }
 
     /**
      * @return 左右括号相等时，返回 0；左括号多于右括号，返回 1；左括号小于右括号，返回 2
@@ -211,8 +198,8 @@ public final class CalculatorData implements Operable, Cloneable {
     }
 
     /**
-     * @since 2021-8-5
      * @lastModified 2021-8-8
+     * @since 2021-8-5
      */
     public void oneTimeCalculation() throws SyntaxException, UndefinedException {
         var optr = this.optrs.pop();
@@ -230,8 +217,8 @@ public final class CalculatorData implements Operable, Cloneable {
     /**
      * 当遇到此方法不能处理的运算，均会抛出异常
      *
-     * @since 2021-8-5
      * @lastModified 2021-8-8
+     * @since 2021-8-5
      */
     public static Operand oneTimeCalculation(Operand opndLeft, Operator optr, Operand opndRight)
             throws SyntaxException, UndefinedException {
@@ -251,6 +238,9 @@ public final class CalculatorData implements Operable, Cloneable {
                     return RationalNumberOperation.multiply(
                             (RationalNumber) opndLeft, (RationalNumber) opndRight);
                 case DIVIDE:
+                    if (opndRight.isZero()) {
+                        throw new SyntaxException("错误：除数为 0");
+                    }
                     return RationalNumberOperation.divide(
                             (RationalNumber) opndLeft, (RationalNumber) opndRight);
 
@@ -260,6 +250,24 @@ public final class CalculatorData implements Operable, Cloneable {
         }
 
         throw new UndefinedException("异常：含有不支持的运算符");
+    }
+
+    /**
+     * @lastModified 2021-8-8
+     * @since 2021-8-1
+     */
+    @SneakyThrows
+    @Override
+    public Object clone() {
+        var cloned = (CalculatorData) super.clone();
+
+        cloned.opnds = (Stack<Operand>) this.opnds.clone();
+        cloned.opndBuff = (Stack<Symbol>) this.opndBuff.clone();
+        cloned.optrs = (Stack<Operator>) this.optrs.clone();
+        cloned.exp = (Stack<Symbol>) this.exp.clone();
+        cloned.calculatedExp = (Stack<Object>) this.calculatedExp.clone();
+
+        return cloned;
     }
 
     /**
@@ -274,7 +282,6 @@ public final class CalculatorData implements Operable, Cloneable {
 
         return this;
     }
-
 
     /**
      * @since 2021-8-9
@@ -298,10 +305,9 @@ public final class CalculatorData implements Operable, Cloneable {
         return sb.toString();
     }
 
-
     /**
      * 因为此方法的含义模糊，所以尽量不要使用此方法
-     *
+     * <p>
      * 此方法显示的是 this.exp 的信息，不是 this.calculatedExp 的信息
      *
      * @since 2021-8-9

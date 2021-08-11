@@ -5,11 +5,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 /**
- * 使用单例模式就是不用担心循环注入的问题
+ * 使用单例模式就不用担心循环注入的问题了
  *
  * @since 2021-8-1
  */

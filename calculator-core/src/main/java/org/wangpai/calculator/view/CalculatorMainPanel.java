@@ -16,8 +16,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import javax.annotation.Resource;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.GridBagLayout;
 import java.util.Stack;
 
 /**

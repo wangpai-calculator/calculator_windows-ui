@@ -1,10 +1,12 @@
 package org.wangpai.calculator.exception.junit5;
 
+import org.wangpai.calculator.exception.SyntaxException;
+
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.lang.reflect.InvocationTargetException;
 
-import org.wangpai.calculator.exception.SyntaxException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @since 2021-7-23
@@ -12,12 +14,8 @@ import org.wangpai.calculator.exception.SyntaxException;
 public class SyntaxException_Test {
     private String msg = "异常：不符语法";
 
-     SyntaxException_Test() {
-        super();
-    }
-
     @Test
-    void getInstance_void()
+    public void test_getInstance_void()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         var syntaxException = SyntaxException.getInstance();
 
@@ -26,7 +24,7 @@ public class SyntaxException_Test {
     }
 
     @Test
-    void getInstance_String()
+    public void test_getInstance_String()
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         var syntaxException = SyntaxException.getInstance(this.msg);
 

@@ -18,6 +18,9 @@ public class ComputingCenter implements TerminalController, MiddleController {
     @Resource(name = "dispatcher")
     private MiddleController upperController;
 
+    @Resource(name = "calculatorService")
+    private CalculatorService calculatorService;
+
     @Override
     public void sendUp(Url url, Object data, MiddleController lowerController) {
         upperController.sendUp(url, data, this);
@@ -48,7 +51,7 @@ public class ComputingCenter implements TerminalController, MiddleController {
     private void receive(Url url, String str) {
         switch (url.getFirstLevelDirectory()) {
             case "expression":
-                new CalculatorService(this).readExpression(str);
+                calculatorService.readExpression(str);
                 break;
 
             default:

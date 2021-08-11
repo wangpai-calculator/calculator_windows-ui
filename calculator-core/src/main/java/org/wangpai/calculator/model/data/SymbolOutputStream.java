@@ -1,10 +1,8 @@
 package org.wangpai.calculator.model.data;
 
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

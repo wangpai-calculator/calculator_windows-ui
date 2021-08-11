@@ -1,6 +1,5 @@
 package org.wangpai.calculator.controller;
 
-
 /**
  * 中间控制器。它分为两种：
  * - 非中央控制器。它只做 2 件事情：

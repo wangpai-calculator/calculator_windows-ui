@@ -1,12 +1,11 @@
 package org.wangpai.calculator.model.symbol.operation.junit5;
 
-import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
-import org.wangpai.calculator.model.symbol.operation.Operation;
 
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,44 +15,44 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @since 2021-7-30
  */
-class FigureOperation_Test {
+public class FigureOperation_Test {
     private int firstInt = 234234;
     private int secondInt = 2341;
 
     @Test
-    void templateOperation() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_templateOperation() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(firstInt - secondInt),
                 templateOperation("subtract",
                         new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void add() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_add() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(firstInt + secondInt),
                 add(new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void subtract() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_subtract() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(firstInt - secondInt),
                 subtract(new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void multiply() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_multiply() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(firstInt * secondInt),
                 multiply(new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void divide() {
+    public void test_divide() {
         Throwable throwable = assertThrows(SyntaxException.class,
                 () -> divide(new Figure(firstInt), new Figure(secondInt)));
         assertEquals("错误：整数不支持除法运算", throwable.getMessage());
     }
 
     @Test
-    void divideAndRemainder_Fraction() {
+    public void test_divideAndRemainder_Fraction() {
         var result = FigureOperation.divideAndRemainder(
                 new Figure(firstInt), new Figure(secondInt));
         // 测试商是否正确
@@ -63,7 +62,7 @@ class FigureOperation_Test {
     }
 
     @Test
-    void divideAndRemainder_long() {
+    public void test_divideAndRemainder_long() {
         var result = FigureOperation.divideAndRemainder(
                 new Figure(firstInt), secondInt);
         // 测试商是否正确
@@ -73,47 +72,47 @@ class FigureOperation_Test {
     }
 
     @Test
-    void mod_Fraction() {
+    public void test_mod_Fraction() {
         assertEquals(new Figure(firstInt % secondInt),
                 FigureOperation.mod(
                         new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void mod_long() {
+    public void test_mod_long() {
         assertEquals(new Figure(firstInt % secondInt),
                 FigureOperation.mod(
                         new Figure(firstInt), secondInt));
     }
 
     @Test
-    void modsQuotient_Fraction() {
+    public void test_modsQuotient_Fraction() {
         assertEquals(new Figure(firstInt / secondInt),
                 FigureOperation.modsQuotient(
                         new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void modsQuotient_long() {
+    public void test_modsQuotient_long() {
         assertEquals(new Figure(firstInt / secondInt),
                 FigureOperation.modsQuotient(
                         new Figure(firstInt), secondInt));
     }
 
     @Test
-    void getOpposite_Fraction() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_getOpposite_Fraction() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(-firstInt),
                 FigureOperation.getOpposite(new Figure(firstInt)));
     }
 
     @Test
-    void getOpposite_long() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+    public void test_getOpposite_long() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
         assertEquals(new Figure(-firstInt),
                 FigureOperation.getOpposite(firstInt));
     }
 
     @Test
-    void findGcd() throws NoSuchMethodException, CalculatorException, CloneNotSupportedException, IllegalAccessException {
+    public void test_findGcd() throws NoSuchMethodException, CalculatorException, CloneNotSupportedException, IllegalAccessException {
         assertEquals(findGcd_forTest(
                 new Figure(firstInt), new Figure(secondInt)),
                 FigureOperation.findGcd(
@@ -121,24 +120,22 @@ class FigureOperation_Test {
     }
 
     @Test
-    void findLcm() throws NoSuchMethodException, IllegalAccessException, CalculatorException, InvocationTargetException, CloneNotSupportedException {
+    public void test_findLcm() throws NoSuchMethodException, IllegalAccessException, CalculatorException, InvocationTargetException, CloneNotSupportedException {
         assertEquals(findLcm_forTest(
                 new Figure(firstInt), new Figure(secondInt)),
                 FigureOperation.findLcm(new Figure(firstInt), new Figure(secondInt)));
     }
 
     @Test
-    void power() throws CalculatorException {
+    public void test_power() throws CalculatorException {
         assertEquals(new Figure(8),
                 FigureOperation.power(2, 3));
     }
 
 
-
-
     /**
      * 求两个数的最大公约数。GCD：Greatest Common Divisor
-     *
+     * <p>
      * 注意事项：
      * > 当这两个数只有一个为 0 时，结果为另一个数的绝对值。
      * > 特别地，当这两个数均为 0 时，结果为 0。
@@ -173,10 +170,10 @@ class FigureOperation_Test {
 
     /**
      * 求两个数的最小公倍数。LCM：Least Common Multiple
-     *
+     * <p>
      * 算法如下：先得出这两个数的最大公约数，
-     *         然后将其中一个数除以最大公约数，得到其中一个质因子（prime factor）
-     *         最后将该质因子另外一个没有除以过公约数的数相乘
+     * 然后将其中一个数除以最大公约数，得到其中一个质因子（prime factor）
+     * 最后将该质因子另外一个没有除以过公约数的数相乘
      */
     Figure findLcm_forTest(Figure first, Figure second)
             throws NoSuchMethodException, IllegalAccessException, CalculatorException, CloneNotSupportedException, InvocationTargetException {

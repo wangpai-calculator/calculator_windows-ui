@@ -4,10 +4,15 @@ import org.wangpai.calculator.view.control.Gbc;
 
 import lombok.SneakyThrows;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.plaf.metal.MetalScrollBarUI;
 import javax.swing.plaf.metal.MetalScrollButton;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
 
 /**
  * @since 2021-8-6

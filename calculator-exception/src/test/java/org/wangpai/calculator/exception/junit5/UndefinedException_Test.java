@@ -1,12 +1,12 @@
 package org.wangpai.calculator.exception.junit5;
 
-import org.junit.jupiter.api.Test;
+import org.wangpai.calculator.exception.UndefinedException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.wangpai.calculator.exception.UndefinedException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @since 2021-7-19
@@ -14,12 +14,8 @@ import org.wangpai.calculator.exception.UndefinedException;
 public class UndefinedException_Test {
     private String msg = "错误：发生了未定义异常";
 
-    protected UndefinedException_Test() {
-        super();
-    }
-
     @Test
-    void getInstance_void()
+    public void test_getInstance_void()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         var undefinedInputException = UndefinedException.getInstance();
 
@@ -29,7 +25,7 @@ public class UndefinedException_Test {
     }
 
     @Test
-    void getInstance_String()
+    public void test_getInstance_String()
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         var undefinedInputException = UndefinedException.getInstance(this.msg);
 

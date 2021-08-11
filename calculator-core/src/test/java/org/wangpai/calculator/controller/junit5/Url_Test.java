@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * @since 2021-8-1
  */
-class Url_Test {
+public class Url_Test {
     String urlString = "/first/second/third";
 
     String lowerUrlString = "/second/third";
@@ -21,16 +21,20 @@ class Url_Test {
 
     String[] expectedDirectories = new String[]{"", "first", "second", "third"};
 
-    Url_Test() throws SyntaxException {
+    /**
+     * 因为字段初始化需要抛出异常，所以此构造器不能省略
+     */
+    public Url_Test() throws SyntaxException {
+        super();
     }
 
     @Test
-    void toString_test() {
+    public void test_toString() {
         assertEquals(this.urlString, url.toString());
     }
 
     @Test
-    void getAllLevelsDirectories_void() {
+    public void test_getAllLevelsDirectories_void() {
         var directories = this.url.getAllLevelsDirectories();
 
         /**
@@ -39,30 +43,29 @@ class Url_Test {
         assertNotEquals(directories, this.url.getAllLevelsDirectories());
     }
 
-
     @Test
-    void getFirstLevelDirectory() {
+    public void test_getFirstLevelDirectory() {
         assertEquals(this.expectedDirectories[1], this.url.getFirstLevelDirectory());
     }
 
     @Test
-    void getSecondLevelDirectory() {
+    public void test_getSecondLevelDirectory() {
         assertEquals(this.expectedDirectories[2], this.url.getSecondLevelDirectory());
     }
 
     @Test
-    void generateLowerUrl() throws SyntaxException {
+    public void test_generateLowerUrl() throws SyntaxException {
         assertEquals(lowerUrl, url.generateLowerUrl());
     }
 
 
     @Test
-    void setAllLevelsDirectories() {
+    public void test_setAllLevelsDirectories() {
         // 此测试的正确性与 getAllLevelsDirectories() 等价，于是不再给出
     }
 
     @Test
-    void getAllLevelsDirectories_static() throws SyntaxException {
+    public void test_getAllLevelsDirectories_static() throws SyntaxException {
         var expected = this.expectedDirectories;
         var actual = Url.getAllLevelsDirectories(url);
         var expecedLength = expected.length;

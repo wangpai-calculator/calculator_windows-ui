@@ -8,13 +8,14 @@
     <parent>
         <artifactId>calculator-project</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>1.2</version>
+        <version>2.2</version>
     </parent>
 
     <artifactId>calculator-exception</artifactId>
     <name>calculator-exception</name>
 
     <dependencies>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -23,6 +24,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>
