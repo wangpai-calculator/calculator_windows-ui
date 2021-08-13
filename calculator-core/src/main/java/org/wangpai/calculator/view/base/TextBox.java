@@ -327,6 +327,7 @@ public abstract class TextBox extends JPanel {
      * @since 2021-8-6
      */
     @SneakyThrows
+    @SuppressWarnings("all")
     public TextBox setBarColor(Color color) {
         /**
          * 此处使用反射来强制更改字段值实属迫不得已，

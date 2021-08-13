@@ -1,5 +1,6 @@
 package org.wangpai.calculator.service;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
@@ -12,6 +13,7 @@ import javax.annotation.Resource;
 /**
  * @since 2021-8-1
  */
+@Lazy
 @Scope("singleton")
 @Controller("computingCenter")
 public class ComputingCenter implements TerminalController, MiddleController {

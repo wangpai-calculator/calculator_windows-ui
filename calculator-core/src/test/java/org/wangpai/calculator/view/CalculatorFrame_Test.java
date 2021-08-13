@@ -13,7 +13,7 @@ class CalculatorFrame_Test {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             // 加载包中的所有 bean
-            var ctx = new ClassPathXmlApplicationContext("beanScan.xml");
+            var ctx = new ClassPathXmlApplicationContext("resources/spring/beanScan.xml");
             // 获取一个 CalculatorFrame 对象
             var frame = ctx.getBean("calculatorFrame", CalculatorFrame.class);
 

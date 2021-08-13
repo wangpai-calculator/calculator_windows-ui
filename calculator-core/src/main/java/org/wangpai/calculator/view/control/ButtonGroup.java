@@ -1,5 +1,6 @@
 package org.wangpai.calculator.view.control;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.view.CalculatorMainPanel;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * @since 2021-8-1
  */
+@Lazy
 @Scope("singleton")
 @Component("buttonGroup")
 public final class ButtonGroup extends JPanel implements InitializingBean {

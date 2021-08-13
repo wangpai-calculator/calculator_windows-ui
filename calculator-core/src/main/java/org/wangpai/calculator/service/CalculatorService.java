@@ -1,5 +1,6 @@
 package org.wangpai.calculator.service;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
@@ -32,6 +33,7 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACK
 /**
  * @since 2021-8-1
  */
+@Lazy
 @Scope("singleton")
 @Service("calculatorService")
 public final class CalculatorService {

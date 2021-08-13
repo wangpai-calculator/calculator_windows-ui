@@ -1,5 +1,6 @@
 package org.wangpai.calculator.controller;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -8,6 +9,7 @@ import javax.annotation.Resource;
 /**
  * @since 2021-7-27
  */
+@Lazy
 @Scope("singleton")
 @Controller("dispatcher")
 public class Dispatcher implements MiddleController {

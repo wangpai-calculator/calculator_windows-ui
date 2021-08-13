@@ -1,5 +1,6 @@
 package org.wangpai.calculator.view.output;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.view.CalculatorMainPanel;
 import org.wangpai.calculator.view.base.TextBox;
 
@@ -13,6 +14,7 @@ import java.awt.Font;
 /**
  * @since 2021-8-1
  */
+@Lazy
 @Scope("singleton")
 @Component("promptMsgBox")
 public final class PromptMsgBox extends TextBox implements InitializingBean {

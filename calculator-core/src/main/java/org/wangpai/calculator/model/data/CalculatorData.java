@@ -1,5 +1,6 @@
 package org.wangpai.calculator.model.data;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
@@ -25,6 +26,7 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACK
 /**
  * @since 2021-8-1
  */
+@Lazy
 @Scope("singleton")
 @Repository("calculatorData")
 public final class CalculatorData implements Operable, Cloneable {

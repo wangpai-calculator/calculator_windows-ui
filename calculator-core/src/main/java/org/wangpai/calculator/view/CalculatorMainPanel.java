@@ -1,5 +1,6 @@
 package org.wangpai.calculator.view;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.Dispatcher;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.TerminalController;
@@ -24,6 +25,7 @@ import java.util.Stack;
 /**
  * @since 2021-8-1
  */
+@Lazy
 @Scope("singleton")
 @Controller("calculatorMainPanel")
 public final class CalculatorMainPanel extends JPanel

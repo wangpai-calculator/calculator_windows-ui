@@ -1,5 +1,6 @@
 package org.wangpai.calculator.view.output;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.view.CalculatorMainPanel;
 import org.wangpai.calculator.view.base.TextBox;
 
@@ -13,6 +14,7 @@ import java.awt.Font;
 /**
  * @since 2021-7-24
  */
+@Lazy
 @Scope("singleton")
 @Component("resultBox")
 public final class ResultBox extends TextBox implements InitializingBean {

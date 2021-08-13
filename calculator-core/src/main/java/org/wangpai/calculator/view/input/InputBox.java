@@ -1,5 +1,6 @@
 package org.wangpai.calculator.view.input;
 
+import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.view.CalculatorMainPanel;
@@ -19,6 +20,7 @@ import java.awt.Font;
 /**
  * @since 2021-7-24
  */
+@Lazy
 @Scope("singleton")
 @Component("inputBox")
 public final class InputBox extends TextBox implements InitializingBean {
