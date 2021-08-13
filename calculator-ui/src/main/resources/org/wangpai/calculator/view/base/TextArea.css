@@ -1,0 +1,26 @@
+#component {
+    -fx-font-size: 13px;
+}
+
+.text-area {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, white, transparent, white;
+}
+
+.text-area .content {
+    -fx-background-color: transparent, white, transparent, white;
+}
+
+.text-area:focused {
+    -fx-background-color: transparent, white, transparent, white;
+}
+
+.scroll-bar {
+    -fx-background-color: white;
+    /*-fx-border-color: #decece;*/
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: white;
+    -fx-border-color: #decece;
+}

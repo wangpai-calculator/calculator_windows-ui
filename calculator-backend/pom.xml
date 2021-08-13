@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
         <version>3.0</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>calculator-exception</artifactId>
-    <name>calculator-exception</name>
+    <artifactId>calculator-backend</artifactId>
+    <version>3.0</version>
 
 <!--    <properties>-->
 <!--        <maven.compiler.source>17</maven.compiler.source>-->
 <!--        <maven.compiler.target>17</maven.compiler.target>-->
 <!--    </properties>-->
 
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.wangpai.calculator</groupId>
+            <artifactId>calculator-exception</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -30,6 +33,15 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+
 
     </dependencies>
 

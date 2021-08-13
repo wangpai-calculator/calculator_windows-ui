@@ -5,22 +5,36 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <parent>
         <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
         <version>3.0</version>
     </parent>
 
-    <artifactId>calculator-exception</artifactId>
-    <name>calculator-exception</name>
+    <artifactId>calculator-entrance</artifactId>
+    <name>calculator-entrance</name>
 
 <!--    <properties>-->
 <!--        <maven.compiler.source>17</maven.compiler.source>-->
 <!--        <maven.compiler.target>17</maven.compiler.target>-->
 <!--    </properties>-->
 
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.wangpai.calculator</groupId>
+            <artifactId>calculator-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -32,5 +46,6 @@
         </dependency>
 
     </dependencies>
+
 
 </project>

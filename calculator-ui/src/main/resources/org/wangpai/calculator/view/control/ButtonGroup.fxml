@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Button?>
+
+<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.wangpai.calculator.view.control.ButtonGroup">
+    <children>
+        <GridPane prefHeight="523.0" prefWidth="425.0" alignment="CENTER" gridLinesVisible="false"
+                  fx:id="gridPane">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <VBox.margin>
+                <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+            </VBox.margin>
+            <children>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="1"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="2"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="3"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.rowIndex="1"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="1"
+                        GridPane.rowIndex="1"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="2"
+                        GridPane.rowIndex="1"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="3"
+                        GridPane.rowIndex="1"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.rowIndex="2"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="1"
+                        GridPane.rowIndex="2"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="2"
+                        GridPane.rowIndex="2"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="3"
+                        GridPane.rowIndex="2"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.rowIndex="3"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="1"
+                        GridPane.rowIndex="3"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="2"
+                        GridPane.rowIndex="3"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="3"
+                        GridPane.rowIndex="3"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.rowIndex="4"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="1"
+                        GridPane.rowIndex="4"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="2"
+                        GridPane.rowIndex="4"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="3"
+                        GridPane.rowIndex="4"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.rowIndex="5"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="1"
+                        GridPane.rowIndex="5"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="2"
+                        GridPane.rowIndex="5"/>
+                <Button alignment="CENTER" maxHeight="1E1000" maxWidth="1E1000"
+                        mnemonicParsing="false" stylesheets="@button.css" GridPane.columnIndex="3"
+                        GridPane.rowIndex="5"/>
+            </children>
+        </GridPane>
+    </children>
+</VBox>
+
+
