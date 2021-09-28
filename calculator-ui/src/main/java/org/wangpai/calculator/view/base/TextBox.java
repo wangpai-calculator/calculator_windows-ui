@@ -1,10 +1,10 @@
 package org.wangpai.calculator.view.base;
 
-import javafx.scene.control.TextArea;
+import org.wangpai.calculator.controller.TerminalController;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
-import org.wangpai.calculator.controller.TerminalController;
+import lombok.Setter;
+import javafx.scene.control.TextArea;
 
 /**
  * 关于 JavaFX 的 TextArea 的文本区光标知识介绍：
@@ -18,10 +18,17 @@ import org.wangpai.calculator.controller.TerminalController;
  * @since 2021年9月25日
  */
 public abstract class TextBox implements FxComponent {
-    private TextArea textArea;
-
     @Getter(AccessLevel.PROTECTED)
     private TerminalController controller;
+
+    private TextArea textArea;
+
+    /**
+     * 焦点优先权。此值为 true 的文本框有资格在执行完方法之后，将焦点转移到自身
+     */
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    private boolean focusPriority;
 
     protected TextBox() {
         super();
@@ -67,11 +74,31 @@ public abstract class TextBox implements FxComponent {
      * > 将滚动条拨到最下
      * > 将焦点转移到本文本框
      *
-     * @since 2021-8-6F
+     * 算法如下：
+     * （此算法是利用了方法 this.textArea.appendText 不会使 redo、undo 失效的特性）
+     * 1. 清除文本中的所有内容
+     * 2. 之后，追加新的内容
+     *
+     * @since 2021-8-6
      */
     public TextBox setText(String msg) {
+        this.cleanAllContent().append(msg);
+        if (this.isFocusPriority()) {
+            this.requestFocus();
+        }
+        return this;
+    }
+
+    /**
+     * 原始的 setText 方法。
+     * 此方法会令 redo 与 undo 失效，慎用此方法
+     *
+     * @since 2021-9-27
+     */
+    @Deprecated
+    public final TextBox setTextOriginally(String msg) {
         this.textArea.setText(msg);
-        return this.requestFocus();
+        return this;
     }
 
     /**
@@ -83,31 +110,60 @@ public abstract class TextBox implements FxComponent {
      * > 将滚动条拨到最下
      * > 将焦点转移到本文本框
      *
+     * 此方法不会使 redo 与 undo 失效
+     *
      * @since 2021-8-6
      */
     public TextBox append(String msg) {
-        if (this.getText().equals("")) {
-            this.textArea.setText(msg);
-        } else {
-            this.textArea.appendText(msg);
+        this.textArea.appendText(msg);
+        if (this.isFocusPriority()) {
+            this.requestFocus();
         }
-
-        return this.requestFocus();
+        return this;
     }
 
     /**
-     * 删除选中字符，并插入指它字符
+     * 删除选中字符，并插入指定字符
      *
      * @since 2021-8-5
      */
     public TextBox insert(String str) {
-        if (this.getSelectedText().equals("")) {
-            return this.addCursorStr(str);
-        } else {
-            return this.replaceSelectedText(str);
+        this.replaceSelectedText(str);
+        if (this.isFocusPriority()) {
+            this.requestFocus();
         }
+        return this;
     }
 
+    /**
+     * @since 2021-9-27
+     */
+    public TextBox undo() {
+        this.textArea.undo();
+        if (this.isFocusPriority()) {
+            this.requestFocus();
+        }
+        return this;
+    }
+
+    /**
+     * @since 2021-9-27
+     */
+    public TextBox redo() {
+        this.textArea.redo();
+        if (this.isFocusPriority()) {
+            this.requestFocus();
+        }
+        return this;
+    }
+
+    /**
+     * @since 2021年9月26日
+     */
+    public TextBox requestFocus() {
+        this.textArea.requestFocus();
+        return this;
+    }
 
     /**
      * 此方法不会返回 null。使用前应注意判空：this.getSelectedText().equals("")
@@ -120,14 +176,6 @@ public abstract class TextBox implements FxComponent {
             return "";
         }
         return this.textArea.getSelectedText();
-    }
-
-    /**
-     * @since 2021年9月26日
-     */
-    public TextBox requestFocus() {
-        this.textArea.requestFocus();
-        return this;
     }
 
     /**
@@ -169,34 +217,137 @@ public abstract class TextBox implements FxComponent {
      * 在光标后添加字符
      *
      * @since 2021-8-5
+     * @lastModified 2021-9-27
      */
     public TextBox addCursorStr(String str) {
-        var caretPosition = this.getCaretPosition();
-        var originText = this.getText();
-        var result = originText.substring(0, caretPosition)
-                + str
-                + originText.substring(caretPosition);
-        return this.setText(result).setCaretPosition(caretPosition + str.length());
+        this.textArea.insertText(this.getCaretPosition(), str);
+        return this;
     }
 
     /**
-     * 删除选中文本并用指它字符替换。如果没有选中文本，不会发生任何效果，也不会引发异常
+     * @since 2021-9-27
+     */
+    public TextBox replaceText(int front, int end, String str) {
+        this.textArea.replaceText(front, end, str);
+        return this;
+    }
+
+    /**
+     * 删除选中文本并用指定字符替换。如果没有选中文本，相当于直接插入，不会引发异常
      *
-     * 算法：
-     * 1. 获得选中文本的首尾坐标。
-     * 2. 根据此坐标截取文本框中选中文本左边和右边的文本。
-     * 3. 将截取到的这两部分文本中间加上指定文本合并并设置在文本框中
-     * 4. 将光标设置在指定文本的尾端
+     * @since 2021-8-5
+     * @lastModified 2021-9-27
+     */
+    public TextBox replaceSelectedText(String str) {
+        this.textArea.replaceSelection(str);
+        return this;
+    }
+
+    /**
+     * @return 返回选中文本的首尾坐标。
+     * 起点坐标为第一个被选中的文本坐标，从 0 开始。
+     * 终点坐标为第一个没有被选中的文本坐标
+     * 如果没有选中文本，这两个坐标将设置为光标的坐标
      *
      * @since 2021-8-5
      */
-    @SneakyThrows
-    public TextBox replaceSelectedText(String str) {
-        var coordinate = this.getSelectedCoordinate();
-        var frontText = this.getFrontText(coordinate[0]);
-        var endText = this.getEndText(coordinate[1]);
-        return this.setText(frontText + str + endText)
-                .setCaretPosition(coordinate[0] + str.length());
+    @Deprecated
+    public int[] getSelectedCoordinate() {
+        var coordinate = this.textArea.getSelection();
+        return new int[]{coordinate.getStart(),
+                coordinate.getEnd()};
+    }
+
+    /**
+     * 为避免循环依赖，此方法的实现不能依赖本类的方法
+     *
+     * @since 2021-8-6
+     * @lastModified 2021-9-27
+     */
+    public TextBox cleanAllContent() {
+        this.deleteRangeText(0, this.textArea.getText().length());
+        return this;
+    }
+
+    /**
+     * @since 2021-8-6
+     */
+    public void selectAll() {
+        this.textArea.selectAll();
+        this.requestFocus(); // 焦点转移到文本区
+    }
+
+    /**
+     * 删除选中文本或光标所在位置之前最近的一个字符
+     *
+     * @since 2021-8-5
+     */
+    public TextBox delete() {
+        this.requestFocus();
+        if (this.getSelectedText().equals("")) {
+            return this.deleteCursorChar();
+        } else {
+            return this.deleteSelectedText();
+        }
+    }
+
+    /**
+     * @since 2021-9-27
+     */
+    public TextBox deleteRangeText(int front, int end) {
+        this.textArea.deleteText(front, end);
+        return this;
+    }
+
+    /**
+     * 删除光标所在位置之前最近的一个字符
+     *
+     * @since 2021-8-5
+     */
+    public TextBox deleteCursorChar() {
+        this.requestFocus();
+        var caretPosition = this.getCaretPosition();
+
+        // 当光标在开头时，什么也不干
+        if (caretPosition == 0) {
+            return this;
+        }
+
+        return this.deleteRangeText(caretPosition - 1, caretPosition);
+    }
+
+    /**
+     * 删除选中文本。如果没有选中文本，不会发生任何效果，也不会引发异常
+     *
+     * @since 2021-8-5
+     */
+    public TextBox deleteSelectedText() {
+        return this.replaceSelectedText("");
+    }
+
+    /**
+     * @since 2021-9-26
+     */
+    private String getFrontText(int gapOrder) {
+        return this.textArea.getText(0, gapOrder);
+    }
+
+    /**
+     * @since 2021-9-26
+     */
+    private String getEndText(int gapOrder) {
+        return this.textArea.getText(gapOrder, this.textArea.getText().length());
+    }
+
+    /**
+     * 将滚动条设置在底部
+     *
+     * @since 2021-8-6
+     * @lastModified 2021-9-26
+     */
+    public TextBox setBarAtTheBottom() {
+        this.textArea.positionCaret(this.textArea.getText().length());
+        return this;
     }
 
     /**
@@ -219,108 +370,6 @@ public abstract class TextBox implements FxComponent {
         }
 
         return position;
-    }
-
-    /**
-     * @return 返回选中文本的首尾坐标。
-     * 起点坐标为第一个被选中的文本坐标，从 0 开始。
-     * 终点坐标为第一个没有被选中的文本坐标
-     * 如果没有选中文本，这两个坐标将设置为光标的坐标
-     * @since 2021-8-5
-     */
-    public int[] getSelectedCoordinate() {
-        var coordinate = this.textArea.getSelection();
-        return new int[]{coordinate.getStart(),
-                coordinate.getEnd()};
-    }
-
-    /**
-     * @since 2021-8-6
-     */
-    public TextBox cleanAllContent() {
-        return this.setText("");
-    }
-
-    /**
-     * @since 2021-8-6
-     */
-    public void selectAll() {
-        this.textArea.selectAll();
-        this.requestFocus(); // 焦点转移到文本区
-    }
-
-    /**
-     * 删除选中文本或光标所在位置之前最近的一个字符
-     *
-     * @since 2021-8-5
-     */
-    public TextBox delete() {
-        if (this.getSelectedText().equals("")) {
-            return this.deleteCursorChar();
-        } else {
-            return this.deleteSelectedText();
-        }
-    }
-
-    /**
-     * 删除光标所在位置之前最近的一个字符
-     *
-     * @since 2021-8-5
-     */
-    public TextBox deleteCursorChar() {
-        var caretPosition = this.getCaretPosition();
-        this.requestFocus();
-
-        // 当光标在开头时，什么也不干
-        if (caretPosition == 0) {
-            return this;
-        }
-
-        var originText = this.getText();
-        var result = originText.substring(0, caretPosition - 1)
-                + originText.substring(caretPosition);
-        return this.setText(result).setCaretPosition(caretPosition - 1);
-    }
-
-    /**
-     * 删除选中文本。如果没有选中文本，不会发生任何效果，也不会引发异常
-     *
-     * 算法：
-     * 1. 获得选中文本的首尾坐标。
-     * 2. 根据此坐标截取文本框中选中文本左边和右边的文本。
-     * 3. 将截取到的这两部分文本拼接并设置在文本框中
-     * 4. 将光标设置为选中文本的首部坐标
-     *
-     * @since 2021-8-5
-     */
-    @SneakyThrows
-    public TextBox deleteSelectedText() {
-        return this.replaceSelectedText("");
-    }
-
-    /**
-     * @since 2021-9-26
-     */
-    private String getFrontText(int gapOrder){
-        return this.textArea.getText(0, gapOrder);
-    }
-
-    /**
-     * @since 2021-9-26
-     */
-    private String getEndText(int gapOrder) {
-        return this.textArea.getText(gapOrder, this.textArea.getText().length());
-    }
-
-    /**
-     * 将滚动条设置在底部
-     *
-     * @since 2021-8-6
-     * @lastModified 2021-9-26
-     */
-    public TextBox setBarAtTheBottom() {
-        this.textArea.positionCaret(this.textArea.getText().length());
-        return this;
     }
 
     /**

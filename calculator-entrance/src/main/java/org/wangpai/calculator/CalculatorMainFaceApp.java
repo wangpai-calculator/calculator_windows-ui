@@ -1,13 +1,17 @@
 package org.wangpai.calculator;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.wangpai.calculator.view.CalculatorMainFaceLinker;
 
 import java.io.IOException;
+
+import org.wangpai.calculator.model.universal.CentralDatabase;
+import org.wangpai.calculator.view.mainface.CalculatorMainFaceLinker;
+import org.wangpai.calculator.view.wrapped.SceneWrapped;
 
 /**
  * 此类必须位于一个独立的文件，必须声明为 public 类
@@ -25,7 +29,7 @@ public class CalculatorMainFaceApp extends Application {
          */
         FXMLLoader fxmlLoader = new FXMLLoader(
                 CalculatorMainFaceLinker.class.getResource("CalculatorMainFace.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = new SceneWrapped(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
 
@@ -42,6 +46,13 @@ public class CalculatorMainFaceApp extends Application {
                 .getResourceAsStream("image/calculatorImage.png");
         stage.getIcons().add(new Image(imageStream));
         stage.setTitle("王牌计算器");
+
+        stage.setOnCloseRequest(event -> {
+            CentralDatabase.multithreadingClosed();
+            Platform.exit();
+        });
+
+        System.out.println("UI 启动用时：" + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
     }
 
     public static void main(String[] args) {

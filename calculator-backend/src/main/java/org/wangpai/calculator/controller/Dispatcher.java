@@ -1,10 +1,10 @@
 package org.wangpai.calculator.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import javax.annotation.Resource;
 
 /**
  * @since 2021-7-27
@@ -13,10 +13,12 @@ import javax.annotation.Resource;
 @Scope("singleton")
 @Controller("dispatcher")
 public class Dispatcher implements MiddleController {
-    @Resource(name = "calculatorMainFace")
+    @Qualifier("calculatorMainFace")
+    @Autowired
     private MiddleController calculatorMainFace;
 
-    @Resource(name = "computingCenter")
+    @Qualifier("computingCenter")
+    @Autowired
     private MiddleController computingCenter;
 
     @Override

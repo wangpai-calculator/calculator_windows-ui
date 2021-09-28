@@ -1,15 +1,16 @@
 package org.wangpai.calculator.view.output;
 
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.model.universal.CentralDatabase;
-import org.wangpai.calculator.view.base.TerminalLinker;
 import org.wangpai.calculator.view.base.TextBoxLinker;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import javafx.application.Platform;
 
 /**
  * @since 2021-7-24
@@ -18,7 +19,8 @@ import javax.annotation.Resource;
 @Scope("singleton")
 @Component("resultBox")
 public class ResultBoxLinker extends TextBoxLinker {
-    @Resource(name = "calculatorMainFace")
+    @Qualifier("calculatorMainFace")
+    @Autowired
     private MiddleController upperController;
 
     private ResultBox resultBox;
@@ -86,21 +88,18 @@ public class ResultBoxLinker extends TextBoxLinker {
 
     @Override
     public void receive(Url url, String str) {
-        switch (url.getFirstLevelDirectory()) {
-            case "append":
-                this.resultBox.append(str);
-                break;
-            case "setText":
-                this.resultBox.setText(str);
-                break;
-            case "cleanAllContent":
-                this.resultBox.cleanAllContent();
-                break;
-        }
+        Platform.runLater(() -> {
+            switch (url.getFirstLevelDirectory()) {
+                case "append":
+                    this.resultBox.append(str);
+                    break;
+                case "setText":
+                    this.resultBox.setText(str);
+                    break;
+                case "cleanAllContent":
+                    this.resultBox.cleanAllContent();
+                    break;
+            }
+        });
     }
-
-
-
-
-
 }

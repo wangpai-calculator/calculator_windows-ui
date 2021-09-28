@@ -31,5 +31,12 @@ public abstract class TerminalLinker extends SpringLinker implements TerminalCon
         }
     }
 
+    /**
+     * 注意，如果此方法涉及更新 JavaFX 的 UI，则要将更新 UI 的代码置于以下代码中：
+     * Platform.runLater(() -> {...});
+     * 这里为了保护 JavaFX UI 的线程安全
+     *
+     * @since 2021-9-28
+     */
     public abstract void receive(Url url, String str);
 }

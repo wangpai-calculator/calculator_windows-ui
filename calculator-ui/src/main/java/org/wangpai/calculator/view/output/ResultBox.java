@@ -3,15 +3,11 @@ package org.wangpai.calculator.view.output;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import lombok.AccessLevel;
-import lombok.Getter;
-import org.wangpai.calculator.view.base.TextBox;
-
 import java.net.URL;
 import java.util.ResourceBundle;
+import org.wangpai.calculator.view.base.TextBox;
 
 public class ResultBox extends TextBox {
-    @Getter(AccessLevel.PACKAGE)
     @FXML
     private VBox textareaVBox;
 
@@ -26,6 +22,7 @@ public class ResultBox extends TextBox {
         }
         super.initSuperTextArea(this.textArea);
         ResultBoxLinker.linking(this);
+        this.setFocusPriority(false);
     }
 
     /**
@@ -33,7 +30,7 @@ public class ResultBox extends TextBox {
      */
     @Override
     public ResultBox setText(String msg) {
-        this.textArea.setText(msg);
+        super.setText(msg);
         this.setBarAtTheBottom(); // 将滚动条拨到最下
         return this;
     }
@@ -43,11 +40,7 @@ public class ResultBox extends TextBox {
      */
     @Override
     public ResultBox append(String msg) {
-        if (this.getText().equals("")) {
-            this.textArea.setText(msg);
-        } else {
-            this.textArea.appendText(msg);
-        }
+        super.append(msg);
         this.setBarAtTheBottom(); // 将滚动条拨到最下
         return this;
     }

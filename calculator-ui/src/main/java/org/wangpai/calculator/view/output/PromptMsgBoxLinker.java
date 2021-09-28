@@ -7,11 +7,12 @@ import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TextBoxLinker;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
+import javafx.application.Platform;
 import java.util.Stack;
 
 /**
@@ -21,7 +22,8 @@ import java.util.Stack;
 @Scope("singleton")
 @Component("promptMsgBox")
 public class PromptMsgBoxLinker extends TextBoxLinker {
-    @Resource(name = "calculatorMainFace")
+    @Qualifier("calculatorMainFace")
+    @Autowired
     private MiddleController upperController;
 
     private PromptMsgBox promptMsgBox;
@@ -126,16 +128,18 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
 
     @Override
     public void receive(Url url, String str) {
-        switch (url.getFirstLevelDirectory()) {
-            case "append":
-                this.promptMsgBox.append(str);
-                break;
-            case "setText":
-                this.promptMsgBox.setText(str);
-                break;
-            case "cleanAllContent":
-                this.promptMsgBox.cleanAllContent();
-                break;
-        }
+        Platform.runLater(() -> {
+            switch (url.getFirstLevelDirectory()) {
+                case "append":
+                    this.promptMsgBox.append(str);
+                    break;
+                case "setText":
+                    this.promptMsgBox.setText(str);
+                    break;
+                case "cleanAllContent":
+                    this.promptMsgBox.cleanAllContent();
+                    break;
+            }
+        });
     }
 }

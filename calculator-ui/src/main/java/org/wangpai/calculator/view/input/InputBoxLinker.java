@@ -1,16 +1,16 @@
 package org.wangpai.calculator.view.input;
 
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TerminalLinker;
 
-
-import javax.annotation.Resource;
-
+import javafx.application.Platform;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * @since 2021-7-24
@@ -19,7 +19,8 @@ import javax.annotation.Resource;
 @Scope("singleton")
 @Component("inputBox")
 public final class InputBoxLinker extends TerminalLinker {
-    @Resource(name = "calculatorMainFace")
+    @Qualifier("calculatorMainFace")
+    @Autowired
     private MiddleController upperController;
 
     private InputBox inputBox;
@@ -87,28 +88,39 @@ public final class InputBoxLinker extends TerminalLinker {
 
     @Override
     public void receive(Url url, String str) {
-        switch (url.getFirstLevelDirectory()) {
-            case "insert":
-                this.inputBox.insert(str);
-                break;
-            case "leftShift":
-                this.inputBox.leftShift();
-                break;
-            case "rightShift":
-                this.inputBox.rightShift();
-                break;
-            case "delete":
-                this.inputBox.delete();
-                break;
-            case "selectAll":
-                this.inputBox.selectAll();
-                break;
-            case "setText":
-                this.inputBox.setText(str);
-                break;
-            case "cleanAllContent":
-                this.inputBox.cleanAllContent();
-                break;
-        }
+        Platform.runLater(() -> {
+            switch (url.getFirstLevelDirectory()) {
+                case "insert":
+                    inputBox.insert(str);
+                    break;
+                case "leftShift":
+                    inputBox.leftShift();
+                    break;
+                case "rightShift":
+                    inputBox.rightShift();
+                    break;
+                case "delete":
+                    inputBox.delete();
+                    break;
+                case "selectAll":
+                    inputBox.selectAll();
+                    break;
+                case "setText":
+                    inputBox.setText(str);
+                    break;
+                case "cleanAllContent":
+                    inputBox.cleanAllContent();
+                    break;
+                case "undo":
+                    inputBox.undo();
+                    break;
+                case "redo":
+                    inputBox.redo();
+                    break;
+                case "focus":
+                    inputBox.requestFocus();
+                    break;
+            }
+        });
     }
 }

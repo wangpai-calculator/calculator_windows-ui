@@ -26,7 +26,9 @@ public interface TerminalController extends Controller{
     /**
      * 含义：发送给最终目标的函数。最终目标是接收者
      *
-     * 用法：此方法只能由终端控制器自己的方法 send、passDown 调用，不能由其它控制器调用
+     * 用法：
+     * 此方法只能由终端控制器自己的方法 send、passDown 调用，不能由其它控制器调用。
+     * 此方法将根据 data 的类型将数据转发给相应的更具体的 receive 方法
      */
     void receive(Url url, Object data);
 }

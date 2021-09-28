@@ -24,5 +24,4 @@ public abstract class SpringLinker implements InitializingBean, MiddleController
 
     @Override
     public abstract void passDown(Url url, Object data, MiddleController upperController);
-
 }

@@ -1,6 +1,5 @@
 package org.wangpai.calculator.service;
 
-import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
@@ -17,8 +16,10 @@ import org.wangpai.calculator.model.symbol.operator.Operator;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -37,7 +38,8 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACK
 @Scope("singleton")
 @Service("calculatorService")
 public final class CalculatorService {
-    @Resource(name = "computingCenter")
+    @Qualifier("computingCenter")
+    @Autowired
     private TerminalController controller;
 
     private static int calculationTimes = 0;

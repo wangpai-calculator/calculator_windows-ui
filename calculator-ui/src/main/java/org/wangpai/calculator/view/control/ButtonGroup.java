@@ -2,17 +2,18 @@ package org.wangpai.calculator.view.control;
 
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.exception.ConflictException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
+import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.FxComponent;
 import org.wangpai.calculator.view.base.SpringLinker;
 
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
-import lombok.AccessLevel;
-import lombok.Getter;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import lombok.SneakyThrows;
 
 import java.net.URL;
@@ -24,7 +25,6 @@ import java.util.ResourceBundle;
 public class ButtonGroup implements FxComponent {
     private TerminalController controller;
 
-    @Getter(AccessLevel.PACKAGE)
     @FXML
     private GridPane gridPane;
 
@@ -35,6 +35,9 @@ public class ButtonGroup implements FxComponent {
 
     // 有实际意义的按钮，非功能键
     private List<Button> practicalButton;
+
+    // 一些未设置成实际按钮的功能。此功能也可以设计成快捷键来使用
+    private List<Button> concealedFunctions;
 
     /**
      * 规定：
@@ -65,13 +68,42 @@ public class ButtonGroup implements FxComponent {
                     "⟳",
                     Symbol.EQUAL.toString()}};
 
+    /**
+     * 此方法源自接口，无法设置为包可见
+     *
+     * @since 2021年9月25日
+     */
+    @Override
+    public void setLinker(SpringLinker linker) {
+        if (linker instanceof TerminalController) {
+            this.controller = (TerminalController) linker;
+        }
+    }
+
+    @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ButtonGroupLinker.linking(this);
+
         final int rowLength = labels.length;
         final int columnLength = labels[0].length;
         this.buttons = new Button[rowLength][columnLength];
         this.functionButtons = new ArrayList<>();
         this.practicalButton = new ArrayList<>();
+        this.concealedFunctions =new ArrayList<>();
+
+        /**
+         * 将这些对象置于全局容器中，供其它地方的类使用
+         */
+        var container = CentralDatabase.getContainer();
+        String[] keys = {"buttons", "functionButtons", "practicalButton", "concealedFunctions"};
+        Object[] values = {this.buttons, this.functionButtons, this.practicalButton, this.concealedFunctions};
+        for (int order = 0; order < keys.length; ++order) {
+            if (container.containsKey(keys[order])) {
+                throw new ConflictException("键" + keys[order] + "已存在");
+            }
+            container.put(keys[order], values[order]);
+        }
 
         var children = gridPane.getChildren();
         Iterator iterator = children.iterator();
@@ -96,8 +128,6 @@ public class ButtonGroup implements FxComponent {
                 }
             }
         }
-
-        ButtonGroupLinker.linking(this);
 
         for (var button : this.practicalButton) {
             button.setOnAction(new EventHandler<ActionEvent>() {
@@ -128,21 +158,52 @@ public class ButtonGroup implements FxComponent {
                         case "☒":
                             controller.send(new Url("/view/inputBox/delete"), str);
                             break;
+                        case "⟲":
+                            controller.send(new Url("/view/inputBox/undo"), str);
+                            break;
+                        case "⟳":
+                            controller.send(new Url("/view/inputBox/redo"), str);
+                            break;
                     }
                 }
             });
         } // for-each
+
+        // 设置特殊隐藏功能
+        this.setConcealedFunctions();
     }
 
     /**
-     * 此方法源自接口，无法设置为包可见
+     * 设置特殊隐藏功能
      *
-     * @since 2021年9月25日
+     * @since 2021-9-28
      */
-    @Override
-    public void setLinker(SpringLinker linker) {
-        if (linker instanceof TerminalController) {
-            this.controller = (TerminalController) linker;
-        }
+    private void setConcealedFunctions(){
+        this.setFocusFunction();
+    }
+
+    /**
+     * 设置聚焦功能
+     *
+     * @since 2021-9-28
+     */
+    private void setFocusFunction() {
+        Button concealedButton = new Button("focus");
+        this.concealedFunctions.add(concealedButton);
+        concealedButton.setOnAction(new EventHandler<ActionEvent>() {
+            @SneakyThrows // 此处不能简写为 lambda 表达式
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                controller.send(new Url("/view/inputBox/focus"), "");
+            }
+        });
+    }
+
+    /**
+     * 注意：Scene 一般等到它之中的所有组件初始化之后才初始化，
+     * 因此，在本组件刚初始化时，Scene 可能为 null
+     */
+    private Scene getScene() {
+        return this.gridPane.getScene();
     }
 }

@@ -1,21 +1,15 @@
 package org.wangpai.calculator.view.control;
 
-import org.springframework.context.annotation.Lazy;
 import org.wangpai.calculator.controller.MiddleController;
-import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.model.universal.CentralDatabase;
-import org.wangpai.calculator.view.CalculatorMainFaceLinker;
+import org.wangpai.calculator.view.base.TerminalLinker;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.wangpai.calculator.view.base.FxComponent;
-import org.wangpai.calculator.view.base.SpringLinker;
-import org.wangpai.calculator.view.base.TerminalLinker;
-import org.wangpai.calculator.view.base.TextBoxLinker;
-import org.wangpai.calculator.view.input.InputBox;
-
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @since 2021-8-1
@@ -24,7 +18,8 @@ import javax.annotation.Resource;
 @Scope("singleton")
 @Component("buttonGroup")
 public final class ButtonGroupLinker extends TerminalLinker {
-    @Resource(name = "calculatorMainFace")
+    @Qualifier("calculatorMainFace")
+    @Autowired
     private MiddleController upperController;
 
     private ButtonGroup buttonGroup;

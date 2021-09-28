@@ -4,11 +4,11 @@ import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import javax.annotation.Resource;
 
 /**
  * @since 2021-8-1
@@ -17,10 +17,12 @@ import javax.annotation.Resource;
 @Scope("singleton")
 @Controller("computingCenter")
 public class ComputingCenter implements TerminalController, MiddleController {
-    @Resource(name = "dispatcher")
+    @Qualifier("dispatcher")
+    @Autowired
     private MiddleController upperController;
 
-    @Resource(name = "calculatorService")
+    @Qualifier("calculatorService")
+    @Autowired
     private CalculatorService calculatorService;
 
     @Override

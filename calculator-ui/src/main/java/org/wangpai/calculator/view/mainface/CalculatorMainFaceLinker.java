@@ -1,7 +1,8 @@
-package org.wangpai.calculator.view;
+package org.wangpai.calculator.view.mainface;
 
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.SpringLinker;
 import org.wangpai.calculator.view.control.ButtonGroupLinker;
 import org.wangpai.calculator.view.input.InputBoxLinker;
@@ -11,31 +12,71 @@ import org.wangpai.calculator.view.output.ResultBoxLinker;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Lazy
 @Scope("singleton")
 @Controller("calculatorMainFace")
 public class CalculatorMainFaceLinker extends SpringLinker implements MiddleController {
-    @Resource(name = "dispatcher")
+    @Qualifier("dispatcher")
+    @Autowired
     private MiddleController upperController;
 
-    @Resource(name = "buttonGroup")
+    @Qualifier("buttonGroup")
+    @Autowired
     private ButtonGroupLinker buttonGroup;
 
-    @Resource(name = "inputBox")
+    @Qualifier("inputBox")
+    @Autowired
     private InputBoxLinker inputBox;
 
-    @Resource(name = "resultBox")
+    @Qualifier("resultBox")
+    @Autowired
     private ResultBoxLinker resultBox;
 
-    @Resource(name = "promptMsgBox")
+    @Qualifier("promptMsgBox")
+    @Autowired
     private PromptMsgBoxLinker promptMsgBox;
+
+    private CalculatorMainFace calculatorMainFace;
 
     @Override
     public void afterPropertiesSet() {
         // 敬请期待
     }
+
+    /**
+     * 此方法为包可见
+     *
+     * @since 2021-9-27
+     */
+    static CalculatorMainFaceLinker getLinker() {
+        return CentralDatabase.getSpringContext()
+                .getBean("calculatorMainFace", CalculatorMainFaceLinker.class);
+    }
+
+    /**
+     * 此方法为包可见
+     *
+     * @since 2021-9-27
+     */
+    void bindLinker(CalculatorMainFace calculatorMainFace) {
+        this.calculatorMainFace = calculatorMainFace;
+        this.calculatorMainFace.setLinker(this);
+    }
+
+    /**
+     * 此方法为包可见
+     * 此方法必须要先于本类的其它方法被调用
+     * 使用本方法可以免除使用方法 bindLinker、getLinker
+     *
+     * @since 2021-9-27
+     */
+    static void linking(CalculatorMainFace calculatorMainFace) {
+        CalculatorMainFaceLinker.getLinker().bindLinker(calculatorMainFace);
+    }
+
 
     @Override
     protected MiddleController getUpperController() {

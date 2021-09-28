@@ -8,17 +8,10 @@
     <parent>
         <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>3.0</version>
+        <version>3.1</version>
     </parent>
 
     <artifactId>calculator-entrance</artifactId>
-    <name>calculator-entrance</name>
-
-<!--    <properties>-->
-<!--        <maven.compiler.source>17</maven.compiler.source>-->
-<!--        <maven.compiler.target>17</maven.compiler.target>-->
-<!--    </properties>-->
-
 
     <dependencies>
 
@@ -46,6 +39,5 @@
         </dependency>
 
     </dependencies>
-
 
 </project>
