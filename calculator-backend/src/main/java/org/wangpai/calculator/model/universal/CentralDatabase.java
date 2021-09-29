@@ -58,10 +58,15 @@ public class CentralDatabase {
             synchronized (LOCK) {
                 // 第二重判断
                 if (CentralDatabase.springContext == null) {
+                    System.out.println("开始初始化 Spring Bean。时间："
+                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
 
                     // Spring 的此路径在 IntelliJ IDEA 中是以资源目录 resources 为基准的
                     CentralDatabase.springContext =
                             new ClassPathXmlApplicationContext("spring/beanScan.xml");
+
+                    System.out.println("Spring Bean 初始化结束。时间："
+                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
                 }
             }
         }
@@ -105,6 +110,7 @@ public class CentralDatabase {
                 // 第二重判断
                 if (CentralDatabase.executor == null) {
                     CentralDatabase.executor = Executors.newCachedThreadPool();
+//                    CentralDatabase.executor = Executors.newFixedThreadPool(1);
                 }
             }
         }

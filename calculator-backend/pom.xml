@@ -8,7 +8,7 @@
     <parent>
         <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>3.1</version>
+        <version>3.2</version>
     </parent>
 
     <artifactId>calculator-backend</artifactId>

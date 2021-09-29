@@ -52,7 +52,7 @@ public class CalculatorMainFaceApp extends Application {
             Platform.exit();
         });
 
-        System.out.println("UI 启动用时：" + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+        System.out.println(">>> UI 启动用时：" + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
     }
 
     public static void main(String[] args) {

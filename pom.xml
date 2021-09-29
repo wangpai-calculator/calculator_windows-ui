@@ -8,7 +8,7 @@
     <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <groupId>org.wangpai.calculator</groupId>
     <artifactId>calculator-windows</artifactId>
-    <version>3.1</version>
+    <version>3.2</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -19,20 +19,20 @@
     </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project_version>3.1</project_version>
-        <openjfx.version>17-ea+11</openjfx.version>
-        <junit.version>5.8.0-M1</junit.version>
-        <spring.version>5.2.9.RELEASE</spring.version>
-        <projectlombok.version>1.18.20</projectlombok.version>
+        <project_version>3.2</project_version>
 
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+
+        <junit.version>5.8.0-M1</junit.version>
+        <projectlombok.version>1.18.20</projectlombok.version>
+        <openjfx.version>17-ea+11</openjfx.version>
+        <spring.version>5.2.9.RELEASE</spring.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.wangpai.calculator</groupId>
                 <artifactId>calculator-entrance</artifactId>
@@ -55,6 +55,18 @@
             </dependency>
 
             <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${projectlombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
                 <version>${openjfx.version}</version>
@@ -64,19 +76,6 @@
                 <artifactId>javafx-fxml</artifactId>
                 <version>${openjfx.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${projectlombok.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-
             <!-- 提供注解 @Controller 等 -->
             <dependency>
                 <groupId>org.springframework</groupId>

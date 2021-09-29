@@ -1,10 +1,13 @@
 package org.wangpai.calculator.view.control;
 
+import javafx.application.Platform;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.ConflictException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.universal.CentralDatabase;
+import org.wangpai.calculator.model.universal.Function;
+import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.FxComponent;
 import org.wangpai.calculator.view.base.SpringLinker;
 
@@ -80,97 +83,115 @@ public class ButtonGroup implements FxComponent {
         }
     }
 
-    @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ButtonGroupLinker.linking(this);
+        var buttonGroup = this;
+        // 懒执行
+        Multithreading.execute(new Function() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @SneakyThrows
+                    @Override
+                    public void run() {
+                        System.out.println("开始初始化 ButtonGroup。时间："
+                                + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
 
-        final int rowLength = labels.length;
-        final int columnLength = labels[0].length;
-        this.buttons = new Button[rowLength][columnLength];
-        this.functionButtons = new ArrayList<>();
-        this.practicalButton = new ArrayList<>();
-        this.concealedFunctions =new ArrayList<>();
+                        final int rowLength = labels.length;
+                        final int columnLength = labels[0].length;
+                        buttonGroup.buttons = new Button[rowLength][columnLength];
+                        buttonGroup.functionButtons = new ArrayList<>();
+                        buttonGroup.practicalButton = new ArrayList<>();
+                        buttonGroup.concealedFunctions = new ArrayList<>();
 
-        /**
-         * 将这些对象置于全局容器中，供其它地方的类使用
-         */
-        var container = CentralDatabase.getContainer();
-        String[] keys = {"buttons", "functionButtons", "practicalButton", "concealedFunctions"};
-        Object[] values = {this.buttons, this.functionButtons, this.practicalButton, this.concealedFunctions};
-        for (int order = 0; order < keys.length; ++order) {
-            if (container.containsKey(keys[order])) {
-                throw new ConflictException("键" + keys[order] + "已存在");
-            }
-            container.put(keys[order], values[order]);
-        }
+                        /**
+                         * 将这些对象置于全局容器中，供其它地方的类使用
+                         */
+                        var container = CentralDatabase.getContainer();
+                        String[] keys = {"buttons", "functionButtons", "practicalButton", "concealedFunctions"};
+                        Object[] values = {buttonGroup.buttons, buttonGroup.functionButtons,
+                                buttonGroup.practicalButton, buttonGroup.concealedFunctions};
+                        for (int order = 0; order < keys.length; ++order) {
+                            if (container.containsKey(keys[order])) {
+                                throw new ConflictException("键" + keys[order] + "已存在");
+                            }
+                            container.put(keys[order], values[order]);
+                        }
 
-        var children = gridPane.getChildren();
-        Iterator iterator = children.iterator();
-        for (int row = 0; row < rowLength; ++row) {
-            for (int column = 0; column < columnLength; ++column) {
-                var button = (Button) iterator.next();
-                var label = labels[row][column];
+                        var children = gridPane.getChildren();
+                        Iterator iterator = children.iterator();
+                        for (int row = 0; row < rowLength; ++row) {
+                            for (int column = 0; column < columnLength; ++column) {
+                                var button = (Button) iterator.next();
+                                var label = labels[row][column];
 
-                button.setText(label);
-                // 设置击键时的颜色变化。击键后按键变为灰色
-                button.setOnMousePressed(event -> button.setStyle("-fx-background-color: grey"));
-                // 将 Style 设置为空串时，JavaFX 会为之恢复之前的 Style
-                button.setOnMouseReleased(event -> button.setStyle(""));
+                                button.setText(label);
+                                // 设置击键时的颜色变化。击键后按键变为灰色
+                                button.setOnMousePressed(event -> button.setStyle("-fx-background-color: grey"));
+                                // 将 Style 设置为空串时，JavaFX 会为之恢复之前的 Style
+                                button.setOnMouseReleased(event -> button.setStyle(""));
 
-                this.buttons[row][column] = button;
-                if (Symbol.getEnum(label) != null) {
-                    this.practicalButton.add(button);
-                } else if (!label.equals("null")) {
-                    this.functionButtons.add(button);
-                } else {
-                    // 未定义按键不触发任何事件
-                }
-            }
-        }
+                                buttonGroup.buttons[row][column] = button;
+                                if (Symbol.getEnum(label) != null) {
+                                    buttonGroup.practicalButton.add(button);
+                                } else if (!label.equals("null")) {
+                                    buttonGroup.functionButtons.add(button);
+                                } else {
+                                    // 未定义按键不触发任何事件
+                                }
+                            }
+                        }
 
-        for (var button : this.practicalButton) {
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @SneakyThrows // 此处不能简写为 lambda 表达式
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    controller.send(new Url("/view/inputBox/insert"), button.getText());
-                }
-            });
-        }// for-each
+                        // 初始化 controller
+                        ButtonGroupLinker.linking(buttonGroup);
+                        for (var button : buttonGroup.practicalButton) {
+                            button.setOnAction(new EventHandler<ActionEvent>() {
+                                @SneakyThrows // 此处不能简写为 lambda 表达式
+                                @Override
+                                public void handle(ActionEvent actionEvent) {
+                                    controller.send(new Url("/view/inputBox/insert"), button.getText());
+                                }
+                            });
+                        }// for-each
 
-        for (var button : this.functionButtons) {
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @SneakyThrows // 此处不能简写为 lambda 表达式
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    String str = button.getText();
-                    switch (str) {
-                        case "❮":
-                            controller.send(new Url("/view/inputBox/leftShift"), str);
-                            break;
-                        case "❯":
-                            controller.send(new Url("/view/inputBox/rightShift"), str);
-                            break;
-                        case "✅":
-                            controller.send(new Url("/view/inputBox/selectAll"), str);
-                            break;
-                        case "☒":
-                            controller.send(new Url("/view/inputBox/delete"), str);
-                            break;
-                        case "⟲":
-                            controller.send(new Url("/view/inputBox/undo"), str);
-                            break;
-                        case "⟳":
-                            controller.send(new Url("/view/inputBox/redo"), str);
-                            break;
+                        for (var button : buttonGroup.functionButtons) {
+                            button.setOnAction(new EventHandler<ActionEvent>() {
+                                @SneakyThrows // 此处不能简写为 lambda 表达式
+                                @Override
+                                public void handle(ActionEvent actionEvent) {
+                                    String str = button.getText();
+                                    switch (str) {
+                                        case "❮":
+                                            controller.send(new Url("/view/inputBox/leftShift"), str);
+                                            break;
+                                        case "❯":
+                                            controller.send(new Url("/view/inputBox/rightShift"), str);
+                                            break;
+                                        case "✅":
+                                            controller.send(new Url("/view/inputBox/selectAll"), str);
+                                            break;
+                                        case "☒":
+                                            controller.send(new Url("/view/inputBox/delete"), str);
+                                            break;
+                                        case "⟲":
+                                            controller.send(new Url("/view/inputBox/undo"), str);
+                                            break;
+                                        case "⟳":
+                                            controller.send(new Url("/view/inputBox/redo"), str);
+                                            break;
+                                    }
+                                }
+                            });
+                        } // for-each
+
+                        // 设置特殊隐藏功能
+                        buttonGroup.setConcealedFunctions();
+                        System.out.println("ButtonGroup 初始化完成。时间："
+                                + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
                     }
-                }
-            });
-        } // for-each
-
-        // 设置特殊隐藏功能
-        this.setConcealedFunctions();
+                });
+            }
+        });
     }
 
     /**
@@ -178,7 +199,7 @@ public class ButtonGroup implements FxComponent {
      *
      * @since 2021-9-28
      */
-    private void setConcealedFunctions(){
+    private void setConcealedFunctions() {
         this.setFocusFunction();
     }
 

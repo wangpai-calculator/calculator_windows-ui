@@ -1,10 +1,14 @@
 package org.wangpai.calculator.view.output;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
+import org.wangpai.calculator.model.universal.CentralDatabase;
+import org.wangpai.calculator.model.universal.Function;
+import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.TextBox;
 
 public class ResultBox extends TextBox {
@@ -15,14 +19,29 @@ public class ResultBox extends TextBox {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // 从 VBox 中取出 TextArea
-        var node = textareaVBox.getChildren().get(0);
-        if (node instanceof TextArea) {
-            this.textArea = (TextArea) node;
-        }
-        super.initSuperTextArea(this.textArea);
-        ResultBoxLinker.linking(this);
-        this.setFocusPriority(false);
+        var resultBox = this;
+        // 懒执行
+        Multithreading.execute(new Function() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    System.out.println("开始初始化 ResultBox。时间："
+                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+
+                    // 从 VBox 中取出 TextArea
+                    var node = textareaVBox.getChildren().get(0);
+                    if (node instanceof TextArea) {
+                        resultBox.textArea = (TextArea) node;
+                    }
+                    resultBox.initSuperTextArea(resultBox.textArea);
+                    resultBox.setFocusPriority(false);
+                    ResultBoxLinker.linking(resultBox);
+
+                    System.out.println("ResultBox 初始化完成。时间："
+                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                });
+            }
+        });
     }
 
     /**
