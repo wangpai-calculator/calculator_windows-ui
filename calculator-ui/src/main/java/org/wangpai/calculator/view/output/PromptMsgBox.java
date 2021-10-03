@@ -24,6 +24,8 @@ public class PromptMsgBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
+                PromptMsgBoxLinker.linking(promptMsgBox);
+
                 Platform.runLater(() -> {
                     System.out.println("开始初始化 PromptMsgBox。时间："
                             + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
@@ -35,7 +37,6 @@ public class PromptMsgBox extends TextBox {
                     }
                     promptMsgBox.initSuperTextArea(promptMsgBox.textArea);
                     promptMsgBox.setFocusPriority(false);
-                    PromptMsgBoxLinker.linking(promptMsgBox);
 
                     System.out.println("PromptMsgBox 初始化完成。时间："
                             + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");

@@ -8,7 +8,7 @@
     <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <groupId>org.wangpai.calculator</groupId>
     <artifactId>calculator-windows</artifactId>
-    <version>3.2</version>
+    <version>3.2.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -19,7 +19,7 @@
     </modules>
 
     <properties>
-        <project_version>3.2</project_version>
+        <project_version>3.2.1</project_version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>

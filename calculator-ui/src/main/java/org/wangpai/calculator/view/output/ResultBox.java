@@ -24,6 +24,8 @@ public class ResultBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
+                ResultBoxLinker.linking(resultBox);
+
                 Platform.runLater(() -> {
                     System.out.println("开始初始化 ResultBox。时间："
                             + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
@@ -35,8 +37,6 @@ public class ResultBox extends TextBox {
                     }
                     resultBox.initSuperTextArea(resultBox.textArea);
                     resultBox.setFocusPriority(false);
-                    ResultBoxLinker.linking(resultBox);
-
                     System.out.println("ResultBox 初始化完成。时间："
                             + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
                 });

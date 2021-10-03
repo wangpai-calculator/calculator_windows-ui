@@ -109,8 +109,8 @@ public class CentralDatabase {
             synchronized (LOCK) {
                 // 第二重判断
                 if (CentralDatabase.executor == null) {
-                    CentralDatabase.executor = Executors.newCachedThreadPool();
-//                    CentralDatabase.executor = Executors.newFixedThreadPool(1);
+                    // 设置初始线程个数，大致为 6
+                    CentralDatabase.executor = Executors.newFixedThreadPool(6);
                 }
             }
         }

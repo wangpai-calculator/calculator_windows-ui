@@ -24,13 +24,14 @@ public class InputBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
+                InputBoxLinker.linking(inputBox);
+
                 Platform.runLater(() -> {
                     System.out.println("开始初始化 InputBox。时间："
                             + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
 
                     inputBox.initSuperTextArea(inputBox.textArea);
                     inputBox.setFocusPriority(true);
-                    InputBoxLinker.linking(inputBox);
                     var controller = inputBox.getController();
                     inputBox.textArea.textProperty().addListener((observable, oldValue, newValue) -> {
                         // 开新线程来完成下面的操作

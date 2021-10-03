@@ -90,6 +90,9 @@ public class ButtonGroup implements FxComponent {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
+                // 初始化 controller
+                ButtonGroupLinker.linking(buttonGroup);
+
                 Platform.runLater(new Runnable() {
                     @SneakyThrows
                     @Override
@@ -142,8 +145,6 @@ public class ButtonGroup implements FxComponent {
                             }
                         }
 
-                        // 初始化 controller
-                        ButtonGroupLinker.linking(buttonGroup);
                         for (var button : buttonGroup.practicalButton) {
                             button.setOnAction(new EventHandler<ActionEvent>() {
                                 @SneakyThrows // 此处不能简写为 lambda 表达式
