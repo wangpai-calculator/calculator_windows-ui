@@ -5,10 +5,11 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <parent>
         <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>3.2.1</version>
+        <version>3.2.2</version>
     </parent>
 
     <artifactId>calculator-entrance</artifactId>

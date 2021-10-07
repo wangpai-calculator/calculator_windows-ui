@@ -14,13 +14,15 @@ import java.util.concurrent.Executors;
  * @since 2021-9-27
  */
 public class CentralDatabase {
-    // 锁定辅助对象
-    private static final Object LOCK = new Object();
+    /**
+     * 这里凡是使用 volatile 的变量都使用了单例模式中的“双重检查锁定”
+     */
 
-    // 这里使用了单例模式中的“双重检查锁定”
     private volatile static AbstractXmlApplicationContext springContext;
+    private static final Object SPRINGCONTEXT_LOCK = new Object();
 
     private volatile static Map container;
+    private static final Object CONTAINER_LOCK = new Object();
 
     /**
      * 注意：记得在程序结束时，如果 executor 不为 null， 使用 “executor.shutdown();” 来回收资源
@@ -28,13 +30,15 @@ public class CentralDatabase {
      * @since 2021-9-28
      */
     private volatile static ExecutorService executor;
+    private static final Object EXECUTOR_LOCK = new Object();
 
     /**
      * 注意：记得在程序结束时，如果 tasks 不为 null，对于每一个 task，使用 “task.cancel();” 来回收资源
      *
      * @since 2021-9-28
      */
-    private volatile static List<Task<Integer>> tasks;
+    private volatile static List<Task<Object>> tasks;
+    private static final Object TASKS_LOCK = new Object();
 
     /**
      * 程序运行开始时间（单位：ms）
@@ -55,7 +59,7 @@ public class CentralDatabase {
         // 第一重判断
         if (CentralDatabase.springContext == null) {
             // 上锁
-            synchronized (LOCK) {
+            synchronized (SPRINGCONTEXT_LOCK) {
                 // 第二重判断
                 if (CentralDatabase.springContext == null) {
                     System.out.println("开始初始化 Spring Bean。时间："
@@ -85,7 +89,7 @@ public class CentralDatabase {
         // 第一重判断
         if (CentralDatabase.container == null) {
             // 上锁
-            synchronized (LOCK) {
+            synchronized (CONTAINER_LOCK) {
                 // 第二重判断
                 if (CentralDatabase.container == null) {
                     CentralDatabase.container = new HashMap();
@@ -106,7 +110,7 @@ public class CentralDatabase {
         // 第一重判断
         if (CentralDatabase.executor == null) {
             // 上锁
-            synchronized (LOCK) {
+            synchronized (EXECUTOR_LOCK) {
                 // 第二重判断
                 if (CentralDatabase.executor == null) {
                     // 设置初始线程个数，大致为 6
@@ -122,11 +126,11 @@ public class CentralDatabase {
      *
      * @since 2021-9-28
      */
-    public static List<Task<Integer>> getTasks() {
+    public static List<Task<Object>> getTasks() {
         // 第一重判断
         if (CentralDatabase.tasks == null) {
             // 上锁
-            synchronized (LOCK) {
+            synchronized (TASKS_LOCK) {
                 // 第二重判断
                 if (CentralDatabase.tasks == null) {
                     CentralDatabase.tasks = new ArrayList<>();

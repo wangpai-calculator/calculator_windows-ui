@@ -24,12 +24,12 @@ public class PromptMsgBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
+                System.out.println("开始初始化 PromptMsgBox。时间："
+                        + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+
                 PromptMsgBoxLinker.linking(promptMsgBox);
 
                 Platform.runLater(() -> {
-                    System.out.println("开始初始化 PromptMsgBox。时间："
-                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
-
                     // 从 VBox 中取出 TextArea
                     var node = textareaVBox.getChildren().get(0);
                     if (node instanceof TextArea) {

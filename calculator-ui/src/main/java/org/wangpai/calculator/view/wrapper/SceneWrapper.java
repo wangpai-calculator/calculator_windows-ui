@@ -1,4 +1,4 @@
-package org.wangpai.calculator.view.wrapped;
+package org.wangpai.calculator.view.wrapper;
 
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -19,10 +19,10 @@ import org.wangpai.calculator.model.universal.Multithreading;
  *
  * @since 2021-9-27
  */
-public class SceneWrapped extends Scene {
+public class SceneWrapper extends Scene {
     private Scene scene = this;
 
-    public SceneWrapped(Parent parent) {
+    public SceneWrapper(Parent parent) {
         super(parent);
 
         this.afterInitScene();
@@ -70,8 +70,8 @@ public class SceneWrapped extends Scene {
              * 一直尝试获取资源会使其它线程得不到运行，从而导致死锁
              */
             do {
+                Thread.sleep(100); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
                 functionButtons = (List<Button>) container.get("functionButtons");
-                Thread.sleep(100);
             } while (functionButtons == null);
 
             for (var button : functionButtons) {
@@ -83,13 +83,13 @@ public class SceneWrapped extends Scene {
                         // 没有设定的必要
                         break;
                     case "✅":
-                        // 此快捷键系统已自动设定为 “Ctrl+A”，无需自行设定
+                        // 此快捷键，系统已自动设定为 “Ctrl+A”，无需自行设定
                         break;
                     case "☒":
                         // 没有设定的必要
                         break;
                     case "⟲":
-                        // 此快捷键系统已自动设定为 “Ctrl+Z”，无需自行设定
+                        // 此快捷键，系统已自动设定为 “Ctrl+Z”，无需自行设定
                         break;
                     case "⟳":
                         this.bindShortcut(button, KeyCode.Z, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);

@@ -18,8 +18,7 @@ import javafx.scene.control.TextArea;
  * @since 2021年9月25日
  */
 public abstract class TextBox implements FxComponent {
-    @Getter(AccessLevel.PROTECTED)
-    private TerminalController controller;
+    protected TerminalController controller;
 
     private TextArea textArea;
 

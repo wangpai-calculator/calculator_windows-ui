@@ -1,6 +1,5 @@
 package org.wangpai.calculator.view.control;
 
-import javafx.application.Platform;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.ConflictException;
@@ -17,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.application.Platform;
 import lombok.SneakyThrows;
 
 import java.net.URL;
@@ -41,6 +41,15 @@ public class ButtonGroup implements FxComponent {
 
     // 一些未设置成实际按钮的功能。此功能也可以设计成快捷键来使用
     private List<Button> concealedFunctions;
+
+    /**
+     * 当方法 setButtonsStyle 完成调用时，此值为 true
+     *
+     * 使用 volatile 是为了在多线程中避免使用锁，因此必须自行保证对此值操作的原子性
+     *
+     * @since 2021-10-10
+     */
+    private volatile boolean buttonInitIsFinished;
 
     /**
      * 规定：
@@ -85,114 +94,146 @@ public class ButtonGroup implements FxComponent {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println("开始初始化 ButtonGroup。时间："
+                + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+
         var buttonGroup = this;
+        buttonGroup.setButtonsStyle(); // 设置按钮文本、击键颜色等
+
         // 懒执行
         Multithreading.execute(new Function() {
+            @SneakyThrows
             @Override
             public void run() {
                 // 初始化 controller
                 ButtonGroupLinker.linking(buttonGroup);
 
-                Platform.runLater(new Runnable() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        System.out.println("开始初始化 ButtonGroup。时间："
-                                + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                /**
+                 * 如果方法 setButtonsStyle 还没有完成调用，一直等待直到其调用为止
+                 */
+                while (!buttonInitIsFinished) {
+                    Thread.sleep(0); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
+                    continue;
+                }
+                Platform.runLater(() -> {
+                    buttonGroup.setPracticalButtons(); // 设置非功能键
+                    buttonGroup.setFunctionButtons(); // 设置功能键
+                    buttonGroup.setConcealedFunctions(); // 设置特殊隐藏功能
 
-                        final int rowLength = labels.length;
-                        final int columnLength = labels[0].length;
-                        buttonGroup.buttons = new Button[rowLength][columnLength];
-                        buttonGroup.functionButtons = new ArrayList<>();
-                        buttonGroup.practicalButton = new ArrayList<>();
-                        buttonGroup.concealedFunctions = new ArrayList<>();
-
-                        /**
-                         * 将这些对象置于全局容器中，供其它地方的类使用
-                         */
-                        var container = CentralDatabase.getContainer();
-                        String[] keys = {"buttons", "functionButtons", "practicalButton", "concealedFunctions"};
-                        Object[] values = {buttonGroup.buttons, buttonGroup.functionButtons,
-                                buttonGroup.practicalButton, buttonGroup.concealedFunctions};
-                        for (int order = 0; order < keys.length; ++order) {
-                            if (container.containsKey(keys[order])) {
-                                throw new ConflictException("键" + keys[order] + "已存在");
-                            }
-                            container.put(keys[order], values[order]);
-                        }
-
-                        var children = gridPane.getChildren();
-                        Iterator iterator = children.iterator();
-                        for (int row = 0; row < rowLength; ++row) {
-                            for (int column = 0; column < columnLength; ++column) {
-                                var button = (Button) iterator.next();
-                                var label = labels[row][column];
-
-                                button.setText(label);
-                                // 设置击键时的颜色变化。击键后按键变为灰色
-                                button.setOnMousePressed(event -> button.setStyle("-fx-background-color: grey"));
-                                // 将 Style 设置为空串时，JavaFX 会为之恢复之前的 Style
-                                button.setOnMouseReleased(event -> button.setStyle(""));
-
-                                buttonGroup.buttons[row][column] = button;
-                                if (Symbol.getEnum(label) != null) {
-                                    buttonGroup.practicalButton.add(button);
-                                } else if (!label.equals("null")) {
-                                    buttonGroup.functionButtons.add(button);
-                                } else {
-                                    // 未定义按键不触发任何事件
-                                }
-                            }
-                        }
-
-                        for (var button : buttonGroup.practicalButton) {
-                            button.setOnAction(new EventHandler<ActionEvent>() {
-                                @SneakyThrows // 此处不能简写为 lambda 表达式
-                                @Override
-                                public void handle(ActionEvent actionEvent) {
-                                    controller.send(new Url("/view/inputBox/insert"), button.getText());
-                                }
-                            });
-                        }// for-each
-
-                        for (var button : buttonGroup.functionButtons) {
-                            button.setOnAction(new EventHandler<ActionEvent>() {
-                                @SneakyThrows // 此处不能简写为 lambda 表达式
-                                @Override
-                                public void handle(ActionEvent actionEvent) {
-                                    String str = button.getText();
-                                    switch (str) {
-                                        case "❮":
-                                            controller.send(new Url("/view/inputBox/leftShift"), str);
-                                            break;
-                                        case "❯":
-                                            controller.send(new Url("/view/inputBox/rightShift"), str);
-                                            break;
-                                        case "✅":
-                                            controller.send(new Url("/view/inputBox/selectAll"), str);
-                                            break;
-                                        case "☒":
-                                            controller.send(new Url("/view/inputBox/delete"), str);
-                                            break;
-                                        case "⟲":
-                                            controller.send(new Url("/view/inputBox/undo"), str);
-                                            break;
-                                        case "⟳":
-                                            controller.send(new Url("/view/inputBox/redo"), str);
-                                            break;
-                                    }
-                                }
-                            });
-                        } // for-each
-
-                        // 设置特殊隐藏功能
-                        buttonGroup.setConcealedFunctions();
-                        System.out.println("ButtonGroup 初始化完成。时间："
-                                + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
-                    }
+                    System.out.println("ButtonGroup 初始化完成。时间："
+                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
                 });
             }
         });
+    }
+
+    /**
+     * 设置按钮文本、击键颜色
+     *
+     * @since 2021-10-10
+     */
+    @SneakyThrows
+    private void setButtonsStyle() {
+        final int rowLength = labels.length;
+        final int columnLength = labels[0].length;
+        this.buttons = new Button[rowLength][columnLength];
+        this.functionButtons = new ArrayList<>();
+        this.practicalButton = new ArrayList<>();
+        this.concealedFunctions = new ArrayList<>();
+
+        /**
+         * 将这些对象置于全局容器中，供其它地方的类使用
+         */
+        var container = CentralDatabase.getContainer();
+        String[] keys = {"buttons", "functionButtons", "practicalButton", "concealedFunctions"};
+        Object[] values = {this.buttons, this.functionButtons,
+                this.practicalButton, this.concealedFunctions};
+        for (int order = 0; order < keys.length; ++order) {
+            if (container.containsKey(keys[order])) {
+                throw new ConflictException("键" + keys[order] + "已存在");
+            }
+            container.put(keys[order], values[order]);
+        }
+
+        var children = gridPane.getChildren();
+        Iterator iterator = children.iterator();
+        for (int row = 0; row < rowLength; ++row) {
+            for (int column = 0; column < columnLength; ++column) {
+                var button = (Button) iterator.next();
+                var label = labels[row][column];
+
+                button.setText(label);
+                // 设置击键时的颜色变化。击键后按键变为灰色
+                button.setOnMousePressed(event -> button.setStyle("-fx-background-color: grey"));
+                // 将 Style 设置为空串时，JavaFX 会为之恢复之前的 Style
+                button.setOnMouseReleased(event -> button.setStyle(""));
+
+                this.buttons[row][column] = button;
+                if (Symbol.getEnum(label) != null) {
+                    this.practicalButton.add(button);
+                } else if (!label.equals("null")) {
+                    this.functionButtons.add(button);
+                } else {
+                    // 未定义按键不触发任何事件
+                }
+            }
+        }
+
+        this.buttonInitIsFinished = true;
+    }
+
+    /**
+     * 设置非功能键
+     *
+     * @since 2021-10-10
+     */
+    private void setPracticalButtons() {
+        for (var button : this.practicalButton) {
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @SneakyThrows // 此处不能简写为 lambda 表达式
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    controller.send(new Url("/view/inputBox/insert"), button.getText());
+                }
+            });
+        }// for-each
+    }
+
+    /**
+     * 设置功能键
+     *
+     * @since 2021-10-10
+     */
+    private void setFunctionButtons() {
+        for (var button : this.functionButtons) {
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @SneakyThrows // 此处不能简写为 lambda 表达式
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    String str = button.getText();
+                    switch (str) {
+                        case "❮":
+                            controller.send(new Url("/view/inputBox/leftShift"), str);
+                            break;
+                        case "❯":
+                            controller.send(new Url("/view/inputBox/rightShift"), str);
+                            break;
+                        case "✅":
+                            controller.send(new Url("/view/inputBox/selectAll"), str);
+                            break;
+                        case "☒":
+                            controller.send(new Url("/view/inputBox/delete"), str);
+                            break;
+                        case "⟲":
+                            controller.send(new Url("/view/inputBox/undo"), str);
+                            break;
+                        case "⟳":
+                            controller.send(new Url("/view/inputBox/redo"), str);
+                            break;
+                    }
+                }
+            });
+        } // for-each
     }
 
     /**

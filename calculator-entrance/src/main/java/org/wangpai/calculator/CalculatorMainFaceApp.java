@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.mainface.CalculatorMainFaceLinker;
-import org.wangpai.calculator.view.wrapped.SceneWrapped;
+import org.wangpai.calculator.view.wrapper.SceneWrapper;
 
 /**
  * 此类必须位于一个独立的文件，必须声明为 public 类
@@ -29,7 +29,7 @@ public class CalculatorMainFaceApp extends Application {
          */
         FXMLLoader fxmlLoader = new FXMLLoader(
                 CalculatorMainFaceLinker.class.getResource("CalculatorMainFace.fxml"));
-        Scene scene = new SceneWrapped(fxmlLoader.load());
+        Scene scene = new SceneWrapper(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
 

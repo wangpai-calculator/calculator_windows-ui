@@ -1,7 +1,5 @@
 package org.wangpai.calculator;
 
-import org.wangpai.calculator.model.universal.CentralDatabase;
-
 /**
  * 程序启动入口
  *
