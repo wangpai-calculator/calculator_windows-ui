@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.mainface.CalculatorMainFaceLinker;
 import org.wangpai.calculator.view.wrapper.SceneWrapper;
@@ -20,6 +21,7 @@ import org.wangpai.calculator.view.wrapper.SceneWrapper;
  *
  * @since 2021年9月24日
  */
+@Slf4j
 public class CalculatorMainFaceApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -50,9 +52,10 @@ public class CalculatorMainFaceApp extends Application {
         stage.setOnCloseRequest(event -> {
             CentralDatabase.multithreadingClosed();
             Platform.exit();
+            log.info("******** UI 界面关闭：{}ms ********", System.currentTimeMillis() - CentralDatabase.startTime);
         });
 
-        System.out.println(">>> UI 启动用时：" + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+        log.info(">>> UI 启动用时：{}ms",System.currentTimeMillis() - CentralDatabase.startTime);
     }
 
     public static void main(String[] args) {

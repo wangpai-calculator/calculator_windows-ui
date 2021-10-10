@@ -1,7 +1,9 @@
 package org.wangpai.calculator.view.input;
 
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TerminalLinker;
 
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Lazy
 @Scope("singleton")
 @Component("inputBox")
+@Slf4j
 public final class InputBoxLinker extends TerminalLinker {
     @Qualifier("calculatorMainFace")
     @Autowired
@@ -86,8 +89,17 @@ public final class InputBoxLinker extends TerminalLinker {
         InputBoxLinker.getLinker().bindLinker(inputBox);
     }
 
-    @Override
-    public void receive(Url url, String str) {
+    public Object receive(Url url, Object data) throws CalculatorException {
+        Object response = null;
+        if (data instanceof String) {
+            response = this.receive(url, (String) data);
+        } else {
+            // 待子类酌情实现
+        }
+        return response;
+    }
+
+    public Object receive(Url url, String str) {
         Platform.runLater(() -> {
             switch (url.getFirstLevelDirectory()) {
                 case "insert":
@@ -120,7 +132,12 @@ public final class InputBoxLinker extends TerminalLinker {
                 case "focus":
                     inputBox.requestFocus();
                     break;
+
+                default:
+                    log.error("错误：使用了未定义的 Url");
+                    break;
             }
         });
+        return null;
     }
 }

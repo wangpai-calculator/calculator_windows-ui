@@ -2,6 +2,7 @@ package org.wangpai.calculator.view.control;
 
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TerminalLinker;
 
@@ -88,12 +89,8 @@ public final class ButtonGroupLinker extends TerminalLinker {
     }
 
     @Override
-    public void receive(Url url, Object data) {
+    public Object receive(Url url, Object data) throws CalculatorException {
         // 此方法无需实现
-    }
-
-    @Override
-    public void receive(Url url, String str) {
-        // 此方法无需实现
+        return null;
     }
 }

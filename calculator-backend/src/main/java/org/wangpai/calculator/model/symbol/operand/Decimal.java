@@ -1,19 +1,22 @@
 package org.wangpai.calculator.model.symbol.operand;
 
+import lombok.extern.slf4j.Slf4j;
+import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 
-import lombok.SneakyThrows;
-
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.*;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.SUBTRACT;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
 
 /**
  * 小数。可以允许负数
  *
  * @since 2021-8-2
  */
+@Slf4j
 public final class Decimal extends Figure {
     /**
      * 由于此类最终要用于转换为自定义类 RationalNumber，
@@ -90,7 +93,6 @@ public final class Decimal extends Figure {
     /**
      * @since 2021-8-3
      */
-    @SneakyThrows
     public RationalNumber toRationalNumber() {
         RationalNumber result = new RationalNumber(0);
         int integerLength = this.integerPart.length;
@@ -103,11 +105,15 @@ public final class Decimal extends Figure {
         for (int order = integerLength - 1; order >= 0; --order) {
             digit = new Figure(Integer.valueOf(this.integerPart[order].toString()));
             // 下面表达式指的是：result = result + digit * pow(10, digit 对应的整数的位数 -1)
-            result = RationalNumberOperation.add(result,
-                    RationalNumberOperation.multiply(digit,
-                            FigureOperation.power(
-                                    10,
-                                    integerLength - order - 1)));
+            try {
+                result = RationalNumberOperation.add(result,
+                        RationalNumberOperation.multiply(digit,
+                                FigureOperation.power(
+                                        10,
+                                        integerLength - order - 1)));
+            } catch (Exception exception) {
+                log.error("异常：", exception);
+            }
         }
 
         /**
@@ -116,10 +122,14 @@ public final class Decimal extends Figure {
         for (int order = 0; order < decimalLength; ++order) {
             digit = new Figure(Integer.valueOf(this.decimalPart[order].toString()));
             // 下面表达式指的是：result = result + digit / pow(10, digit 对应的小数的位数)
-            result = RationalNumberOperation.add(result,
-                    RationalNumberOperation.divide(digit,
-                            FigureOperation.power(10,
-                                    order + 1)));
+            try {
+                result = RationalNumberOperation.add(result,
+                        RationalNumberOperation.divide(digit,
+                                FigureOperation.power(10,
+                                        order + 1)));
+            } catch (Exception exception) {
+                log.error("异常：", exception);
+            }
         }
 
         if (this.sign) {

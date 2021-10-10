@@ -1,12 +1,6 @@
 package org.wangpai.calculator.view.output;
 
-import org.wangpai.calculator.controller.MiddleController;
-import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-import org.wangpai.calculator.model.universal.CentralDatabase;
-import org.wangpai.calculator.view.base.TextBoxLinker;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -14,6 +8,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import javafx.application.Platform;
 import java.util.Stack;
+import org.wangpai.calculator.controller.MiddleController;
+import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.calculator.model.symbol.enumeration.Symbol;
+import org.wangpai.calculator.model.universal.CentralDatabase;
+import org.wangpai.calculator.view.base.TextBoxLinker;
 
 /**
  * @since 2021-8-1
@@ -21,6 +21,7 @@ import java.util.Stack;
 @Lazy
 @Scope("singleton")
 @Component("promptMsgBox")
+@Slf4j
 public class PromptMsgBoxLinker extends TextBoxLinker {
     @Qualifier("calculatorMainFace")
     @Autowired
@@ -90,10 +91,13 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
     }
 
     @Override
-    public void receive(Url url, Object data) {
+    public Object receive(Url url, Object data) throws CalculatorException {
+        Object response = null;
         // 当 instanceof 的左边为 null 时，结果也是 false
-        if (data instanceof String) {
-            this.receive(url, (String) data);
+        if (data == null) {
+            response = this.receive(url);
+        } else if (data instanceof String) {
+            response = this.receive(url, (String) data);
         } else if (data instanceof CalculatorException) {
             var exceptionMsg = ((CalculatorException) data).getExceptionMsg();
             var exceptionData = ((CalculatorException) data).getData();
@@ -120,14 +124,39 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
                 msg.append(System.lineSeparator());
             }
 
-            this.receive(url, msg.toString());
+            response = this.receive(url, msg.toString());
+        } else if (data instanceof PromptMsgBoxState) {
+            response = this.receive(url, (PromptMsgBoxState) data);
         } else {
             // 敬请期待
         }
+        return response;
     }
 
-    @Override
-    public void receive(Url url, String str) {
+    /**
+     * @since 2021-10-12
+     */
+    public Object receive(Url url) {
+        Object response = null;
+        switch (url.getFirstLevelDirectory()) {
+            case "cleanAllContent":
+                Platform.runLater(() -> {
+                    this.promptMsgBox.cleanAllContent();
+                });
+                break;
+            case "getState":
+                response = this.promptMsgBox.getState();
+                break;
+
+            default:
+                log.error("错误：使用了未定义的 Url");
+                break;
+        }
+
+        return response;
+    }
+
+    public Object receive(Url url, String str) {
         Platform.runLater(() -> {
             switch (url.getFirstLevelDirectory()) {
                 case "append":
@@ -136,10 +165,31 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
                 case "setText":
                     this.promptMsgBox.setText(str);
                     break;
-                case "cleanAllContent":
-                    this.promptMsgBox.cleanAllContent();
+
+                default:
+                    log.error("错误：使用了未定义的 Url");
                     break;
             }
         });
+        return null;
+    }
+
+    /**
+     * @since 2021-10-12
+     */
+    public Object receive(Url url, PromptMsgBoxState state) {
+        Platform.runLater(() -> {
+            switch (url.getFirstLevelDirectory()) {
+                case "setState":
+                    this.promptMsgBox.setState(state);
+                    break;
+
+                default:
+                    log.error("错误：使用了未定义的 Url");
+                    break;
+            }
+        });
+
+        return null;
     }
 }

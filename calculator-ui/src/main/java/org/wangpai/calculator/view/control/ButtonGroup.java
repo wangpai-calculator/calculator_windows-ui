@@ -1,5 +1,16 @@
 package org.wangpai.calculator.view.control;
 
+import lombok.extern.slf4j.Slf4j;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
+import javafx.fxml.FXML;
+import javafx.application.Platform;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.ConflictException;
@@ -10,21 +21,7 @@ import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.FxComponent;
 import org.wangpai.calculator.view.base.SpringLinker;
 
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.application.Platform;
-import lombok.SneakyThrows;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
-
+@Slf4j
 public class ButtonGroup implements FxComponent {
     private TerminalController controller;
 
@@ -94,15 +91,13 @@ public class ButtonGroup implements FxComponent {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("开始初始化 ButtonGroup。时间："
-                + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+        log.info("开始初始化 ButtonGroup。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
 
         var buttonGroup = this;
         buttonGroup.setButtonsStyle(); // 设置按钮文本、击键颜色等
 
         // 懒执行
         Multithreading.execute(new Function() {
-            @SneakyThrows
             @Override
             public void run() {
                 // 初始化 controller
@@ -112,7 +107,11 @@ public class ButtonGroup implements FxComponent {
                  * 如果方法 setButtonsStyle 还没有完成调用，一直等待直到其调用为止
                  */
                 while (!buttonInitIsFinished) {
-                    Thread.sleep(0); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
+                    try {
+                        Thread.sleep(0); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
+                    } catch (InterruptedException exception) {
+                        log.error("发生了非自定义异常：", exception, exception);
+                    }
                     continue;
                 }
                 Platform.runLater(() -> {
@@ -120,8 +119,7 @@ public class ButtonGroup implements FxComponent {
                     buttonGroup.setFunctionButtons(); // 设置功能键
                     buttonGroup.setConcealedFunctions(); // 设置特殊隐藏功能
 
-                    System.out.println("ButtonGroup 初始化完成。时间："
-                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                    log.info("ButtonGroup 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
                 });
             }
         });
@@ -132,7 +130,6 @@ public class ButtonGroup implements FxComponent {
      *
      * @since 2021-10-10
      */
-    @SneakyThrows
     private void setButtonsStyle() {
         final int rowLength = labels.length;
         final int columnLength = labels[0].length;
@@ -150,7 +147,11 @@ public class ButtonGroup implements FxComponent {
                 this.practicalButton, this.concealedFunctions};
         for (int order = 0; order < keys.length; ++order) {
             if (container.containsKey(keys[order])) {
-                throw new ConflictException("键" + keys[order] + "已存在");
+                try {
+                    throw new ConflictException("键" + keys[order] + "已存在");
+                } catch (Exception exception) {
+                    log.error("异常：", exception);
+                }
             }
             container.put(keys[order], values[order]);
         }
@@ -189,11 +190,11 @@ public class ButtonGroup implements FxComponent {
      */
     private void setPracticalButtons() {
         for (var button : this.practicalButton) {
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @SneakyThrows // 此处不能简写为 lambda 表达式
-                @Override
-                public void handle(ActionEvent actionEvent) {
+            button.setOnAction(actionEvent -> {
+                try {
                     controller.send(new Url("/view/inputBox/insert"), button.getText());
+                } catch (Exception exception) {
+                    log.error("异常：", exception);
                 }
             });
         }// for-each
@@ -206,11 +207,9 @@ public class ButtonGroup implements FxComponent {
      */
     private void setFunctionButtons() {
         for (var button : this.functionButtons) {
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @SneakyThrows // 此处不能简写为 lambda 表达式
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    String str = button.getText();
+            button.setOnAction(actionEvent -> {
+                String str = button.getText();
+                try {
                     switch (str) {
                         case "❮":
                             controller.send(new Url("/view/inputBox/leftShift"), str);
@@ -230,7 +229,13 @@ public class ButtonGroup implements FxComponent {
                         case "⟳":
                             controller.send(new Url("/view/inputBox/redo"), str);
                             break;
+
+                        default:
+                            log.error("错误：出现了意料之外的符号：{}", str);
+                            break;
                     }
+                } catch (Exception exception) {
+                    log.error("异常：", exception);
                 }
             });
         } // for-each
@@ -253,11 +258,11 @@ public class ButtonGroup implements FxComponent {
     private void setFocusFunction() {
         Button concealedButton = new Button("focus");
         this.concealedFunctions.add(concealedButton);
-        concealedButton.setOnAction(new EventHandler<ActionEvent>() {
-            @SneakyThrows // 此处不能简写为 lambda 表达式
-            @Override
-            public void handle(ActionEvent actionEvent) {
+        concealedButton.setOnAction(actionEvent -> {
+            try {
                 controller.send(new Url("/view/inputBox/focus"), "");
+            } catch (Exception exception) {
+                log.error("异常：", exception);
             }
         });
     }

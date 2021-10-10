@@ -1,11 +1,12 @@
 package org.wangpai.calculator.controller;
 
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.exception.SyntaxException;
 
 /**
  * @since 2021-7-25
  */
+@Slf4j
 public class Url {
     private String underlyingUrl;
     private String[] directories; // 此数组 0 号位为空串
@@ -50,9 +51,12 @@ public class Url {
         return Url.UrlCheck(url.underlyingUrl);
     }
 
-    @SneakyThrows
     protected Url setAllLevelsDirectories() {
-        this.directories = getAllLevelsDirectories(this);
+        try {
+            this.directories = getAllLevelsDirectories(this);
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
         return this;
     }
 

@@ -1,5 +1,7 @@
 package org.wangpai.calculator.controller;
 
+import org.wangpai.calculator.exception.CalculatorException;
+
 /**
  * 中间控制器。它分为两种：
  * - 非中央控制器。它只做 2 件事情：
@@ -26,11 +28,11 @@ public interface MiddleController extends Controller {
      * 对于最高层控制器，此方法只能调用自己的方法 passDown
      * 对于终端控制器，调用本方法传入的第三个实参应为 null
      */
-    void passUp(Url url, Object data, MiddleController lowerController);
+    Object passUp(Url url, Object data, MiddleController lowerController) throws CalculatorException;
 
     /**
      * 此函数只能由上层控制器的方法 passDown，或最高层控制器的 passUp 方法来调用。
      * 对于终端控制器，此方法只能调用自己的方法 receive
      */
-    void passDown(Url url, Object data, MiddleController upperController);
+    Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException;
 }

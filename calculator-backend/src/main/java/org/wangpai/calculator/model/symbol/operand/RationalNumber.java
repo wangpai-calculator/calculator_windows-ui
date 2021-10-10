@@ -188,13 +188,55 @@ public class RationalNumber implements Operand {
         }
     }
 
+    /**
+     * @since 2021-10-12
+     */
+    public String toString(boolean needShowBrackets) {
+        if (needShowBrackets) {
+            /**
+             * 规定外加括号的样式
+             */
+            final var LEFT_BRACKET = "[";
+            final var RIGHT_BRACKET = "]";
+
+            // 如果此有理数为整数，不输出分母
+            if (this.denominator.equals(new Figure(1))) {
+                // 如果此整数为负数，外加括号
+                if (this.numerator.isNegative()) {
+                    return new StringBuilder()
+                            .append(LEFT_BRACKET)
+                            .append(this.numerator)
+                            .append(RIGHT_BRACKET)
+                            .toString();
+                }
+                // 如果此整数为正数，直接转化，不外加括号
+                return this.numerator.toString();
+            } else {
+                return new StringBuilder()
+                        .append(LEFT_BRACKET)
+                        .append(this.numerator).append("/").append(this.denominator)
+                        .append(RIGHT_BRACKET)
+                        .toString();
+            }
+        } else {
+            // 如果此有理数为整数，不输出分母
+            if (this.denominator.equals(new Figure(1))) {
+                return this.numerator.toString();
+            } else {
+                return new StringBuilder()
+                        .append(this.numerator).append("/").append(this.denominator)
+                        .toString();
+            }
+        }
+    }
+
+    /**
+     * @since 2021-8-1
+     * @lastModified 2021-10-12
+     */
     @Override
     public String toString() {
-        if (this.denominator.equals(new Figure(1))) {
-            return this.numerator.toString();
-        } else {
-            return this.numerator.toString() + "/" + this.denominator.toString();
-        }
+        return this.toString(true);
     }
 
     public double toDouble() {
@@ -227,7 +269,7 @@ public class RationalNumber implements Operand {
             }
 
             if (FigureOperation.subtract(
-                    this.numerator, this.denominator)
+                            this.numerator, this.denominator)
                     .isNegative()) {
                 return true;
             } else {

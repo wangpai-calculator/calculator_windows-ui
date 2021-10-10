@@ -1,5 +1,6 @@
 package org.wangpai.calculator.model.universal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javafx.concurrent.Task;
@@ -13,11 +14,11 @@ import java.util.concurrent.Executors;
 /**
  * @since 2021-9-27
  */
+@Slf4j
 public class CentralDatabase {
     /**
      * 这里凡是使用 volatile 的变量都使用了单例模式中的“双重检查锁定”
      */
-
     private volatile static AbstractXmlApplicationContext springContext;
     private static final Object SPRINGCONTEXT_LOCK = new Object();
 
@@ -47,6 +48,10 @@ public class CentralDatabase {
      */
     public static final long startTime = System.currentTimeMillis();
 
+    static {
+        log.info("--------应用启动，日志信息开始输出：{}ms---------", System.currentTimeMillis() - CentralDatabase.startTime);
+    }
+
     /**
      * 此方法是强同步方法，此方法不能返回 null，因此不能新建线程来创建 Spring 容器。
      * 使用此方法而不是直接使用类字段是为了进行“懒加载”
@@ -62,15 +67,13 @@ public class CentralDatabase {
             synchronized (SPRINGCONTEXT_LOCK) {
                 // 第二重判断
                 if (CentralDatabase.springContext == null) {
-                    System.out.println("开始初始化 Spring Bean。时间："
-                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                    log.info("开始初始化 Spring Bean。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
 
                     // Spring 的此路径在 IntelliJ IDEA 中是以资源目录 resources 为基准的
                     CentralDatabase.springContext =
                             new ClassPathXmlApplicationContext("spring/beanScan.xml");
 
-                    System.out.println("Spring Bean 初始化结束。时间："
-                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                    log.info("Spring Bean 初始化结束。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
                 }
             }
         }

@@ -1,5 +1,13 @@
 package org.wangpai.calculator.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
@@ -13,16 +21,6 @@ import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operator.Operator;
 
-import lombok.SneakyThrows;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
-
-import java.util.List;
-import java.util.regex.Pattern;
-
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ADD;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DIVIDE;
@@ -30,6 +28,8 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.EQUAL;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKET;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACKET;
+import static org.wangpai.calculator.view.output.PromptMsgBoxState.ERROR_TEXT;
+import static org.wangpai.calculator.view.output.PromptMsgBoxState.NORMAL_TEXT;
 
 /**
  * @since 2021-8-1
@@ -37,6 +37,7 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACK
 @Lazy
 @Scope("singleton")
 @Service("calculatorService")
+@Slf4j
 public final class CalculatorService {
     @Qualifier("computingCenter")
     @Autowired
@@ -58,26 +59,61 @@ public final class CalculatorService {
         this.controller = controller;
     }
 
-    @SneakyThrows
+    /**
+     * @since 2021-8-1
+     * @lastModified 2021-10-12
+     */
     private void sendPromptMsg(String msg) {
-        this.controller.send(new Url("/view/promptMsgBox/setText"),
-                System.lineSeparator() + "恭喜你，未检测到语法错误" + msg);
+        try {
+            this.controller.send(new Url("/view/promptMsgBox/setText"),
+                    System.lineSeparator() + "恭喜你，未检测到语法错误" + msg);
+            this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL_TEXT);
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
     }
 
-    @SneakyThrows
+    /**
+     * @since 2021-8-1
+     * @lastModified 2021-10-12
+     */
     private void sendExceptionMsg(CalculatorException exception) {
-        this.controller.send(new Url("/view/promptMsgBox/setText"), exception);
+        try {
+            this.controller.send(new Url("/view/promptMsgBox/setText"), exception);
+            this.controller.send(new Url("/view/promptMsgBox/setState"), ERROR_TEXT);
+        } catch (Exception sendException) {
+            log.error("异常：", exception);
+        }
     }
 
-    @SneakyThrows
+    /**
+     * @since 2021-8-1
+     * @lastModified 2021-10-12
+     */
     private void clearPromptMsg() {
-        this.controller.send(new Url("/view/promptMsgBox/setText"),
-                System.lineSeparator() + "恭喜你，未检测到语法错误");
+        try {
+            this.controller.send(new Url("/view/promptMsgBox/setText"),
+                    System.lineSeparator() + "恭喜你，未检测到语法错误");
+            this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL_TEXT);
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
     }
 
-    @SneakyThrows
+    /**
+     * @since 2021-8-1
+     * @lastModified 2021-10-12
+     */
     private void sendCalculationResult(String output) {
-        this.controller.send(new Url("/view/resultBox/append"), output);
+        try {
+            this.controller.send(new Url("/view/resultBox/append"), output);
+            var promptMsgBoxState = this.controller.send(new Url("/view/promptMsgBox/getState"), null);
+            if (promptMsgBoxState.equals(ERROR_TEXT)) {
+                this.clearPromptMsg();
+            }
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
     }
 
     /**
@@ -309,14 +345,14 @@ public final class CalculatorService {
              *
              * 此处，只有右括号多于左括号时，才需要进行错误处理
              */
-            if (tempCalData.pareMatch() == 2) {
+            if (tempCalData.bracketMatch() == 2) {
                 var ERROR_INFO = "\n右括号不匹配，已为你自动删除【)】";
                 throw new SyntaxException(ERROR_INFO,
                         generateExpressionString(calData.getExp()));
             }
         }
         // 最后准备结束输入时，如果发现括号不匹配
-        if (input == EQUAL && calData.pareMatch() != 0) {
+        if (input == EQUAL && calData.bracketMatch() != 0) {
             // 此处实际上只可能左括号多于右括号
             var ERROR_INFO = "\n左括号不能多于右括号，已为你自动删除【=】";
             throw new SyntaxException(ERROR_INFO,
@@ -399,7 +435,6 @@ public final class CalculatorService {
      *
      * @since before 2021-8-5
      */
-    @SneakyThrows
     public String generateProcess(String expression) {
         if (expression == null || expression.equals("")) {
             return "";
@@ -409,15 +444,20 @@ public final class CalculatorService {
         boolean hasCalculation = false;
         StringBuilder result = new StringBuilder();
 
-        /**
-         * 先将等号前面的原表达式输出
-         */
-        result.append(this.generateExpressionString(
-                new SymbolOutputStream().init(
-                        expression.substring(0, expression.indexOf("=")))
-                        .toList()));
+        SymbolOutputStream outputStream = null;
+        try {
+            /**
+             * 先将等号前面的原表达式输出
+             */
+            result.append(this.generateExpressionString(
+                    new SymbolOutputStream().init(
+                                    expression.substring(0, expression.indexOf("=")))
+                            .toList()));
+            outputStream = new SymbolOutputStream().init(expression);
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
 
-        var outputStream = new SymbolOutputStream().init(expression);
         var calData = new CalculatorData();
         Symbol input;
 
@@ -440,26 +480,51 @@ public final class CalculatorService {
                     // 如果运算符栈里什么也没有，该运算符就直接入栈
                     calData.pushSymbol(input);
                 } else {
-                    switch (this.precede(calData.peekFromOptrs(), new Operator(input))) {
+                    String priority = null;
+                    try {
+                        priority = this.precede(calData.peekFromOptrs(), new Operator(input));
+                    } catch (Exception exception) {
+                        log.error("异常：", exception);
+                    }
+                    switch (priority) {
                         case "<": // 当前读取的运算符优先级大于最近的运算符。那当前读取的运算符就直接入栈
-                        case "=":
-                            /**
-                             * 运行到此 case "="，说明最近的两个运算符是一对括号，
-                             * 不过，方法 pushSymbol 已拥有处理此情况的能力，
-                             * 因此只需要调用此方法
-                             */
                             calData.pushSymbol(input);
                             break;
                         case ">":
-                            calData.oneTimeCalculation();
-                            outputStream.rollback();
+                            boolean isPaired = false; // 一个操作数外出现成对括号
+                            try {
+                                calData.oneTimeCalculation();
+
+                                /**
+                                 * 如果 input 为右括号，检查是否可以进行如下优化：
+                                 * 运算之后，如果这对括号之间就只有一个操作数，那就直接从中去掉这对括号
+                                 */
+                                if (input == RIGHT_BRACKET) {
+                                    isPaired = this.precede(calData.peekFromOptrs(), new Operator(input)).equals("=");
+                                }
+                            } catch (Exception exception) {
+                                log.error("异常：", exception);
+                            }
+                            if (isPaired) {
+                                /**
+                                 * 运行到此处，说明最近的两个运算符是一对括号，那就直接从中去掉这对括号。
+                                 * 不过，方法 pushSymbol 已拥有处理此情况的能力，因此只需要调用此方法
+                                 */
+                                calData.pushSymbol(input);
+                            } else {
+                                // 本次输入的运算符优先级过低，并没有被使用，所以要将本次的运算符退回输入流
+                                outputStream.rollback();
+                            }
 
                             result.append(this.generateMiddleExpression(
                                     calData.calculatedExpToString()
                                             + outputStream.getRest().toString()));
 
                             hasCalculation = true; // 这是为了告诉程序，本函数至少执行了一次计算
-
+                            break;
+                        case "=": // 已经在 case ">" 优化过，此 case 不会发生
+                            break;
+                        default: // 此 case 不会发生
                             break;
                     } // switch
                 }
@@ -502,7 +567,6 @@ public final class CalculatorService {
      *
      * @since 2021-8-9
      */
-    @SneakyThrows
     private String generateMiddleExpression(String expression) {
         if (expression == null || expression.equals("")) {
             return "";
@@ -511,21 +575,24 @@ public final class CalculatorService {
         StringBuilder sb = new StringBuilder();
         sb.append(System.lineSeparator())
                 .append(System.lineSeparator());
-
-        if (expression.contains("=")) {
-            /**
-             * 如果表达式中含等号，将其前置
-             */
-            sb.append("=")
-                    .append(this.beautifyExpression(
-                            new SymbolOutputStream().init(
-                                    expression.substring(0, expression.indexOf("=")))
-                                    .toList(), EQUAL));
-        } else {
-            sb.append(this.beautifyExpression(
-                    new SymbolOutputStream()
-                            .init(expression)
-                            .toList(), EQUAL));
+        try {
+            if (expression.contains("=")) {
+                /**
+                 * 如果表达式中含等号，将其前置
+                 */
+                sb.append("=")
+                        .append(this.beautifyExpression(
+                                new SymbolOutputStream().init(
+                                                expression.substring(0, expression.indexOf("=")))
+                                        .toList(), EQUAL));
+            } else {
+                sb.append(this.beautifyExpression(
+                        new SymbolOutputStream()
+                                .init(expression)
+                                .toList(), EQUAL));
+            }
+        } catch (Exception exception) {
+            log.error("异常：", exception);
         }
 
         return sb.toString();
@@ -547,6 +614,8 @@ public final class CalculatorService {
                 // 左括号后面不加空格，右括号左边不加空格
             } else if (lastSymbol == DOT || symbol == DOT) {
                 // 小数点前后不加空格
+            } else if (lastSymbol == Symbol.getEnum("[") || symbol == Symbol.getEnum("]")) {
+                // 左括号后面不加空格，右括号左边不加空格
             } else if (!symbol.isDigit()) {
                 sb.append(" ");
             } else if (symbol.isDigit() && !lastSymbol.isDigit()) {

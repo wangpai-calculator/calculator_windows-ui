@@ -1,10 +1,15 @@
 package org.wangpai.calculator.view.base;
 
-import org.wangpai.calculator.controller.TerminalController;
+import javafx.application.Platform;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import javafx.scene.control.TextArea;
+import org.wangpai.calculator.controller.TerminalController;
+import org.wangpai.calculator.model.universal.CentralDatabase;
+import org.wangpai.calculator.model.universal.Function;
+import org.wangpai.calculator.model.universal.Multithreading;
+import org.wangpai.calculator.view.output.PromptMsgBoxLinker;
 
 /**
  * 关于 JavaFX 的 TextArea 的文本区光标知识介绍：
@@ -341,11 +346,16 @@ public abstract class TextBox implements FxComponent {
     /**
      * 将滚动条设置在底部
      *
+     * @deprecated 这个方法不起作用，原因未知，这可能是 JavaFX 的一个 bug。已经试过很多方法，没有一个起作用的。
+     * 首先，将滚动条滑动到底部是 TextArea 的默认行为，但它会在滑动条首次出现时失效。
+     * 另外，TextArea 似乎能每次重置滚动条的位置，无论前面进行什么设定，它可能会自动将此位置重置为底部的位置
+     *
      * @since 2021-8-6
      * @lastModified 2021-9-26
      */
+    @Deprecated
     public TextBox setBarAtTheBottom() {
-        this.textArea.positionCaret(this.textArea.getText().length());
+        this.textArea.setScrollTop(Double.MAX_VALUE);
         return this;
     }
 

@@ -18,7 +18,7 @@ import lombok.Getter;
  *
  * 特殊功能符号指无特定意义的符号，这种符号的语义由使用者临时指定
  *
- * @since  2021-8-2
+ * @since 2021-8-2
  */
 public enum Symbol {
     /**
@@ -51,7 +51,10 @@ public enum Symbol {
 
     WRAP(" ", 1001), // 换行
 
-    F1("#", 1100);
+    F1("#", 1100),
+
+    S1("[", 1200), // 左小括号的替代显示符号
+    S2("]", 1201); // 右小括号的替代显示符号
 
     private final String symbol;
 

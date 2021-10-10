@@ -9,7 +9,7 @@
     <parent>
         <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>3.2.2</version>
+        <version>3.3</version>
     </parent>
 
     <artifactId>calculator-ui</artifactId>
@@ -24,7 +24,27 @@
             <groupId>org.wangpai.calculator</groupId>
             <artifactId>calculator-exception</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wangpai.calculator</groupId>
+            <artifactId>calculator-ui-depended</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -33,17 +53,7 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
 
     </dependencies>
-
-
 
 </project>

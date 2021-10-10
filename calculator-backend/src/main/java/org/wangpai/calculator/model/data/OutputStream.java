@@ -1,18 +1,17 @@
 package org.wangpai.calculator.model.data;
 
-import org.wangpai.calculator.exception.CalculatorException;
-import org.wangpai.calculator.exception.UndefinedException;
-
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
-
+import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
+import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.calculator.exception.UndefinedException;
 
 /**
  * @since 2021-8-1
  */
+@Slf4j
 public abstract class OutputStream<T> implements Cloneable {
     /**
      * 为了减少子类设计的工作量，
@@ -59,10 +58,14 @@ public abstract class OutputStream<T> implements Cloneable {
      * @lastModified 2021-8-9
      * @since 2021-8-5
      */
-    @SneakyThrows
     @Override
     protected Object clone() {
-        var cloned = (OutputStream<T>) super.clone();
+        OutputStream<T> cloned = null;
+        try {
+            cloned = (OutputStream<T>) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            log.error("发生了非自定义异常：", exception);
+        }
         cloned.outputStream = (ArrayList<T>) this.outputStream.clone();
         cloned.length = this.length;
         cloned.index = this.index;

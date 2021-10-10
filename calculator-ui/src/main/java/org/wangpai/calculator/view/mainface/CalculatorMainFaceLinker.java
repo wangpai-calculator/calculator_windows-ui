@@ -1,7 +1,9 @@
 package org.wangpai.calculator.view.mainface;
 
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.SpringLinker;
 import org.wangpai.calculator.view.control.ButtonGroupLinker;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @Lazy
 @Scope("singleton")
 @Controller("calculatorMainFace")
+@Slf4j
 public class CalculatorMainFaceLinker extends SpringLinker implements MiddleController {
     @Qualifier("dispatcher")
     @Autowired
@@ -84,17 +87,23 @@ public class CalculatorMainFaceLinker extends SpringLinker implements MiddleCont
     }
 
     @Override
-    public void passDown(Url url, Object data, MiddleController upperController) {
+    public Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException {
+        Object response = null;
         switch (url.getFirstLevelDirectory()) {
             case "inputBox":
-                this.inputBox.passDown(url.generateLowerUrl(), data, this);
+                response = this.inputBox.passDown(url.generateLowerUrl(), data, this);
                 break;
             case "promptMsgBox":
-                this.promptMsgBox.passDown(url.generateLowerUrl(), data, this);
+                response = this.promptMsgBox.passDown(url.generateLowerUrl(), data, this);
                 break;
             case "resultBox":
-                this.resultBox.passDown(url.generateLowerUrl(), data, this);
+                response = this.resultBox.passDown(url.generateLowerUrl(), data, this);
+                break;
+
+            default:
+                log.error("错误：使用了未定义的 Url");
                 break;
         }
+        return response;
     }
 }

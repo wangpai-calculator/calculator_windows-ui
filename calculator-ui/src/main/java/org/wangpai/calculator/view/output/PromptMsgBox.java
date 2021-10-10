@@ -6,16 +6,32 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
 import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.TextBox;
 
+import static org.wangpai.calculator.view.output.PromptMsgBoxState.INIT_TEXT;
+
+@Slf4j
 public class PromptMsgBox extends TextBox {
+
     @FXML
     private VBox textareaVBox;
 
     private TextArea textArea;
+
+    /**
+     * 提示框的状态
+     *
+     * @since 2021-10-12
+     */
+    @Setter
+    @Getter
+    private PromptMsgBoxState state = INIT_TEXT;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -24,8 +40,7 @@ public class PromptMsgBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
-                System.out.println("开始初始化 PromptMsgBox。时间："
-                        + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                log.info("开始初始化 PromptMsgBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
 
                 PromptMsgBoxLinker.linking(promptMsgBox);
 
@@ -38,8 +53,7 @@ public class PromptMsgBox extends TextBox {
                     promptMsgBox.initSuperTextArea(promptMsgBox.textArea);
                     promptMsgBox.setFocusPriority(false);
 
-                    System.out.println("PromptMsgBox 初始化完成。时间："
-                            + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                    log.info("PromptMsgBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
                 });
             }
         });

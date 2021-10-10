@@ -12,18 +12,14 @@
         <version>3.3</version>
     </parent>
 
-    <artifactId>calculator-exception</artifactId>
+    <artifactId>calculator-ui-depended</artifactId>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
+        <!--
+        本模块是为了解决 Maven 模块之间的循环依赖而引入的模块。
+        本模块是从模块 calculator-ui 分离出来的模块。
+        本模块不能依赖的模块有：calculator-backend
+        -->
 
     </dependencies>
 

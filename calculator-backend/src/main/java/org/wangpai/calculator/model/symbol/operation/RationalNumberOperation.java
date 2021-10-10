@@ -1,5 +1,6 @@
 package org.wangpai.calculator.model.symbol.operation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UnknownException;
@@ -8,13 +9,12 @@ import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 
-import lombok.SneakyThrows;
-
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * @since 2021-8-1
  */
+@Slf4j
 public class RationalNumberOperation extends Operation {
     /*---------------加减乘除基本运算---------------*/
 
@@ -113,11 +113,10 @@ public class RationalNumberOperation extends Operation {
      * 最终的分子为：第一个分子乘以第二个分母的质因子，第二个分子乘以第一个分母的质因子，然后把得到的结果相加
      * 最终的分母为：其中一个分母乘以另一个分母的质因子（也即这两个分母的最小公倍数）
      *
-     * @since before 2021-8-5
+     * @since 2021-8-5
+     * @lastModified 2021-10-12
      */
-    @SneakyThrows
-    public static RationalNumber add(RationalNumber first, RationalNumber second)
-             {
+    public static RationalNumber add(RationalNumber first, RationalNumber second) {
         final var firstNumerator = first.getNumerator();
         final var firstDenominator = first.getDenominator();
         final var secondNumerator = second.getNumerator();
@@ -128,12 +127,19 @@ public class RationalNumberOperation extends Operation {
         Figure firstPrimeFactor = FigureOperation.modsQuotient(firstDenominator, gcd);
         Figure secondPrimeFactor = FigureOperation.modsQuotient(secondDenominator, gcd);
 
-        return new RationalNumber(
-                FigureOperation.add(
-                        FigureOperation.multiply(firstNumerator, secondPrimeFactor),
-                        FigureOperation.multiply(secondNumerator, firstPrimeFactor)),
-                FigureOperation.multiply(firstDenominator, secondPrimeFactor))
-                .reduceFraction();
+        RationalNumber result = null;
+        try {
+            result = new RationalNumber(
+                    FigureOperation.add(
+                            FigureOperation.multiply(firstNumerator, secondPrimeFactor),
+                            FigureOperation.multiply(secondNumerator, firstPrimeFactor)),
+                    FigureOperation.multiply(firstDenominator, secondPrimeFactor))
+                    .reduceFraction();
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
+
+        return result;
     }
 
     /**
@@ -148,27 +154,41 @@ public class RationalNumberOperation extends Operation {
     /**
      * 算法：两个数的分子、分母分别相乘
      *
-     * @since before 2021-8-5
+     * @since 2021-8-5
+     * @lastModified 2021-10-12
      */
-    @SneakyThrows
     public static RationalNumber multiply(RationalNumber first, RationalNumber second) {
-        return new RationalNumber(
-                FigureOperation.multiply(first.getNumerator(), second.getNumerator()),
-                FigureOperation.multiply(first.getDenominator(), second.getDenominator()))
-                .reduceFraction();
+        RationalNumber result = null;
+        try {
+            result = new RationalNumber(
+                    FigureOperation.multiply(first.getNumerator(), second.getNumerator()),
+                    FigureOperation.multiply(first.getDenominator(), second.getDenominator()))
+                    .reduceFraction();
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+
+        }
+        return result;
     }
 
     /**
      * 算法：将第二个整数与第一个有理数的分子相乘
      *
-     * @since before 2021-8-5
+     * @since 2021-8-5
+     * @lastModified 2021-10-12
      */
-    @SneakyThrows
     public static RationalNumber multiply(RationalNumber first, Figure second) {
-        return new RationalNumber(
-                FigureOperation.multiply(first.getNumerator(), second),
-                first.getDenominator())
-                .reduceFraction();
+        RationalNumber result = null;
+        try {
+            result = new RationalNumber(
+                    FigureOperation.multiply(first.getNumerator(), second),
+                    first.getDenominator())
+                    .reduceFraction();
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+
+        }
+        return result;
     }
 
     /**
@@ -217,13 +237,19 @@ public class RationalNumberOperation extends Operation {
     /**
      * 求相反数
      *
-     * @since before 2021-8-5
+     * @since 2021-8-5
+     * @lastModified 2021-10-12
      */
-    @SneakyThrows
     public static RationalNumber getOpposite(RationalNumber rationalNumber) {
-        return new RationalNumber(
-                FigureOperation.getOpposite(rationalNumber.getNumerator()),
-                rationalNumber.getDenominator().clone());
+        RationalNumber result = null;
+        try {
+            result = new RationalNumber(
+                    FigureOperation.getOpposite(rationalNumber.getNumerator()),
+                    rationalNumber.getDenominator().clone());
+        } catch (Exception exception) {
+            log.error("异常：", exception);
+        }
+        return result;
     }
 
     /**

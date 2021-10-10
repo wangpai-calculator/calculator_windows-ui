@@ -1,5 +1,6 @@
 package org.wangpai.calculator.view.wrapper;
 
+import lombok.extern.slf4j.Slf4j;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,7 +10,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyCombination.Modifier;
 import java.util.List;
-import lombok.SneakyThrows;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
 import org.wangpai.calculator.model.universal.Multithreading;
@@ -19,6 +19,7 @@ import org.wangpai.calculator.model.universal.Multithreading;
  *
  * @since 2021-9-27
  */
+@Slf4j
 public class SceneWrapper extends Scene {
     private Scene scene = this;
 
@@ -33,14 +34,12 @@ public class SceneWrapper extends Scene {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
-                System.out.println("开始执行 afterInitScene()。时间："
-                        + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                log.info("开始执行方法 afterInitScene()。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
 
                 TaskAboutBindShortcut bindShortcutTask = new TaskAboutBindShortcut();
                 bindShortcutTask.task();
 
-                System.out.println("afterInitScene() 执行结束。时间："
-                        + (System.currentTimeMillis() - CentralDatabase.startTime) + "ms");
+                log.info("方法 afterInitScene() 执行结束。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
             }
         });
     }
@@ -59,7 +58,6 @@ public class SceneWrapper extends Scene {
             this.bindShortcuts();
         }
 
-        @SneakyThrows
         private void bindShortcuts() {
             var container = CentralDatabase.getContainer();
             List<Button> functionButtons;
@@ -70,7 +68,11 @@ public class SceneWrapper extends Scene {
              * 一直尝试获取资源会使其它线程得不到运行，从而导致死锁
              */
             do {
-                Thread.sleep(100); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
+                try {
+                    Thread.sleep(100); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
+                } catch (Exception exception) {
+                    log.error("发生了非自定义异常：", exception);
+                }
                 functionButtons = (List<Button>) container.get("functionButtons");
             } while (functionButtons == null);
 
@@ -93,6 +95,9 @@ public class SceneWrapper extends Scene {
                         break;
                     case "⟳":
                         this.bindShortcut(button, KeyCode.Z, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+                        break;
+
+                    default: // 不需要定义快捷键的按钮
                         break;
                 }
             }

@@ -1,5 +1,7 @@
 package org.wangpai.calculator.controller;
 
+import org.wangpai.calculator.exception.CalculatorException;
+
 /**
  * 终端控制器。实现终端控制器的类一般也要同时实现中间控制器（MiddleController）。
  *
@@ -11,7 +13,7 @@ package org.wangpai.calculator.controller;
  *
  * @since 2021-8-2
  */
-public interface TerminalController extends Controller{
+public interface TerminalController extends Controller {
     /**
      * 此处的方法 send、receive 都是针对最终目标来说的接收与发送，而不是针对控制器自身来说的
      *
@@ -21,7 +23,7 @@ public interface TerminalController extends Controller{
     /**
      * 此函数由非控制器的发送方调用，不能由终端控制器自己调用
      */
-    void send(Url url, Object data);
+    Object send(Url url, Object data) throws CalculatorException;
 
     /**
      * 含义：发送给最终目标的函数。最终目标是接收者
@@ -30,5 +32,5 @@ public interface TerminalController extends Controller{
      * 此方法只能由终端控制器自己的方法 send、passDown 调用，不能由其它控制器调用。
      * 此方法将根据 data 的类型将数据转发给相应的更具体的 receive 方法
      */
-    void receive(Url url, Object data);
+    Object receive(Url url, Object data) throws CalculatorException;
 }

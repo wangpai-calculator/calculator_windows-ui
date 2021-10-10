@@ -1,6 +1,10 @@
 package org.wangpai.calculator.model.data;
 
-import org.springframework.context.annotation.Lazy;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.Stack;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
@@ -10,15 +14,6 @@ import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 import org.wangpai.calculator.model.symbol.operator.Operator;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Repository;
-
-import java.util.Collections;
-import java.util.Stack;
-
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKET;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACKET;
@@ -26,9 +21,7 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACK
 /**
  * @since 2021-8-1
  */
-@Lazy
-@Scope("singleton")
-@Repository("calculatorData")
+@Slf4j
 public final class CalculatorData implements Operable, Cloneable {
     /**
      * 注意：对于 Stack，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的
@@ -119,7 +112,6 @@ public final class CalculatorData implements Operable, Cloneable {
      * @lastModified 2021-8-8
      * @since 2021-8-1
      */
-    @SneakyThrows
     public void pushSymbol(Symbol symbol) {
         if (symbol.isDigit() || symbol == DOT) {
             this.opndBuff.push(symbol);
@@ -140,7 +132,12 @@ public final class CalculatorData implements Operable, Cloneable {
             this.calculatedExp.pop();
             this.calculatedExp.push(temp);
         } else {
-            var operator = new Operator(symbol);
+            Operator operator = null;
+            try {
+                operator = new Operator(symbol);
+            } catch (Exception exception) {
+                log.error("异常：", exception);
+            }
             this.optrs.push(operator);
             this.calculatedExp.push(operator);
         }
@@ -150,23 +147,22 @@ public final class CalculatorData implements Operable, Cloneable {
 
     /**
      * @return 左右括号相等时，返回 0；左括号多于右括号，返回 1；左括号小于右括号，返回 2
-     * @apiNote pareMatch：parentheses match 括号匹配
      */
-    public int pareMatch() {
+    public int bracketMatch() {
         var antiOptrs = (Stack<Operator>) this.optrs.clone(); // antiOptrs：anti optr optr的反转
         Collections.reverse(antiOptrs);
 
-        Stack<Symbol> pares = new Stack<>();
+        Stack<Symbol> brackets = new Stack<>();
 
         while (!antiOptrs.empty()) {
             var tempOptr = antiOptrs.pop().getSymbol();
             switch (tempOptr) {
                 case LEFT_BRACKET:
-                    pares.push(tempOptr);
+                    brackets.push(tempOptr);
                     break;
                 case RIGHT_BRACKET:
-                    if (!pares.empty() && LEFT_BRACKET == pares.peek()) {
-                        pares.pop();
+                    if (!brackets.empty() && LEFT_BRACKET == brackets.peek()) {
+                        brackets.pop();
                     } else {
                         return 2;
                     }
@@ -175,10 +171,10 @@ public final class CalculatorData implements Operable, Cloneable {
             }
         }
 
-        // 如果最后 pares 为空，说明左右括号相等
-        if (pares.empty()) {
+        // 如果最后 brackets 为空，说明左右括号相等
+        if (brackets.empty()) {
             return 0;
-        } else { // 如果最后 pares 不为空，说明左括号数量多于右括号
+        } else { // 如果最后 brackets 不为空，说明左括号数量多于右括号
             return 1;
         }
     }
@@ -200,10 +196,10 @@ public final class CalculatorData implements Operable, Cloneable {
     }
 
     /**
-     * @lastModified 2021-8-8
      * @since 2021-8-5
+     * @lastModified 2021-10-12
      */
-    public void oneTimeCalculation() throws SyntaxException, UndefinedException {
+    public Operand oneTimeCalculation() throws SyntaxException, UndefinedException {
         var optr = this.optrs.pop();
         var opndRight = this.opnds.pop();
         var opndLeft = this.opnds.pop();
@@ -214,6 +210,7 @@ public final class CalculatorData implements Operable, Cloneable {
         Operand result = CalculatorData.oneTimeCalculation(opndLeft, optr, opndRight);
         this.opnds.push(result);
         this.calculatedExp.push(result);
+        return result;
     }
 
     /**
@@ -258,10 +255,14 @@ public final class CalculatorData implements Operable, Cloneable {
      * @lastModified 2021-8-8
      * @since 2021-8-1
      */
-    @SneakyThrows
     @Override
     public Object clone() {
-        var cloned = (CalculatorData) super.clone();
+        CalculatorData cloned = null;
+        try {
+            cloned = (CalculatorData) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            log.error("发生了非自定义异常：", exception);
+        }
 
         cloned.opnds = (Stack<Operand>) this.opnds.clone();
         cloned.opndBuff = (Stack<Symbol>) this.opndBuff.clone();
@@ -298,6 +299,7 @@ public final class CalculatorData implements Operable, Cloneable {
 
     /**
      * @since 2021-8-9
+     * @lastModified 2021-10-12
      */
     public String calculatedExpToString() {
         StringBuilder sb = new StringBuilder();
