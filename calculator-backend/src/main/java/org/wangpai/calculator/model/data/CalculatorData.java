@@ -1,10 +1,10 @@
 package org.wangpai.calculator.model.data;
 
+import java.util.Collections;
+import java.util.Stack;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import java.util.Collections;
-import java.util.Stack;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;

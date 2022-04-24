@@ -1,11 +1,10 @@
 package org.wangpai.calculator.view.output;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * 此类必须位于一个独立的文件，而不能各其它 public 类放一起

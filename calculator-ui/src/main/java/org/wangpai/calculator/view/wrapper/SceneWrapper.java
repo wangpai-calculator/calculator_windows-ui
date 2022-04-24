@@ -1,6 +1,6 @@
 package org.wangpai.calculator.view.wrapper;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,7 +9,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyCombination.Modifier;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
 import org.wangpai.calculator.model.universal.Multithreading;
@@ -34,12 +34,12 @@ public class SceneWrapper extends Scene {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
-                log.info("开始执行方法 afterInitScene()。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                log.info("开始执行方法 afterInitScene()。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
 
                 TaskAboutBindShortcut bindShortcutTask = new TaskAboutBindShortcut();
                 bindShortcutTask.task();
 
-                log.info("方法 afterInitScene() 执行结束。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                log.info("方法 afterInitScene() 执行结束。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
             }
         });
     }

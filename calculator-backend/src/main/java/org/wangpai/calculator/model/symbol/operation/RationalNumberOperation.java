@@ -1,5 +1,6 @@
 package org.wangpai.calculator.model.symbol.operation;
 
+import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
@@ -8,8 +9,6 @@ import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @since 2021-8-1

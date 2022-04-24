@@ -1,17 +1,15 @@
 package org.wangpai.calculator;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.model.universal.CentralDatabase;
-import org.wangpai.calculator.view.mainface.CalculatorMainFaceLinker;
+import org.wangpai.calculator.view.mainface.CalculatorMainFace;
 import org.wangpai.calculator.view.wrapper.SceneWrapper;
 
 /**
@@ -26,11 +24,11 @@ public class CalculatorMainFaceApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         /**
-         * 注意：此路径是以 resource 下 XXX.class 的类所在 模块 及 包 中的文件路径为相对路径。
-         * 例如，如果类 XXX 所在模块的包为 xxx，此相对路径的基路径为该模块 resource/xxx/
+         * 注意：此路径是以 resources 下 XXX.class 的类所在 模块 及 包 中的文件路径为相对路径。
+         * 例如，如果类 XXX 所在模块的包为 xxx，此相对路径的基路径为该模块 resources/xxx/
          */
         FXMLLoader fxmlLoader = new FXMLLoader(
-                CalculatorMainFaceLinker.class.getResource("CalculatorMainFace.fxml"));
+                CalculatorMainFace.class.getResource("CalculatorMainFace.fxml"));
         Scene scene = new SceneWrapper(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
@@ -42,7 +40,7 @@ public class CalculatorMainFaceApp extends Application {
          * 此外，这个路径也会随模块打成 JAR 包而改变
          *
          * 方法 getResourceAsStream 的路径是以资源目录 resources 为基准的，
-         * 且不受模块的限制。这于 xxx.class 中 xxx 是哪个模块的哪个类无关
+         * 且不受 Maven 模块的限制。这于 xxx.class 中 xxx 是哪个模块的哪个类无关
          */
         var imageStream = CalculatorMainFaceApp.class.getClassLoader()
                 .getResourceAsStream("image/calculatorImage.png");
@@ -52,10 +50,10 @@ public class CalculatorMainFaceApp extends Application {
         stage.setOnCloseRequest(event -> {
             CentralDatabase.multithreadingClosed();
             Platform.exit();
-            log.info("******** UI 界面关闭：{}ms ********", System.currentTimeMillis() - CentralDatabase.startTime);
+            log.info("******** UI 界面关闭：{}ms ********", System.currentTimeMillis() - CentralDatabase.START_TIME);
         });
 
-        log.info(">>> UI 启动用时：{}ms",System.currentTimeMillis() - CentralDatabase.startTime);
+        log.info(">>> UI 启动用时：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
     }
 
     public static void main(String[] args) {

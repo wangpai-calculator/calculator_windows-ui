@@ -1,10 +1,8 @@
 package org.wangpai.calculator.exception.junit5;
 
-import org.wangpai.calculator.exception.SyntaxException;
-
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.api.Test;
+import org.wangpai.calculator.exception.SyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

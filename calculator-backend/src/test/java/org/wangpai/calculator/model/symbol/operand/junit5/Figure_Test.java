@@ -1,15 +1,13 @@
 package org.wangpai.calculator.model.symbol.operand.junit5;
 
+import java.math.BigInteger;
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
 import org.wangpai.calculator.model.symbol.operation.Operation;
-
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

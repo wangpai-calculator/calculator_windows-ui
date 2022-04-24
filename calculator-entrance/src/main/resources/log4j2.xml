@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+    <Properties>
+        <property name="console_log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%t] %l %n %m%n</property>
+        <property name="file_log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%t] %C.%M[%L line] %n %m%n</property>
+        <property name="every_file_size">20MB</property>
+    </Properties>
+
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${console_log_pattern}"/>
+        </Console>
+
+        <RollingFile name="DEBUG" fileName="./log/log4j2/debug.log"
+                     filePattern="./log/log4j2/debug_log_archive/debug-%d{yyyy-MM-dd}-%i.log.zip">
+            <PatternLayout pattern="${file_log_pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingFile>
+
+        <RollingFile name="INFO" fileName="./log/log4j2/info.log"
+                     filePattern="./log/log4j2/info_log_archive/info-%d{yyyy-MM-dd}-%i.log.zip">
+            <PatternLayout pattern="${file_log_pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingFile>
+
+        <RollingFile name="WARN" fileName="./log/log4j2/warn.log"
+                     filePattern="./log/log4j2/warn_log_archive/warn-%d{yyyy-MM-dd}-%i.log.zip">
+            <PatternLayout pattern="${file_log_pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingFile>
+
+        <RollingFile name="ERROR" fileName="./log/log4j2/error.log"
+                     filePattern="./log/log4j2/error_log_archive/error-%d{yyyy-MM-dd}-%i.log.zip">
+            <PatternLayout pattern="${file_log_pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingFile>
+
+    </appenders>
+
+    <loggers>
+        <!-- 属性 level 是用于设置最低需要输出的日志输出级别 -->
+        <root level="DEBUG">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="DEBUG"/>
+            <appender-ref ref="INFO"/>
+            <appender-ref ref="WARN"/>
+            <appender-ref ref="ERROR"/>
+        </root>
+    </loggers>
+</configuration>

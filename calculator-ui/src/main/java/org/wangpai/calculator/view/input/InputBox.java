@@ -1,11 +1,11 @@
 package org.wangpai.calculator.view.input;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import lombok.extern.slf4j.Slf4j;
-import java.net.URL;
-import java.util.ResourceBundle;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
@@ -24,7 +24,7 @@ public class InputBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
-                log.info("开始初始化 InputBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                log.info("开始初始化 InputBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
 
                 InputBoxLinker.linking(inputBox);
 
@@ -46,7 +46,7 @@ public class InputBox extends TextBox {
                         });
                     });
 
-                    log.info("InputBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                    log.info("InputBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
                 });
             }
         });

@@ -1,4 +1,4 @@
-package org.wangpai.calculator.view.control;
+package org.wangpai.calculator.view.mainface;
 
 import java.io.IOException;
 import javafx.application.Application;
@@ -11,13 +11,13 @@ import javafx.stage.Stage;
  *
  * @since 2021年9月24日
  */
-public class ButtonGroupApp extends Application {
+public class CalculatorMainFaceApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(
-                ButtonGroupAppTest.class.getResource("ButtonGroup.fxml"));
+                CalculatorMainFaceApp.class.getResource("CalculatorMainFace.fxml"));
+
         Scene scene = new Scene(fxmlLoader.load());
-//        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }

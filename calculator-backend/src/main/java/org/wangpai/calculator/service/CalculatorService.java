@@ -1,13 +1,13 @@
 package org.wangpai.calculator.service;
 
+import java.util.List;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
-import java.util.List;
-import java.util.regex.Pattern;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
@@ -21,13 +21,13 @@ import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operator.Operator;
 
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ADD;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DIVIDE;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.EQUAL;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKET;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACKET;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
 import static org.wangpai.calculator.view.output.PromptMsgBoxState.ERROR_TEXT;
 import static org.wangpai.calculator.view.output.PromptMsgBoxState.NORMAL_TEXT;
 

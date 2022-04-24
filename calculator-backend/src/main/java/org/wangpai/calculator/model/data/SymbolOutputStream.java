@@ -1,12 +1,11 @@
 package org.wangpai.calculator.model.data;
 
-import org.wangpai.calculator.exception.UndefinedException;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import org.wangpai.calculator.exception.UndefinedException;
+import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
 /**
  * @since 2021-8-1

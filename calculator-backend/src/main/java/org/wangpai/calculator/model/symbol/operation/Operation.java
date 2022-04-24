@@ -1,12 +1,11 @@
 package org.wangpai.calculator.model.symbol.operation;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Operand;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
 
 /**
  * 这个类的所有方法都应该是 static 方法

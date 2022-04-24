@@ -1,8 +1,7 @@
 package org.wangpai.calculator.model.symbol.enumeration.junit5;
 
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-
 import org.junit.jupiter.api.Test;
+import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

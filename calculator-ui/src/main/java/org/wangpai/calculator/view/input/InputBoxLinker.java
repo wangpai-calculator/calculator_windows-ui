@@ -1,18 +1,17 @@
 package org.wangpai.calculator.view.input;
 
-import lombok.extern.slf4j.Slf4j;
-import org.wangpai.calculator.controller.MiddleController;
-import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
-import org.wangpai.calculator.model.universal.CentralDatabase;
-import org.wangpai.calculator.view.base.TerminalLinker;
-
 import javafx.application.Platform;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.wangpai.calculator.controller.MiddleController;
+import org.wangpai.calculator.controller.Url;
+import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.calculator.model.universal.CentralDatabase;
+import org.wangpai.calculator.view.base.TerminalLinker;
 
 /**
  * @since 2021-7-24
@@ -54,6 +53,7 @@ public final class InputBoxLinker extends TerminalLinker {
      *
      * @since 2021-8-7
      */
+    @Override
     public void afterPropertiesSet() {
         // 此方法无需实现
     }
@@ -89,6 +89,7 @@ public final class InputBoxLinker extends TerminalLinker {
         InputBoxLinker.getLinker().bindLinker(inputBox);
     }
 
+    @Override
     public Object receive(Url url, Object data) throws CalculatorException {
         Object response = null;
         if (data instanceof String) {

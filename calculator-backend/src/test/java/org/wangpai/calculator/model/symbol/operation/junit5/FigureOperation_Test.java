@@ -1,13 +1,11 @@
 package org.wangpai.calculator.model.symbol.operation.junit5;
 
+import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
-
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -114,7 +112,7 @@ public class FigureOperation_Test {
     @Test
     public void test_findGcd() throws NoSuchMethodException, CalculatorException, CloneNotSupportedException, IllegalAccessException {
         assertEquals(findGcd_forTest(
-                new Figure(firstInt), new Figure(secondInt)),
+                        new Figure(firstInt), new Figure(secondInt)),
                 FigureOperation.findGcd(
                         new Figure(firstInt), new Figure(secondInt)));
     }
@@ -122,7 +120,7 @@ public class FigureOperation_Test {
     @Test
     public void test_findLcm() throws NoSuchMethodException, IllegalAccessException, CalculatorException, InvocationTargetException, CloneNotSupportedException {
         assertEquals(findLcm_forTest(
-                new Figure(firstInt), new Figure(secondInt)),
+                        new Figure(firstInt), new Figure(secondInt)),
                 FigureOperation.findLcm(new Figure(firstInt), new Figure(secondInt)));
     }
 

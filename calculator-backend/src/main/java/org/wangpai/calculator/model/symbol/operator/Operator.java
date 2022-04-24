@@ -1,11 +1,10 @@
 package org.wangpai.calculator.model.symbol.operator;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-
-import lombok.AccessLevel;
-import lombok.Getter;
 
 /**
  * @since 2021-7-28

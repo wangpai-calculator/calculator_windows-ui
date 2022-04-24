@@ -1,17 +1,15 @@
 package org.wangpai.calculator.model.symbol.operation.junit5;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.Operation;
-
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

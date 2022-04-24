@@ -7,9 +7,9 @@
 
     <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <parent>
-        <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>3.3</version>
+        <artifactId>calculator-windows</artifactId>
+        <version>3.4</version>
     </parent>
 
     <artifactId>calculator-exception</artifactId>

@@ -1,6 +1,11 @@
 package org.wangpai.calculator.view.mainface;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
@@ -10,12 +15,6 @@ import org.wangpai.calculator.view.control.ButtonGroupLinker;
 import org.wangpai.calculator.view.input.InputBoxLinker;
 import org.wangpai.calculator.view.output.PromptMsgBoxLinker;
 import org.wangpai.calculator.view.output.ResultBoxLinker;
-
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @Lazy
 @Scope("singleton")

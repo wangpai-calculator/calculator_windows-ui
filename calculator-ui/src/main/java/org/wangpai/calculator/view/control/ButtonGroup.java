@@ -1,16 +1,16 @@
 package org.wangpai.calculator.view.control;
 
-import lombok.extern.slf4j.Slf4j;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.fxml.FXML;
-import javafx.application.Platform;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
+import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.ConflictException;
@@ -91,7 +91,7 @@ public class ButtonGroup implements FxComponent {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        log.info("开始初始化 ButtonGroup。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+        log.info("开始初始化 ButtonGroup。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
 
         var buttonGroup = this;
         buttonGroup.setButtonsStyle(); // 设置按钮文本、击键颜色等
@@ -119,7 +119,7 @@ public class ButtonGroup implements FxComponent {
                     buttonGroup.setFunctionButtons(); // 设置功能键
                     buttonGroup.setConcealedFunctions(); // 设置特殊隐藏功能
 
-                    log.info("ButtonGroup 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                    log.info("ButtonGroup 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
                 });
             }
         });
@@ -166,7 +166,7 @@ public class ButtonGroup implements FxComponent {
                 button.setText(label);
                 // 设置击键时的颜色变化。击键后按键变为灰色
                 button.setOnMousePressed(event -> button.setStyle("-fx-background-color: grey"));
-                // 将 Style 设置为空串时，JavaFX 会为之恢复之前的 Style
+                // 将 Style 设置为空串时，JavaFX 会将之前调用方法 setStyle 产生的所有效果都消除
                 button.setOnMouseReleased(event -> button.setStyle(""));
 
                 this.buttons[row][column] = button;

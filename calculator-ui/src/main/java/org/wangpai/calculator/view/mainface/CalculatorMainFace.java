@@ -1,11 +1,10 @@
 package org.wangpai.calculator.view.mainface;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.view.base.FxComponent;
 import org.wangpai.calculator.view.base.SpringLinker;
@@ -20,10 +19,10 @@ public class CalculatorMainFace implements FxComponent {
     private VBox buttongroupVbox;
 
     @FXML
-    private GridPane promptmsgboxVbox;
+    private GridPane promptmsgboxGridPane;
 
     @FXML
-    private GridPane resultboxVbox;
+    private GridPane resultboxGridPane;
 
     /**
      * @since 2021-9-27

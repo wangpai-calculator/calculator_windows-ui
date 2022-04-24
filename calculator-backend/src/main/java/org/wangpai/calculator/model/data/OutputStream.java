@@ -1,10 +1,10 @@
 package org.wangpai.calculator.model.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import java.util.ArrayList;
-import java.util.List;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.UndefinedException;
 

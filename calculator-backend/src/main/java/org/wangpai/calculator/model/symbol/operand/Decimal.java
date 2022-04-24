@@ -1,7 +1,6 @@
 package org.wangpai.calculator.model.symbol.operand;
 
 import lombok.extern.slf4j.Slf4j;
-import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;

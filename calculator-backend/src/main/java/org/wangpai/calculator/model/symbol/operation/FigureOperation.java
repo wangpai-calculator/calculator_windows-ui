@@ -1,14 +1,13 @@
 package org.wangpai.calculator.model.symbol.operation;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UnknownException;
 import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Figure;
 import org.wangpai.calculator.model.symbol.operand.Operand;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
 
 /**
  * 此类不定义整数除法运算

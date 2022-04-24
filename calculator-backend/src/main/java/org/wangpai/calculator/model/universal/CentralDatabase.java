@@ -1,15 +1,16 @@
 package org.wangpai.calculator.model.universal;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import javafx.concurrent.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javafx.concurrent.Task;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.wangpai.calculator.model.data.SpringConfig;
 
 /**
  * @since 2021-9-27
@@ -19,10 +20,10 @@ public class CentralDatabase {
     /**
      * 这里凡是使用 volatile 的变量都使用了单例模式中的“双重检查锁定”
      */
-    private volatile static AbstractXmlApplicationContext springContext;
+    private static volatile AbstractApplicationContext springContext;
     private static final Object SPRINGCONTEXT_LOCK = new Object();
 
-    private volatile static Map container;
+    private static volatile Map container;
     private static final Object CONTAINER_LOCK = new Object();
 
     /**
@@ -30,7 +31,7 @@ public class CentralDatabase {
      *
      * @since 2021-9-28
      */
-    private volatile static ExecutorService executor;
+    private static volatile ExecutorService executor;
     private static final Object EXECUTOR_LOCK = new Object();
 
     /**
@@ -38,7 +39,7 @@ public class CentralDatabase {
      *
      * @since 2021-9-28
      */
-    private volatile static List<Task<Object>> tasks;
+    private static volatile List<Task<Object>> tasks;
     private static final Object TASKS_LOCK = new Object();
 
     /**
@@ -46,34 +47,34 @@ public class CentralDatabase {
      *
      * @since 2021-9-28
      */
-    public static final long startTime = System.currentTimeMillis();
+    public static final long START_TIME = System.currentTimeMillis();
 
     static {
-        log.info("--------应用启动，日志信息开始输出：{}ms---------", System.currentTimeMillis() - CentralDatabase.startTime);
+        log.info(System.lineSeparator()); // 先打印空行来分隔以前的日志，以提高视觉效果
+        log.info("--------应用启动，日志信息开始输出：{}ms---------", System.currentTimeMillis() - CentralDatabase.START_TIME);
     }
 
     /**
      * 此方法是强同步方法，此方法不能返回 null，因此不能新建线程来创建 Spring 容器。
-     * 使用此方法而不是直接使用类字段是为了进行“懒加载”
+     * 提供此方法是为了进行“懒加载”
      *
      * 这里使用了单例模式中的“双重检查锁定”
      *
      * @since 2021-9-28
      */
-    public static AbstractXmlApplicationContext getSpringContext() {
+    public static AbstractApplicationContext getSpringContext() {
         // 第一重判断
         if (CentralDatabase.springContext == null) {
             // 上锁
             synchronized (SPRINGCONTEXT_LOCK) {
                 // 第二重判断
                 if (CentralDatabase.springContext == null) {
-                    log.info("开始初始化 Spring Bean。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                    log.info("开始初始化 Spring Bean。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
 
-                    // Spring 的此路径在 IntelliJ IDEA 中是以资源目录 resources 为基准的
                     CentralDatabase.springContext =
-                            new ClassPathXmlApplicationContext("spring/beanScan.xml");
+                            new AnnotationConfigApplicationContext(SpringConfig.class);
 
-                    log.info("Spring Bean 初始化结束。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                    log.info("Spring Bean 初始化结束。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
                 }
             }
         }
@@ -81,7 +82,7 @@ public class CentralDatabase {
     }
 
     /**
-     * 使用此方法而不是直接使用类字段是为了进行“懒加载”
+     * 提供此方法是为了进行“懒加载”
      *
      * 这里使用了单例模式中的“双重检查锁定”
      *
@@ -103,7 +104,7 @@ public class CentralDatabase {
     }
 
     /**
-     * 使用此方法而不是直接使用类字段是为了进行“懒加载”
+     * 提供此方法是为了进行“懒加载”
      *
      * 这里使用了单例模式中的“双重检查锁定”
      *
@@ -125,7 +126,7 @@ public class CentralDatabase {
     }
 
     /**
-     * 使用此方法而不是直接使用类字段是为了进行“懒加载”
+     * 提供此方法是为了进行“懒加载”
      *
      * @since 2021-9-28
      */

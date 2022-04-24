@@ -1,10 +1,9 @@
 package org.wangpai.calculator.model.data.junit5;
 
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.data.CalculatorData;
 import org.wangpai.calculator.model.data.SymbolOutputStream;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

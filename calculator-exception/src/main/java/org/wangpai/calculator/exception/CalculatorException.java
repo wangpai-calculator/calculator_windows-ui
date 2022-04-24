@@ -1,10 +1,9 @@
 package org.wangpai.calculator.exception;
 
+import java.lang.reflect.InvocationTargetException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @since 2021-7-9
@@ -36,7 +35,7 @@ public abstract class CalculatorException extends Exception {
         this.setData(obj);
     }
 
-    public String exceptionCause(){
+    public String exceptionCause() {
         return this.getExceptionMsg();
     }
 

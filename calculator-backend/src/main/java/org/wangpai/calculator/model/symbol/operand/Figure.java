@@ -1,13 +1,11 @@
 package org.wangpai.calculator.model.symbol.operand;
 
+import java.math.BigInteger;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
 import org.wangpai.calculator.model.symbol.operation.Operation;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-
-import java.math.BigInteger;
 
 /**
  * 整数
@@ -169,6 +167,7 @@ public class Figure implements Operand {
         return this.integer.equals(BigInteger.ZERO);
     }
 
+    @Override
     public boolean isNegative() {
         /**
          * 对于 BigInteger 的函数 signum 的返回值：

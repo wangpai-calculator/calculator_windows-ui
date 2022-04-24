@@ -1,4 +1,4 @@
-package org.wangpai.calculator.view;
+package org.wangpai.calculator.view.mainface;
 
 public class CalculatorMainFaceAppTest {
     public static void main(String[] args) {

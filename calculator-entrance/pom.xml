@@ -7,9 +7,9 @@
 
     <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <parent>
-        <artifactId>calculator-windows</artifactId>
         <groupId>org.wangpai.calculator</groupId>
-        <version>3.3</version>
+        <artifactId>calculator-windows</artifactId>
+        <version>3.4</version>
     </parent>
 
     <artifactId>calculator-entrance</artifactId>
@@ -35,12 +35,16 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -66,67 +70,64 @@
                 </executions>
             </plugin>
 
-
+            <!-- 此插件暂时没起到什么作用，留着以后备用 -->
             <!--
             此插件可以用于在当前模块中生成单入口类 JAR 包。
             此插件往往与插件 maven-dependency-plugin 一起配合使用
-
-            此插件暂时没起到什么作用，留着以后备用
             -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <!-- 配置程序运行入口所在的类 -->
-                            <mainClass>${mainClass}</mainClass>
-                            <!--
-                            设置程序的 ClassPath 路径。
-                            这指的是在命令行中 java -cp XXX 中 -cp 参数的内容。也就是说，此项为依赖 JAR 包目录。
-                            如果设置了此项，且之后把依赖 JAR 包全部放入目录 lib/ 下，
-                            然后就可以直接使用 java -jar XXX.jar 来运行本 JAR 包，而无需在命令中指定依赖
-                            -->
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                    <!-- 设置 JAR 包输出目录 -->
-                    <outputDirectory>${project.build.directory}/#maven-jar-plugin</outputDirectory>
-                </configuration>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-jar-plugin</artifactId>-->
+            <!--                <version>3.2.0</version>-->
+            <!--                <configuration>-->
+            <!--                    <archive>-->
+            <!--                        <manifest>-->
+            <!--                            &lt;!&ndash; 配置程序运行入口所在的类 &ndash;&gt;-->
+            <!--                            <mainClass>${mainClass}</mainClass>-->
+            <!--                            &lt;!&ndash;-->
+            <!--                            设置程序的 ClassPath 路径。-->
+            <!--                            这指的是在命令行中 java -cp XXX 中 -cp 参数的内容。也就是说，此项为依赖 JAR 包目录。-->
+            <!--                            如果设置了此项，且之后把依赖 JAR 包全部放入目录 lib/ 下，-->
+            <!--                            然后就可以直接使用 java -jar XXX.jar 来运行本 JAR 包，而无需在命令中指定依赖-->
+            <!--                            &ndash;&gt;-->
+            <!--                            <classpathPrefix>lib/</classpathPrefix>-->
+            <!--                            <addClasspath>true</addClasspath>-->
+            <!--                        </manifest>-->
+            <!--                    </archive>-->
+            <!--                    &lt;!&ndash; 设置 JAR 包输出目录 &ndash;&gt;-->
+            <!--                    <outputDirectory>${project.build.directory}/#maven-jar-plugin</outputDirectory>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
 
+            <!-- 此插件暂时没起到什么作用，留着以后备用 -->
             <!--
             此插件是用于生成该模块所直接和间接引用的所有依赖。
             但生成的不包括自身的 JAR 包，所以在此插件的设置中无需设置程序运行入口类。
             此插件可在生命周期 package 中被执行。
             此插件往往与插件 maven-jar-plugin 一起使用
-
-            此插件暂时没起到什么作用，留着以后备用
             -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <!-- 设置 JAR 包输出目录 -->
-                            <outputDirectory>${project.build.directory}/#maven-jar-plugin/lib</outputDirectory>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                            <includeScope>compile</includeScope>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-dependency-plugin</artifactId>-->
+            <!--                <version>3.2.0</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>copy-dependencies</id>-->
+            <!--                        <phase>package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>copy-dependencies</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            &lt;!&ndash; 设置 JAR 包输出目录 &ndash;&gt;-->
+            <!--                            <outputDirectory>${project.build.directory}/#maven-jar-plugin/lib</outputDirectory>-->
+            <!--                            <overWriteReleases>true</overWriteReleases>-->
+            <!--                            <overWriteSnapshots>true</overWriteSnapshots>-->
+            <!--                            <overWriteIfNewer>true</overWriteIfNewer>-->
+            <!--                            <includeScope>compile</includeScope>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
 
         </plugins>
     </build>

@@ -1,16 +1,15 @@
 package org.wangpai.calculator.view.control;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TerminalLinker;
-
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @since 2021-8-1

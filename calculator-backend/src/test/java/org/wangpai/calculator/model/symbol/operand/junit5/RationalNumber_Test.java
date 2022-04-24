@@ -1,5 +1,7 @@
 package org.wangpai.calculator.model.symbol.operand.junit5;
 
+import java.math.BigInteger;
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
@@ -7,10 +9,6 @@ import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 import org.wangpai.calculator.model.symbol.operation.Operation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
-
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -125,8 +123,8 @@ public class RationalNumber_Test {
 
     @Test
     public void test_toString() {
-        assertEquals(rationalNumber.getNumerator().toString()
-                        + "/" + rationalNumber.getDenominator().toString(),
+        assertEquals("[" + rationalNumber.getNumerator().toString()
+                        + "/" + rationalNumber.getDenominator().toString() + "]",
                 rationalNumber.toString());
     }
 

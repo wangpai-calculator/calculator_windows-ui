@@ -1,11 +1,10 @@
 package org.wangpai.calculator.view.output;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * 此类必须位于一个独立的文件，而不能各其它 public 类放一起
@@ -18,7 +17,6 @@ public class PromptMsgBoxApp extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(
                 PromptMsgBoxApp.class.getResource("PromptMsgBox.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-//        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }

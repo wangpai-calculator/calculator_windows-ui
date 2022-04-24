@@ -1,14 +1,9 @@
 package org.wangpai.calculator.model.data.junit5;
 
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.data.SymbolOutputStream;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-
-import org.junit.jupiter.api.Test;
-
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ONE;
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.THREE;
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.TWO;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ONE;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.THREE;
+import static org.wangpai.calculator.model.symbol.enumeration.Symbol.TWO;
 
 /**
  * @since 2021-7-29

@@ -1,11 +1,11 @@
 package org.wangpai.calculator.view.output;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import java.net.URL;
-import java.util.ResourceBundle;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class PromptMsgBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
-                log.info("开始初始化 PromptMsgBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                log.info("开始初始化 PromptMsgBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
 
                 PromptMsgBoxLinker.linking(promptMsgBox);
 
@@ -53,7 +53,7 @@ public class PromptMsgBox extends TextBox {
                     promptMsgBox.initSuperTextArea(promptMsgBox.textArea);
                     promptMsgBox.setFocusPriority(false);
 
-                    log.info("PromptMsgBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                    log.info("PromptMsgBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
                 });
             }
         });

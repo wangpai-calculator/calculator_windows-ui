@@ -1,11 +1,11 @@
 package org.wangpai.calculator.view.output;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import java.net.URL;
-import java.util.ResourceBundle;
 import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
@@ -26,7 +26,7 @@ public class ResultBox extends TextBox {
         Multithreading.execute(new Function() {
             @Override
             public void run() {
-                log.info("开始初始化 ResultBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                log.info("开始初始化 ResultBox。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
 
                 ResultBoxLinker.linking(resultBox);
 
@@ -39,7 +39,7 @@ public class ResultBox extends TextBox {
                     resultBox.initSuperTextArea(resultBox.textArea);
                     resultBox.setFocusPriority(false);
 
-                    log.info("ResultBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.startTime);
+                    log.info("ResultBox 初始化完成。时间：{}ms", System.currentTimeMillis() - CentralDatabase.START_TIME);
                 });
             }
         });

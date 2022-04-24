@@ -1,12 +1,14 @@
 package org.wangpai.calculator.model.symbol.operand.junit5;
 
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.symbol.operand.Decimal;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 
-import org.junit.jupiter.api.Test;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ADD;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.FIVE;
@@ -16,10 +18,6 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.SUBTRACT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.THREE;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.TWO;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Decimal_Test {
     Symbol[] zero = {ZERO}; // 0

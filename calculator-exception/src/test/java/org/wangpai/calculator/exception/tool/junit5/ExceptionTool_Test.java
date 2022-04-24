@@ -1,10 +1,9 @@
 package org.wangpai.calculator.exception.tool.junit5;
 
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UnknownException;
 import org.wangpai.calculator.exception.tool.ExceptionTool;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

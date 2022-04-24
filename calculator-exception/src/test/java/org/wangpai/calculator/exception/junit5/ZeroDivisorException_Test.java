@@ -1,12 +1,10 @@
 package org.wangpai.calculator.exception.junit5;
 
+import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.ZeroDivisorException;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @since 2021-7-19

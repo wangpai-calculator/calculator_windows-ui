@@ -1,9 +1,8 @@
 package org.wangpai.calculator.exception.junit5;
 
+import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.ConflictException;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

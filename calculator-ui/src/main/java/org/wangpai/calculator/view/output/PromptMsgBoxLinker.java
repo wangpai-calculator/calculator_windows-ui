@@ -1,13 +1,13 @@
 package org.wangpai.calculator.view.output;
 
+import java.util.Stack;
+import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import javafx.application.Platform;
-import java.util.Stack;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
 import org.wangpai.calculator.exception.CalculatorException;
@@ -55,6 +55,7 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
      *
      * @since 2021-8-7
      */
+    @Override
     public void afterPropertiesSet() {
         // 敬请期待
     }
