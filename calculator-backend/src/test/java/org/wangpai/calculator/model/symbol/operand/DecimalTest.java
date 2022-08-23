@@ -1,10 +1,8 @@
-package org.wangpai.calculator.model.symbol.operand.junit5;
+package org.wangpai.calculator.model.symbol.operand;
 
 import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.symbol.enumeration.Symbol;
-import org.wangpai.calculator.model.symbol.operand.Decimal;
-import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,7 +17,7 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.THREE;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.TWO;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
 
-public class Decimal_Test {
+public class DecimalTest {
     Symbol[] zero = {ZERO}; // 0
     Symbol[] positive = {ONE, TWO, THREE}; // 正数
     Symbol[] negative = {SUBTRACT, ONE, TWO, THREE}; // 负数
@@ -36,30 +34,30 @@ public class Decimal_Test {
      * @since 2021-8-2
      */
     @Test
-    public void test_arrayIsDecimal() {
-        assertTrue(Decimal.arrayIsDecimal(zero));
-        assertTrue(Decimal.arrayIsDecimal(positive));
-        assertTrue(Decimal.arrayIsDecimal(negative));
-        assertTrue(Decimal.arrayIsDecimal(properFraction));
-        assertTrue(Decimal.arrayIsDecimal(decimal));
+    public void arrayIsDecimal() {
+        assertTrue(Decimal.arrayIsDecimal(this.zero));
+        assertTrue(Decimal.arrayIsDecimal(this.positive));
+        assertTrue(Decimal.arrayIsDecimal(this.negative));
+        assertTrue(Decimal.arrayIsDecimal(this.properFraction));
+        assertTrue(Decimal.arrayIsDecimal(this.decimal));
 
-        assertFalse(Decimal.arrayIsDecimal(wrongFirst));
-        assertFalse(Decimal.arrayIsDecimal(doubleSubtract));
-        assertFalse(Decimal.arrayIsDecimal(innerSubtract));
-        assertFalse(Decimal.arrayIsDecimal(doublePoint));
-        assertFalse(Decimal.arrayIsDecimal(beginDot));
+        assertFalse(Decimal.arrayIsDecimal(this.wrongFirst));
+        assertFalse(Decimal.arrayIsDecimal(this.doubleSubtract));
+        assertFalse(Decimal.arrayIsDecimal(this.innerSubtract));
+        assertFalse(Decimal.arrayIsDecimal(this.doublePoint));
+        assertFalse(Decimal.arrayIsDecimal(this.beginDot));
         assertFalse(Decimal.arrayIsDecimal(null));
     }
 
     @Test
-    public void test_toRationalNumber() throws CalculatorException {
+    public void toRationalNumber() throws CalculatorException {
         Symbol[] lessThanZero = {ZERO, DOT, FIVE}; // 0.5
         Symbol[] largerThanZero = {ONE, DOT, FIVE}; // 1.5
         Symbol[] lessThanZeroNegative = {SUBTRACT, ZERO, DOT, FIVE}; // -0.5
         Symbol[] largerThanZeroNegative = {SUBTRACT, ONE, DOT, FIVE}; // -1.5
 
         assertEquals(new RationalNumber(0),
-                new Decimal(zero).toRationalNumber());
+                new Decimal(this.zero).toRationalNumber());
         assertEquals(new RationalNumber(1, 2),
                 new Decimal(lessThanZero).toRationalNumber());
         assertEquals(new RationalNumber(3, 2),

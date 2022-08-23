@@ -1,13 +1,8 @@
-package org.wangpai.calculator.model.symbol.operand.junit5;
+package org.wangpai.calculator.model.symbol.operand;
 
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.UndefinedException;
-import org.wangpai.calculator.model.symbol.operand.Figure;
-import org.wangpai.calculator.model.symbol.operand.Operand;
-import org.wangpai.calculator.model.symbol.operand.RationalNumber;
-import org.wangpai.calculator.model.symbol.operation.FigureOperation;
-import org.wangpai.calculator.model.symbol.operation.Operation;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,52 +13,46 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @since 2021-7-22
  */
-public class Figure_Test {
+public class FigureTest {
     private final int numForTest = 1;
 
     /**
      * @since 2021-8-3
      */
     @Test
-    public void test_Figure_Operand() {
-        assertDoesNotThrow(() -> new Figure((Operand) new Figure(numForTest)));
+    public void Figure_Operand() {
+        assertDoesNotThrow(() -> new Figure((Operand) new Figure(this.numForTest)));
 
         assertThrows(UndefinedException.class,
                 () -> new Figure((Operand) new RationalNumber(1, 1)));
     }
 
     @Test
-    public void test_getBindingOperation() {
-        assertEquals(FigureOperation.class,
-                new Figure().getBindingOperation());
+    public void getFraction() {
+        assertEquals(BigInteger.valueOf(this.numForTest),
+                new Figure(this.numForTest).getInteger());
     }
 
     @Test
-    public void test_getFraction() {
-        assertEquals(BigInteger.valueOf(numForTest),
-                new Figure(numForTest).getInteger());
+    public void valueOf() {
+        assertEquals(new Figure(this.numForTest),
+                Figure.valueOf(this.numForTest));
     }
 
     @Test
-    public void test_valueOf() {
-        assertEquals(new Figure(numForTest),
-                Figure.valueOf(numForTest));
-    }
-
-    @Test
-    public void test_setFigure() {
+    public void setFigure() {
         // 测试 public Fraction setFraction(BigInteger fraction)
-        assertEquals(new Figure(numForTest),
-                new Figure().setInteger(BigInteger.valueOf(numForTest)));
+        assertEquals(new Figure(this.numForTest),
+                new Figure().setInteger(BigInteger.valueOf(this.numForTest)));
 
         //  测试 public Fraction setFraction(long num)
-        assertEquals(new Figure(numForTest),
-                new Figure().setInteger(numForTest));
+        assertEquals(new Figure(this.numForTest),
+                new Figure().setInteger(this.numForTest));
     }
 
     @Test
-    public void test_clone() throws CloneNotSupportedException {
-        var figure = new Figure(numForTest);
+    public void clone_test() throws CloneNotSupportedException {
+        var figure = new Figure(this.numForTest);
         var cloned = figure.clone();
 
         assertEquals(figure, cloned); // 意义上相等
@@ -71,14 +60,14 @@ public class Figure_Test {
     }
 
     @Test
-    public void test_toString() {
-        assertEquals(new Figure(numForTest).getInteger().toString(),
-                new Figure(numForTest).toString());
+    public void toString_test() {
+        assertEquals(new Figure(this.numForTest).getInteger().toString(),
+                new Figure(this.numForTest).toString());
     }
 
     @Test
-    public void test_equals() throws CloneNotSupportedException {
-        var figure = new Figure(numForTest);
+    public void equals() throws CloneNotSupportedException {
+        var figure = new Figure(this.numForTest);
 
         // 自身比较返回 true
         assertTrue(figure.equals(figure));
@@ -95,11 +84,6 @@ public class Figure_Test {
 
         var illegalStubObj = new Operand() {
             @Override
-            public Class<? extends Operation> getBindingOperation() {
-                return null;
-            }
-
-            @Override
             public boolean isZero() {
                 return false;
             }
@@ -109,13 +93,13 @@ public class Figure_Test {
     }
 
     @Test
-    public void test_isZero() {
+    public void isZero() {
         assertTrue(new Figure(0).isZero());
         assertFalse(new Figure(1).isZero());
     }
 
     @Test
-    public void test_isNegative() {
+    public void isNegative() {
         assertTrue(new Figure(-1).isNegative());
         assertFalse(new Figure(0).isNegative());
         assertFalse(new Figure(1).isNegative());

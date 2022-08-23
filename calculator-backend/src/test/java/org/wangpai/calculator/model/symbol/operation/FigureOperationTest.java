@@ -1,11 +1,10 @@
-package org.wangpai.calculator.model.symbol.operation.junit5;
+package org.wangpai.calculator.model.symbol.operation;
 
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.model.symbol.operand.Figure;
-import org.wangpai.calculator.model.symbol.operation.FigureOperation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,123 +12,136 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @since 2021-7-30
  */
-public class FigureOperation_Test {
+public class FigureOperationTest {
     private int firstInt = 234234;
     private int secondInt = 2341;
 
     @Test
-    public void test_templateOperation() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(firstInt - secondInt),
-                templateOperation("subtract",
-                        new Figure(firstInt), new Figure(secondInt)));
+    public void templateOperation() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+        assertEquals(new Figure(this.firstInt - this.secondInt),
+                this.templateOperation("subtract",
+                        new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_add() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(firstInt + secondInt),
-                add(new Figure(firstInt), new Figure(secondInt)));
+    public void add() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+        assertEquals(new Figure(this.firstInt + this.secondInt),
+                this.add(new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_subtract() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(firstInt - secondInt),
-                subtract(new Figure(firstInt), new Figure(secondInt)));
+    public void subtract() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+        assertEquals(new Figure(this.firstInt - this.secondInt),
+                this.subtract(new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_multiply() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(firstInt * secondInt),
-                multiply(new Figure(firstInt), new Figure(secondInt)));
+    public void multiply() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+        assertEquals(new Figure(this.firstInt * this.secondInt),
+                this.multiply(new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_divide() {
+    public void divide() {
         Throwable throwable = assertThrows(SyntaxException.class,
-                () -> divide(new Figure(firstInt), new Figure(secondInt)));
+                () -> this.divide(new Figure(this.firstInt), new Figure(this.secondInt)));
         assertEquals("错误：整数不支持除法运算", throwable.getMessage());
     }
 
     @Test
-    public void test_divideAndRemainder_Fraction() {
+    public void divideAndRemainder_Fraction() {
         var result = FigureOperation.divideAndRemainder(
-                new Figure(firstInt), new Figure(secondInt));
+                new Figure(this.firstInt), new Figure(this.secondInt));
         // 测试商是否正确
-        assertEquals(new Figure(firstInt / secondInt), result[0]);
+        assertEquals(new Figure(this.firstInt / this.secondInt), result[0]);
         // 测试余数是否正确
-        assertEquals(new Figure(firstInt % secondInt), result[1]);
+        assertEquals(new Figure(this.firstInt % this.secondInt), result[1]);
     }
 
     @Test
-    public void test_divideAndRemainder_long() {
+    public void divideAndRemainder_long() {
         var result = FigureOperation.divideAndRemainder(
-                new Figure(firstInt), secondInt);
+                new Figure(this.firstInt), this.secondInt);
         // 测试商是否正确
-        assertEquals(new Figure(firstInt / secondInt), result[0]);
+        assertEquals(new Figure(this.firstInt / this.secondInt), result[0]);
         // 测试余数是否正确
-        assertEquals(new Figure(firstInt % secondInt), result[1]);
+        assertEquals(new Figure(this.firstInt % this.secondInt), result[1]);
     }
 
     @Test
-    public void test_mod_Fraction() {
-        assertEquals(new Figure(firstInt % secondInt),
+    public void mod_Fraction() {
+        assertEquals(new Figure(this.firstInt % this.secondInt),
                 FigureOperation.mod(
-                        new Figure(firstInt), new Figure(secondInt)));
+                        new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_mod_long() {
-        assertEquals(new Figure(firstInt % secondInt),
+    public void mod_long() {
+        assertEquals(new Figure(this.firstInt % this.secondInt),
                 FigureOperation.mod(
-                        new Figure(firstInt), secondInt));
+                        new Figure(this.firstInt), this.secondInt));
     }
 
     @Test
-    public void test_modsQuotient_Fraction() {
-        assertEquals(new Figure(firstInt / secondInt),
+    public void modsQuotient_Fraction() {
+        assertEquals(new Figure(this.firstInt / this.secondInt),
                 FigureOperation.modsQuotient(
-                        new Figure(firstInt), new Figure(secondInt)));
+                        new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_modsQuotient_long() {
-        assertEquals(new Figure(firstInt / secondInt),
+    public void modsQuotient_long() {
+        assertEquals(new Figure(this.firstInt / this.secondInt),
                 FigureOperation.modsQuotient(
-                        new Figure(firstInt), secondInt));
+                        new Figure(this.firstInt), this.secondInt));
     }
 
     @Test
-    public void test_getOpposite_Fraction() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(-firstInt),
-                FigureOperation.getOpposite(new Figure(firstInt)));
+    public void getOpposite_Fraction() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
+        assertEquals(new Figure(-this.firstInt),
+                FigureOperation.getOpposite(new Figure(this.firstInt)));
     }
 
     @Test
-    public void test_getOpposite_long() throws NoSuchMethodException, IllegalAccessException, CalculatorException {
-        assertEquals(new Figure(-firstInt),
-                FigureOperation.getOpposite(firstInt));
+    public void getAbsolute() {
+        assertEquals(new Figure(this.firstInt),
+                FigureOperation.getAbsolute(new Figure(-this.firstInt)));
     }
 
     @Test
-    public void test_findGcd() throws NoSuchMethodException, CalculatorException, CloneNotSupportedException, IllegalAccessException {
-        assertEquals(findGcd_forTest(
-                        new Figure(firstInt), new Figure(secondInt)),
+    public void getOpposite_long() {
+        assertEquals(new Figure(-this.firstInt),
+                FigureOperation.getOpposite(this.firstInt));
+    }
+
+    @Test
+    public void findGcd() {
+        assertEquals(this.findGcd_forTest(
+                        new Figure(this.firstInt), new Figure(this.secondInt)),
                 FigureOperation.findGcd(
-                        new Figure(firstInt), new Figure(secondInt)));
+                        new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_findLcm() throws NoSuchMethodException, IllegalAccessException, CalculatorException, InvocationTargetException, CloneNotSupportedException {
-        assertEquals(findLcm_forTest(
-                        new Figure(firstInt), new Figure(secondInt)),
-                FigureOperation.findLcm(new Figure(firstInt), new Figure(secondInt)));
+    public void findLcm() throws CalculatorException,
+            NoSuchMethodException, IllegalAccessException, InvocationTargetException, CloneNotSupportedException {
+        assertEquals(this.findLcm_forTest(
+                        new Figure(this.firstInt), new Figure(this.secondInt)),
+                FigureOperation.findLcm(new Figure(this.firstInt), new Figure(this.secondInt)));
     }
 
     @Test
-    public void test_power() throws CalculatorException {
+    public void power() throws CalculatorException {
+        // 8 = 2 ^ 3
         assertEquals(new Figure(8),
                 FigureOperation.power(2, 3));
+        // ? = (?) ^ (1)
+        assertEquals(new Figure(this.firstInt),
+                FigureOperation.power(new Figure(this.firstInt), Figure.ONE));
+        // 1 = (?) ^ (0)
+        assertEquals(Figure.ONE,
+                FigureOperation.power(new Figure(this.firstInt), Figure.ZERO));
     }
-
 
     /**
      * 求两个数的最大公约数。GCD：Greatest Common Divisor
@@ -139,7 +151,7 @@ public class FigureOperation_Test {
      * > 特别地，当这两个数均为 0 时，结果为 0。
      * > 其它情况下，结果为正数
      */
-    Figure findGcd_forTest(Figure first, Figure second) throws CloneNotSupportedException, NoSuchMethodException, IllegalAccessException, CalculatorException {
+    Figure findGcd_forTest(Figure first, Figure second) {
         if (first.isZero()) {
             return second;
         }
@@ -177,7 +189,7 @@ public class FigureOperation_Test {
             throws NoSuchMethodException, IllegalAccessException, CalculatorException, CloneNotSupportedException, InvocationTargetException {
         return (Figure) FigureOperation.multiply(first,
                 FigureOperation.subtract(
-                        second, findGcd_forTest(first, second)));
+                        second, this.findGcd_forTest(first, second)));
     }
 
     /*---------------模拟的原生待测方法---------------*/
@@ -193,7 +205,7 @@ public class FigureOperation_Test {
             result = (Figure) methodToBeTested.invoke(
                     null, methodName, first, second);
         } catch (NoSuchMethodException | InvocationTargetException
-                | IllegalAccessException exception) {
+                 | IllegalAccessException exception) {
             Throwable realException = exception.getCause();
             throw (CalculatorException) realException;
         }
@@ -213,7 +225,7 @@ public class FigureOperation_Test {
             result = (Figure) methodToBeTested.invoke(
                     null, first, second);
         } catch (NoSuchMethodException | InvocationTargetException
-                | IllegalAccessException exception) {
+                 | IllegalAccessException exception) {
             Throwable realException = exception.getCause();
             throw (CalculatorException) realException;
         }
@@ -232,7 +244,7 @@ public class FigureOperation_Test {
             result = (Figure) methodToBeTested.invoke(
                     null, first, second);
         } catch (NoSuchMethodException | InvocationTargetException
-                | IllegalAccessException exception) {
+                 | IllegalAccessException exception) {
             Throwable realException = exception.getCause();
             throw (CalculatorException) realException;
         }
@@ -251,7 +263,7 @@ public class FigureOperation_Test {
             result = (Figure) methodToBeTested.invoke(
                     null, first, second);
         } catch (NoSuchMethodException | InvocationTargetException
-                | IllegalAccessException exception) {
+                 | IllegalAccessException exception) {
             Throwable realException = exception.getCause();
             throw (CalculatorException) realException;
         }
@@ -269,7 +281,7 @@ public class FigureOperation_Test {
             result = (Figure) methodToBeTested.invoke(
                     null, first, second);
         } catch (NoSuchMethodException | InvocationTargetException
-                | IllegalAccessException exception) {
+                 | IllegalAccessException exception) {
             Throwable realException = exception.getCause();
             throw (SyntaxException) realException;
         }

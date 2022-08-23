@@ -1,7 +1,6 @@
-package org.wangpai.calculator.model.symbol.enumeration.junit5;
+package org.wangpai.calculator.model.symbol.enumeration;
 
 import org.junit.jupiter.api.Test;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -10,12 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @since 2021-7-30
  */
-public class Symbol_Test {
+public class SymbolTest {
     Symbol symbol = Symbol.ADD;
 
 
     @Test
-    public void test_getEnum() {
+    public void getEnum() {
         assertEquals(Symbol.ADD, Symbol.getEnum("+"));
 
         assertEquals(Symbol.MULTIPLY, Symbol.getEnum("*"));
@@ -23,25 +22,25 @@ public class Symbol_Test {
     }
 
     @Test
-    public void test_isDigit() {
+    public void isDigit() {
         assertTrue(Symbol.ZERO.isDigit());
         assertFalse(Symbol.ADD.isDigit());
     }
 
     @Test
-    public void test_isBracket() {
+    public void isBracket() {
         assertTrue(Symbol.LEFT_BRACKET.isBracket());
         assertTrue(Symbol.RIGHT_BRACKET.isBracket());
         assertFalse(Symbol.ADD.isBracket());
     }
 
     @Test
-    public void test_getUnderlyingSymbol() {
-        assertEquals("+", symbol.toString());
+    public void getUnderlyingSymbol() {
+        assertEquals("+", this.symbol.toString());
     }
 
     @Test
-    public void test_getOrder() {
+    public void getOrder() {
         // lombok 的 get 方法无需测试
     }
 }

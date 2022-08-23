@@ -92,7 +92,7 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
     }
 
     @Override
-    public Object receive(Url url, Object data) throws CalculatorException {
+    public Object receive(Url url, Object data) {
         Object response = null;
         // 当 instanceof 的左边为 null 时，结果也是 false
         if (data == null) {

@@ -1,18 +1,18 @@
-package org.wangpai.calculator.model.symbol.operand.junit5;
+package org.wangpai.calculator.model.symbol.operand;
 
 import org.junit.jupiter.api.Test;
 
 /**
  * @since 2021-7-31
  */
-public class Operand_Test {
+public class OperandTest {
     @Test
-    public void test_getBindingOperation() {
+    public void getBindingOperation() {
         // 原类的方法为抽象方法，因此此方法为空。
     }
 
     @Test
-    public void test_isZero() {
+    public void isZero() {
         // 原类的方法为抽象方法，因此此方法为空。
     }
 }

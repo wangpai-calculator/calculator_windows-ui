@@ -1,8 +1,7 @@
-package org.wangpai.calculator.exception.junit5;
+package org.wangpai.calculator.exception;
 
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
-import org.wangpai.calculator.exception.CalculatorException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,19 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @since 2021-7-19
  */
-public class CalculatorException_Test {
+public class CalculatorExceptionTest {
     private CalculatorException calculatorException = new CalculatorExceptionExtends("测试信息");
     private String msg = "测试信息";
 
     /**
      * 这个方法可以声明为 default，因为测试方法实际上是由该测试类的子类来调用的，这是因为测试类含有测试注解
      */
-    public CalculatorException_Test() {
+    public CalculatorExceptionTest() {
         super();
     }
 
     @Test
-    public void test_exceptionCause() {
+    public void exceptionCause() {
         /**
          * 函数 assertEquals 内部会使用类 Object 的函数 equals 来比较，所以无需担心
          */
@@ -34,7 +33,7 @@ public class CalculatorException_Test {
     }
 
     @Test
-    public void test_getInstance()
+    public void getInstance()
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         var calculatorExceptionInstance = ((CalculatorExceptionExtends) this.calculatorException).getInstance(this.msg);
 

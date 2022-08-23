@@ -1,110 +1,16 @@
 package org.wangpai.calculator.model.symbol.operation;
 
-import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
-import org.wangpai.calculator.exception.UnknownException;
-import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Figure;
-import org.wangpai.calculator.model.symbol.operand.Operand;
 import org.wangpai.calculator.model.symbol.operand.RationalNumber;
 
 /**
  * @since 2021-8-1
  */
 @Slf4j
-public class RationalNumberOperation extends Operation {
+public final class RationalNumberOperation {
     /*---------------加减乘除基本运算---------------*/
-
-    /**
-     * 此函数将用于导航到最终的运算函数。
-     * 最终的运算函数指的是每个操作数的类型均与方法签名中标明的一致的函数
-     *
-     * @deprecated 2021-8-5
-     * 此方法为使用了反射，为废弃方法，仅基类可以调用
-     */
-    @Deprecated
-    protected final static RationalNumber methodNavigation(
-            String methodName, RationalNumber first,
-            Operand second, boolean hasSwap)
-            throws CalculatorException {
-        var firstClass = first.getClass();
-        if (firstClass != RationalNumber.class) {
-            throw new SyntaxException("错误：含有此运算不支持的操作数类型 " + firstClass);
-        }
-
-        Class<?> secondParaClass;
-        switch (second.getClass().getSimpleName()) {
-            case "RationalNumber":
-                secondParaClass = RationalNumber.class;
-                break;
-            case "Figure":
-                secondParaClass = Figure.class;
-                break;
-            default:
-                throw new SyntaxException("错误：含有此运算 " + methodName + " 不支持的操作数");
-        }
-
-        RationalNumber result = null;
-
-        try {
-            /**
-             * 此处需要调用非 public 方法，因此
-             * 只能使用方法 getDeclaredMethod，而不能使用方法 getMethod
-             */
-            result = (RationalNumber) (RationalNumberOperation.class
-                    .getDeclaredMethod(methodName,
-                            RationalNumber.class, secondParaClass)
-                    .invoke(null, first, second));
-        } catch (InvocationTargetException exception) {
-            Throwable realException = exception.getTargetException();
-            if (realException instanceof CalculatorException) {
-                throw (CalculatorException) realException;
-            } else {
-                throw new UnknownException("错误：发生了未知异常。");
-            }
-        } catch (NoSuchMethodException noSuchMethodException) {
-            try {
-                /**
-                 * 如果上一个 try 块抛出此异常，有可能是因为这里没有给出与第二个形参相同类型的方法。
-                 * 在这种情况下，将第二个形参转化为类型 RationalNumber 之后再次尝试调用
-                 */
-                result = (RationalNumber) (RationalNumberOperation.class
-                        .getDeclaredMethod(methodName,
-                                RationalNumber.class, RationalNumber.class)
-                        .invoke(null, first, new RationalNumber(second)));
-            } catch (Exception exception) {
-                ExceptionTool.pkgException(exception);
-            }
-        } catch (Exception exception) {
-            ExceptionTool.pkgException(exception);
-        }
-
-        /**
-         * 如果在执行这个方法之前，操作数被交换过，就执行相应的补充运算
-         */
-        if (hasSwap) {
-            switch (methodName) {
-                case "subtract":
-                    result = RationalNumberOperation.getOpposite(result);
-                    break;
-                case "divide":
-                    result = RationalNumberOperation.getReciprocal(result);
-                    break;
-                /**
-                 * 加法、乘法不需要进行补充运算
-                 */
-                case "add":
-                case "multiply":
-                    break;
-                default:
-                    throw new SyntaxException("错误：不支持此运算 " + methodName);
-            }
-        }
-
-        return result;
-    }
 
     /**
      * 算法如下：
@@ -252,6 +158,17 @@ public class RationalNumberOperation extends Operation {
     }
 
     /**
+     * 求绝对值
+     *
+     * @since 2022-8-23
+     */
+    public static RationalNumber getAbsolute(RationalNumber rationalNumber)
+            throws SyntaxException {
+        return new RationalNumber(FigureOperation.getAbsolute(rationalNumber.getNumerator()),
+                FigureOperation.getAbsolute(rationalNumber.getDenominator()));
+    }
+
+    /**
      * 求倒数
      *
      * @since before 2021-8-5
@@ -278,7 +195,46 @@ public class RationalNumberOperation extends Operation {
      */
     public static RationalNumber power(RationalNumber base, RationalNumber exponent)
             throws SyntaxException {
-        throw new SyntaxException("错误：有理数不支持乘方");
+        throw new SyntaxException("错误：不支持指数为有理数的乘方"); // 原因是，当指数为有理数时，其结果为实数，不一定为有理数
     }
 
+    /**
+     * 有数数的整数乘方。注意：指数 exponent 不能太大
+     *
+     * @since 2022-8-23
+     */
+    public static RationalNumber power(RationalNumber base, Figure exponent)
+            throws SyntaxException {
+        if (base.isZero() && exponent.isZero()) {
+            throw new SyntaxException("错误：不能计算 0 的 0 次方");
+        }
+        if (base.isZero() && exponent.isNegative()) {
+            throw new SyntaxException("错误：不能计算 0 的负数次方");
+        }
+        if (exponent.isZero()) {
+            return new RationalNumber(1);
+        }
+
+        boolean needReciprocal = false;
+        if (exponent.isNegative()) {
+            needReciprocal = true;
+        }
+        Figure multiplyTimes = FigureOperation.getAbsolute(exponent);
+        RationalNumber result = new RationalNumber(
+                FigureOperation.power(base.getNumerator(), multiplyTimes),
+                FigureOperation.power(base.getDenominator(), multiplyTimes));
+
+        // 另一种实现
+//        for (Figure multiplyTimes = FigureOperation.getAbsolute(exponent);
+//             !multiplyTimes.isZero();
+//             multiplyTimes = FigureOperation.subtract(multiplyTimes, Figure.ONE)) {
+//            result = RationalNumberOperation.multiply(result, base);
+//        }
+
+        if (needReciprocal) {
+            return getReciprocal(result);
+        } else {
+            return result;
+        }
+    }
 }

@@ -22,7 +22,7 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACK
  * @since 2021-8-1
  */
 @Slf4j
-public final class CalculatorData implements Operable, Cloneable {
+public final class CalculatorData implements Cloneable {
     /**
      * 注意：对于 Stack，其栈底的序号为 0，入栈、出栈操作均是在栈顶进行的
      */

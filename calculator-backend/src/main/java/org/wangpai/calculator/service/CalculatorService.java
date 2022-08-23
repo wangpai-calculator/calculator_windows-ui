@@ -28,8 +28,8 @@ import static org.wangpai.calculator.model.symbol.enumeration.Symbol.EQUAL;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.LEFT_BRACKET;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.RIGHT_BRACKET;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
-import static org.wangpai.calculator.view.output.PromptMsgBoxState.ERROR_TEXT;
-import static org.wangpai.calculator.view.output.PromptMsgBoxState.NORMAL_TEXT;
+import static org.wangpai.calculator.view.output.PromptMsgBoxState.ERROR;
+import static org.wangpai.calculator.view.output.PromptMsgBoxState.NORMAL;
 
 /**
  * @since 2021-8-1
@@ -67,7 +67,7 @@ public final class CalculatorService {
         try {
             this.controller.send(new Url("/view/promptMsgBox/setText"),
                     System.lineSeparator() + "恭喜你，未检测到语法错误" + msg);
-            this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL_TEXT);
+            this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL);
         } catch (Exception exception) {
             log.error("异常：", exception);
         }
@@ -80,7 +80,7 @@ public final class CalculatorService {
     private void sendExceptionMsg(CalculatorException exception) {
         try {
             this.controller.send(new Url("/view/promptMsgBox/setText"), exception);
-            this.controller.send(new Url("/view/promptMsgBox/setState"), ERROR_TEXT);
+            this.controller.send(new Url("/view/promptMsgBox/setState"), ERROR);
         } catch (Exception sendException) {
             log.error("异常：", exception);
         }
@@ -90,11 +90,11 @@ public final class CalculatorService {
      * @since 2021-8-1
      * @lastModified 2021-10-12
      */
-    private void clearPromptMsg() {
+    private void sendNoSyntaxErrorDetectedPromptMsg() {
         try {
             this.controller.send(new Url("/view/promptMsgBox/setText"),
                     System.lineSeparator() + "恭喜你，未检测到语法错误");
-            this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL_TEXT);
+            this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL);
         } catch (Exception exception) {
             log.error("异常：", exception);
         }
@@ -107,9 +107,10 @@ public final class CalculatorService {
     private void sendCalculationResult(String output) {
         try {
             this.controller.send(new Url("/view/resultBox/append"), output);
-            var promptMsgBoxState = this.controller.send(new Url("/view/promptMsgBox/getState"), null);
-            if (promptMsgBoxState.equals(ERROR_TEXT)) {
-                this.clearPromptMsg();
+            var lastPromptMsgBoxState = this.controller.send(new Url("/view/promptMsgBox/getState"), null);
+            if (lastPromptMsgBoxState.equals(ERROR)) {
+                this.controller.send(new Url("/view/promptMsgBox/setState"), NORMAL);
+                this.sendNoSyntaxErrorDetectedPromptMsg();
             }
         } catch (Exception exception) {
             log.error("异常：", exception);
@@ -146,7 +147,7 @@ public final class CalculatorService {
             try {
                 this.expressionCheck(calData.clearAllCalData(), expression + "=");
             } catch (CalculatorException exception) { // 如果发生了异常，说明本次的等号补充是不合理的
-                this.clearPromptMsg();
+                this.sendNoSyntaxErrorDetectedPromptMsg();
                 return;
             }
 
@@ -167,7 +168,7 @@ public final class CalculatorService {
                 this.sendProcessResult(expression);
             }
         } else { // 如果用户输入的是一个不完整但没有语法错误的一个表达式
-            this.clearPromptMsg();
+            this.sendNoSyntaxErrorDetectedPromptMsg();
         }
     }
 
@@ -186,8 +187,8 @@ public final class CalculatorService {
         } else {
             resultStr = result.toString();
         }
-        StringBuilder prompMsg = new StringBuilder();
-        prompMsg.append(System.lineSeparator())
+        StringBuilder promptMsg = new StringBuilder();
+        promptMsg.append(System.lineSeparator())
                 .append(System.lineSeparator())
                 .append("自动计算的结果为：")
                 .append(System.lineSeparator())
@@ -197,7 +198,7 @@ public final class CalculatorService {
                 .append(System.lineSeparator())
                 .append(System.lineSeparator())
                 .append("（输入等号可显示计算过程）");
-        this.sendPromptMsg(prompMsg.toString());
+        this.sendPromptMsg(promptMsg.toString());
     }
 
     /**
@@ -206,8 +207,8 @@ public final class CalculatorService {
      * @since 2021-8-5
      */
     private void sendProcessResult(final String expression) {
-        StringBuilder prompMsg = new StringBuilder();
-        prompMsg.append(System.lineSeparator())
+        StringBuilder promptMsg = new StringBuilder();
+        promptMsg.append(System.lineSeparator())
                 .append(System.lineSeparator())
                 .append("----------------------")
                 .append(System.lineSeparator())
@@ -215,7 +216,7 @@ public final class CalculatorService {
                 .append("【" + (++CalculatorService.calculationTimes) + "】下面是计算过程：")
                 .append(System.lineSeparator());
 
-        this.sendCalculationResult(prompMsg + this.generateProcess(expression));
+        this.sendCalculationResult(promptMsg + this.generateProcess(expression));
     }
 
     /**
@@ -259,7 +260,7 @@ public final class CalculatorService {
         if (input == DOT && calData.searchFromBuff(DOT) != -1) {
             var ERROR_INFO = "\n你不能在一个数里输入两个【.】，已为你自动删除【.】";
             throw new SyntaxException(ERROR_INFO,
-                    generateExpressionString(calData.getExp()));
+                    this.generateExpressionString(calData.getExp()));
         }
         // 如果前面没有第一个操作数或右括号，但是后面输入了非数字（例外有：左括号、一元运算符）
         if (!(input == LEFT_BRACKET || input.isDigit())
@@ -275,7 +276,7 @@ public final class CalculatorService {
                     + "已为你自动删除" + "【" + input + "】";
 
             throw new SyntaxException(ERROR_INFO,
-                    generateExpressionString(calData.getExp()));
+                    this.generateExpressionString(calData.getExp()));
         }
         // 连续输入两个非数字符，例外是【第二个为左括号，第一个为其它】、【第一个为右括号，第二个为其它】
         if (!(input.isDigit() || input == LEFT_BRACKET) && !calData.expIsEmpty()
@@ -285,7 +286,7 @@ public final class CalculatorService {
                     + "【" + input + "】" + "：";
 
             throw new SyntaxException(ERROR_INFO,
-                    generateExpressionString(calData.getExp()));
+                    this.generateExpressionString(calData.getExp()));
         }
         // 如果输入的是数字
         if (input.isDigit()) {
@@ -296,14 +297,14 @@ public final class CalculatorService {
                 var ERROR_INFO = "\n你不能一开始就在数中输入【0】，已为你自动删除【0】";
                 calData.popFromExp(); // 删除一开始输入的 0
                 throw new SyntaxException(ERROR_INFO,
-                        generateExpressionString(calData.getExp()));
+                        this.generateExpressionString(calData.getExp()));
             }
             // 数字前面有右括号
             if (!calData.expIsEmpty() && calData.peekFromExp() == RIGHT_BRACKET) {
                 var ERROR_INFO = "\n你不能在右括号后输入数字" + "【" + input + "】" +
                         "。已为你自动删除" + "【" + input + "】";
                 throw new SyntaxException(ERROR_INFO,
-                        generateExpressionString(calData.getExp()));
+                        this.generateExpressionString(calData.getExp()));
             }
         }
         // 如果左括号前面有数字、小数点，报错
@@ -313,7 +314,7 @@ public final class CalculatorService {
             var ERROR_INFO = "\n左括号前面不能有字符" + "【" + calData.peekFromExp() + "】" +
                     "（左括号前面不能有数字、小数点），已为你自动删除【(】";
             throw new SyntaxException(ERROR_INFO,
-                    generateExpressionString(calData.getExp()));
+                    this.generateExpressionString(calData.getExp()));
         }
         // 如果输入的是右括号
         if (input == RIGHT_BRACKET) {
@@ -323,7 +324,7 @@ public final class CalculatorService {
                 var TIP = "\n这一对括号里什么也没有，已为你自动删除这一对括号：";
                 calData.popFromExp();
                 throw new SyntaxException(TIP,
-                        generateExpressionString(calData.getExp()));
+                        this.generateExpressionString(calData.getExp()));
             }
 
             // 如果右括号前面有非左括号的运算符
@@ -334,7 +335,7 @@ public final class CalculatorService {
                 var ERROR_INFO = "\n右括号前面不能有运算符" + "【" + input + "】"
                         + "，已为你自动删除" + "【" + input + "】";
                 throw new SyntaxException(ERROR_INFO,
-                        generateExpressionString(calData.getExp()));
+                        this.generateExpressionString(calData.getExp()));
             }
 
             // 等下就要检查括号匹配的问题，而括号匹配必须右括号先入栈后才能检查
@@ -348,7 +349,7 @@ public final class CalculatorService {
             if (tempCalData.bracketMatch() == 2) {
                 var ERROR_INFO = "\n右括号不匹配，已为你自动删除【)】";
                 throw new SyntaxException(ERROR_INFO,
-                        generateExpressionString(calData.getExp()));
+                        this.generateExpressionString(calData.getExp()));
             }
         }
         // 最后准备结束输入时，如果发现括号不匹配
@@ -356,7 +357,7 @@ public final class CalculatorService {
             // 此处实际上只可能左括号多于右括号
             var ERROR_INFO = "\n左括号不能多于右括号，已为你自动删除【=】";
             throw new SyntaxException(ERROR_INFO,
-                    generateExpressionString(calData.getExp()));
+                    this.generateExpressionString(calData.getExp()));
         }
     }
 
@@ -533,10 +534,10 @@ public final class CalculatorService {
 
         if (hasCalculation) {
             // 将最终结果转化为小数
-            result.append(generateLastExpressionData(calData.getOpnds().peek(), EQUAL));
+            result.append(this.generateLastExpressionData(calData.getOpnds().peek(), EQUAL));
         } else {
             // 如果表达式过于简单，就将原表达式输出
-            result.append(generateMiddleExpression(expression));
+            result.append(this.generateMiddleExpression(expression));
         }
 
         return result.toString();

@@ -8,7 +8,6 @@ import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.DOT;
 import static org.wangpai.calculator.model.symbol.enumeration.Symbol.SUBTRACT;
-import static org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO;
 
 /**
  * 小数。可以允许负数
@@ -152,7 +151,7 @@ public final class Decimal extends Figure {
         var begin = decimal[0];
         var length = decimal.length;
 
-        if (begin == ZERO && length > 1) { // 如果 decimal 不是 0
+        if (begin == org.wangpai.calculator.model.symbol.enumeration.Symbol.ZERO && length > 1) { // 如果 decimal 不是 0
             if (length == 2) {
                 return false;
             }

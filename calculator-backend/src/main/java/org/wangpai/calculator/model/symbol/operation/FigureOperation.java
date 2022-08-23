@@ -1,136 +1,16 @@
 package org.wangpai.calculator.model.symbol.operation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
-import org.wangpai.calculator.exception.UnknownException;
-import org.wangpai.calculator.exception.tool.ExceptionTool;
 import org.wangpai.calculator.model.symbol.operand.Figure;
-import org.wangpai.calculator.model.symbol.operand.Operand;
 
 /**
  * 此类不定义整数除法运算
  *
  * @since 2021-8-2
  */
-public final class FigureOperation extends Operation {
+public final class FigureOperation {
     /*---------------加减乘---------------*/
-
-    /**
-     * 此函数将用于导航到最终的运算函数。
-     * 最终的运算函数指的是每个操作数的类型均与方法签名中标明的一致的函数
-     *
-     * @deprecated 2021-8-5
-     * 此方法为使用了反射，为废弃方法，仅基类可以调用
-     */
-    @Deprecated
-    protected final static Figure methodNavigation(
-            String methodName, Figure first,
-            Operand second, boolean hasSwap)
-            throws CalculatorException {
-        var firstClass = first.getClass();
-        if (firstClass != Figure.class) {
-            throw new SyntaxException("错误：含有此运算不支持的操作数类型 " + firstClass);
-        }
-
-        Class<?> secondParaClass;
-        switch (second.getClass().getSimpleName()) {
-            case "Figure":
-                secondParaClass = Figure.class;
-                break;
-            default:
-                throw new SyntaxException("错误：含有此运算 " + methodName + " 不支持的操作数");
-        }
-
-        Figure result = null;
-
-        try {
-            /**
-             * 此处需要调用非 public 方法，因此
-             * 只能使用方法 getDeclaredMethod，而不能使用方法 getMethod
-             */
-            result = (Figure) (FigureOperation.class
-                    .getDeclaredMethod(methodName,
-                            Figure.class, secondParaClass)
-                    .invoke(null, first, second));
-        } catch (InvocationTargetException exception) {
-            Throwable realException = exception.getTargetException();
-            if (realException instanceof CalculatorException) {
-                throw (CalculatorException) realException;
-            } else {
-                throw new UnknownException("错误：发生了未知异常。");
-            }
-        } catch (NoSuchMethodException noSuchMethodException) {
-            try {
-                /**
-                 * 如果上一个 try 块抛出此异常，有可能是因为这里没有给出与第二个形参相同类型的方法。
-                 * 在这种情况下，将第二个形参转化为类型 Figure 之后再次尝试调用
-                 */
-                result = (Figure) (FigureOperation.class
-                        .getDeclaredMethod(methodName,
-                                Figure.class, Figure.class)
-                        .invoke(null, first, new Figure(second)));
-            } catch (Exception exception) {
-                ExceptionTool.pkgException(exception);
-            }
-        } catch (Exception exception) {
-            ExceptionTool.pkgException(exception);
-        }
-
-        /**
-         * 如果在执行这个方法之前，操作数被交换过，就执行相应的补充运算
-         */
-        if (hasSwap) {
-            switch (methodName) {
-                case "subtract":
-                    result = FigureOperation.getOpposite(result);
-                    break;
-                case "add":
-                case "multiply":
-                    break;
-                default:
-                    throw new SyntaxException("错误：不支持此运算 " + methodName);
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * 注意：此处的 methodName 是 Figure 底层的字段类型 BigInteger 的运算函数名，
-     * 不是 FigureOperation 的运算函数名
-     *
-     * @deprecated 2021-8-5
-     * 此方法为使用了反射，为废弃方法
-     */
-    @Deprecated
-    private static Figure templateOperation(
-            String methodName, Figure first, Figure second)
-            throws CalculatorException {
-        var firstValue = first.getInteger();
-        var secondValue = second.getInteger();
-        var className = BigInteger.class;
-
-        BigInteger result = null;
-
-        try {
-            result = (BigInteger) (className
-                    .getMethod(methodName, className)
-                    .invoke(firstValue, secondValue));
-        } catch (InvocationTargetException exception) {
-            Throwable realException = exception.getTargetException();
-            if (realException instanceof CalculatorException) {
-                throw (CalculatorException) realException;
-            } else {
-                ExceptionTool.pkgException(exception);
-            }
-        } catch (Exception exception) {
-            ExceptionTool.pkgException(exception);
-        }
-
-        return new Figure(result);
-    }
 
     /**
      * @since 2021-8-5
@@ -216,8 +96,8 @@ public final class FigureOperation extends Operation {
      *
      * @since before 2021-8-5
      */
-    public final static Figure getOpposite(Figure rationalNumber) {
-        return multiply(rationalNumber, new Figure(-1));
+    public final static Figure getOpposite(Figure num) {
+        return multiply(num, new Figure(-1));
     }
 
     /**
@@ -225,6 +105,19 @@ public final class FigureOperation extends Operation {
      */
     public final static Figure getOpposite(long num) {
         return getOpposite(new Figure(num));
+    }
+
+    /**
+     * 求绝对值
+     *
+     * @since 2022-8-23
+     */
+    public static Figure getAbsolute(Figure num) {
+        if (num.isNegative()) {
+            return getOpposite(num);
+        } else {
+            return num.clone();
+        }
     }
 
     /**
@@ -257,14 +150,17 @@ public final class FigureOperation extends Operation {
     }
 
     /**
-     * 整数的乘方
+     * 整数的乘方。注意：指数 exponent 不能太大
      *
      * @since before 2021-8-5
      */
     public static Figure power(Figure base, Figure exponent)
             throws SyntaxException {
-        if (base.isZero()) {
-            throw new SyntaxException("错误：0 不能作为乘方的底数");
+        if (base.isZero() && exponent.isZero()) {
+            throw new SyntaxException("错误：不能计算 0 的 0 次方");
+        }
+        if (exponent.isNegative()) {
+            throw new SyntaxException("错误：整数乘法不支持负数次方");
         }
 
         return new Figure(base.getInteger().pow(exponent.getInteger().intValue()));

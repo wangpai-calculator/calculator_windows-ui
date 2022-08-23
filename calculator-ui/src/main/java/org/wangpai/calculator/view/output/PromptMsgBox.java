@@ -14,7 +14,7 @@ import org.wangpai.calculator.model.universal.Function;
 import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.TextBox;
 
-import static org.wangpai.calculator.view.output.PromptMsgBoxState.INIT_TEXT;
+import static org.wangpai.calculator.view.output.PromptMsgBoxState.INIT;
 
 @Slf4j
 public class PromptMsgBox extends TextBox {
@@ -31,7 +31,7 @@ public class PromptMsgBox extends TextBox {
      */
     @Setter
     @Getter
-    private PromptMsgBoxState state = INIT_TEXT;
+    private PromptMsgBoxState state = INIT;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,7 +46,7 @@ public class PromptMsgBox extends TextBox {
 
                 Platform.runLater(() -> {
                     // 从 VBox 中取出 TextArea
-                    var node = textareaVBox.getChildren().get(0);
+                    var node = PromptMsgBox.this.textareaVBox.getChildren().get(0);
                     if (node instanceof TextArea) {
                         promptMsgBox.textArea = (TextArea) node;
                     }

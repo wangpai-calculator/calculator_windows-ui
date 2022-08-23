@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
-import org.wangpai.calculator.model.symbol.operation.Operation;
 
 /**
  * 整数
@@ -21,6 +20,10 @@ public class Figure implements Operand {
      */
     @Getter(AccessLevel.PUBLIC)
     private BigInteger integer;
+
+    public final static Figure ZERO = new Figure(0);
+
+    public final static Figure ONE = new Figure(1);
 
     public Figure() {
         super();
@@ -81,12 +84,6 @@ public class Figure implements Operand {
         this.integer = temp.integer;
     }
 
-    @Override
-    @Deprecated
-    public Class<? extends Operation> getBindingOperation() {
-        return FigureOperation.class;
-    }
-
     public static Figure valueOf(long num) {
         return new Figure(BigInteger.valueOf(num));
     }
@@ -113,7 +110,7 @@ public class Figure implements Operand {
 
     @Override
     public String toString() {
-        return integer.toString();
+        return this.integer.toString();
     }
 
     /**

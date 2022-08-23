@@ -7,8 +7,8 @@
 
     <!-- 此部分不能使用 <properties/...> 中的元素来取代，必须直接给出具体的内容  -->
     <groupId>org.wangpai.calculator</groupId>
-    <artifactId>calculator-windows</artifactId>
-    <version>3.4</version>
+    <artifactId>calculator-windows-ui</artifactId>
+    <version>3.5</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -17,16 +17,16 @@
         <module>calculator-backend</module>
         <module>calculator-exception</module>
         <module>calculator-ui-depended</module>
-
     </modules>
 
     <properties>
+        <!-- 不加此项，JavaFX 打包出来中文会乱码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- 凡是自定义的属性，都要加 .custom 后缀，以防与已有的预置属性相冲突 -->
-        <project.version.custom>3.4</project.version.custom>
+        <project.version.custom>3.5</project.version.custom>
 
         <junit.version.custom>5.8.2</junit.version.custom>
         <lombok.version.custom>1.18.20</lombok.version.custom>

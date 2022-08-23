@@ -6,7 +6,6 @@ import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.exception.SyntaxException;
 import org.wangpai.calculator.exception.UndefinedException;
 import org.wangpai.calculator.model.symbol.operation.FigureOperation;
-import org.wangpai.calculator.model.symbol.operation.Operation;
 import org.wangpai.calculator.model.symbol.operation.RationalNumberOperation;
 
 /**
@@ -103,12 +102,6 @@ public class RationalNumber implements Operand {
         // 将 temp 浅拷贝至 this
         this.numerator = temp.numerator;
         this.denominator = new Figure(1);
-    }
-
-    @Override
-    @Deprecated
-    public Class<? extends Operation> getBindingOperation() {
-        return RationalNumberOperation.class;
     }
 
     @Override

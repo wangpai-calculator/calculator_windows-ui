@@ -1,19 +1,18 @@
-package org.wangpai.calculator.exception.junit5;
+package org.wangpai.calculator.exception;
 
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
-import org.wangpai.calculator.exception.ConflictException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @since 2021-9-27
  */
-public class ConflictException_Test {
+public class ConflictExceptionTest {
     private String msg = "异常：引发冲突";
 
     @Test
-    public void test_getInstance_void()
+    public void getInstance_void()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         var conflictException = ConflictException.getInstance();
 
@@ -22,7 +21,7 @@ public class ConflictException_Test {
     }
 
     @Test
-    public void test_getInstance_String()
+    public void getInstance_String()
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         var conflictException = ConflictException.getInstance(this.msg);
 
