@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TerminalLinker;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * @since 2021-8-1
@@ -88,7 +88,7 @@ public final class ButtonGroupLinker extends TerminalLinker {
     }
 
     @Override
-    public Object receive(Url url, Object data) throws CalculatorException {
+    public Object receive(Url url, Object data) throws MathlabException {
         // 此方法无需实现
         return null;
     }

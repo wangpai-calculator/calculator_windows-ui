@@ -1,7 +1,7 @@
 package org.wangpai.calculator.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.wangpai.calculator.exception.SyntaxException;
+import org.wangpai.mathlab.exception.SyntaxException;
 
 /**
  * @since 2021-7-25

@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TextBoxLinker;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * @since 2021-7-24
@@ -90,7 +90,7 @@ public class ResultBoxLinker extends TextBoxLinker {
     }
 
     @Override
-    public Object receive(Url url, Object data) throws CalculatorException {
+    public Object receive(Url url, Object data) throws MathlabException {
         Object response = null;
         if (data instanceof String) {
             response = this.receive(url, (String) data);

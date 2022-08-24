@@ -13,13 +13,13 @@ import javafx.scene.layout.GridPane;
 import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.ConflictException;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
 import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.FxComponent;
 import org.wangpai.calculator.view.base.SpringLinker;
+import org.wangpai.mathlab.exception.ConflictException;
+import org.wangpai.mathlab.symbol.enumeration.Symbol;
 
 @Slf4j
 public class ButtonGroup implements FxComponent {
@@ -106,7 +106,7 @@ public class ButtonGroup implements FxComponent {
                 /**
                  * 如果方法 setButtonsStyle 还没有完成调用，一直等待直到其调用为止
                  */
-                while (!buttonInitIsFinished) {
+                while (!ButtonGroup.this.buttonInitIsFinished) {
                     try {
                         Thread.sleep(0); // 触发线程调度。防止 CPU 一直执行此循环从而导致死锁
                     } catch (InterruptedException exception) {
@@ -131,8 +131,8 @@ public class ButtonGroup implements FxComponent {
      * @since 2021-10-10
      */
     private void setButtonsStyle() {
-        final int rowLength = labels.length;
-        final int columnLength = labels[0].length;
+        final int rowLength = this.labels.length;
+        final int columnLength = this.labels[0].length;
         this.buttons = new Button[rowLength][columnLength];
         this.functionButtons = new ArrayList<>();
         this.practicalButton = new ArrayList<>();
@@ -156,12 +156,12 @@ public class ButtonGroup implements FxComponent {
             container.put(keys[order], values[order]);
         }
 
-        var children = gridPane.getChildren();
+        var children = this.gridPane.getChildren();
         Iterator iterator = children.iterator();
         for (int row = 0; row < rowLength; ++row) {
             for (int column = 0; column < columnLength; ++column) {
                 var button = (Button) iterator.next();
-                var label = labels[row][column];
+                var label = this.labels[row][column];
 
                 button.setText(label);
                 // 设置击键时的颜色变化。击键后按键变为灰色
@@ -192,7 +192,7 @@ public class ButtonGroup implements FxComponent {
         for (var button : this.practicalButton) {
             button.setOnAction(actionEvent -> {
                 try {
-                    controller.send(new Url("/view/inputBox/insert"), button.getText());
+                    this.controller.send(new Url("/view/inputBox/insert"), button.getText());
                 } catch (Exception exception) {
                     log.error("异常：", exception);
                 }
@@ -212,22 +212,22 @@ public class ButtonGroup implements FxComponent {
                 try {
                     switch (str) {
                         case "❮":
-                            controller.send(new Url("/view/inputBox/leftShift"), str);
+                            this.controller.send(new Url("/view/inputBox/leftShift"), str);
                             break;
                         case "❯":
-                            controller.send(new Url("/view/inputBox/rightShift"), str);
+                            this.controller.send(new Url("/view/inputBox/rightShift"), str);
                             break;
                         case "✅":
-                            controller.send(new Url("/view/inputBox/selectAll"), str);
+                            this.controller.send(new Url("/view/inputBox/selectAll"), str);
                             break;
                         case "☒":
-                            controller.send(new Url("/view/inputBox/delete"), str);
+                            this.controller.send(new Url("/view/inputBox/delete"), str);
                             break;
                         case "⟲":
-                            controller.send(new Url("/view/inputBox/undo"), str);
+                            this.controller.send(new Url("/view/inputBox/undo"), str);
                             break;
                         case "⟳":
-                            controller.send(new Url("/view/inputBox/redo"), str);
+                            this.controller.send(new Url("/view/inputBox/redo"), str);
                             break;
 
                         default:
@@ -260,7 +260,7 @@ public class ButtonGroup implements FxComponent {
         this.concealedFunctions.add(concealedButton);
         concealedButton.setOnAction(actionEvent -> {
             try {
-                controller.send(new Url("/view/inputBox/focus"), "");
+                this.controller.send(new Url("/view/inputBox/focus"), "");
             } catch (Exception exception) {
                 log.error("异常：", exception);
             }

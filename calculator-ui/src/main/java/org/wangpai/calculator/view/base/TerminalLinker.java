@@ -3,7 +3,7 @@ package org.wangpai.calculator.view.base;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.mathlab.exception.MathlabException;
 
 public abstract class TerminalLinker extends SpringLinker implements TerminalController {
     /**
@@ -14,12 +14,12 @@ public abstract class TerminalLinker extends SpringLinker implements TerminalCon
      */
 
     @Override
-    public Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException {
-        return receive(url, data); // 注意：此处不使用 url.generateLowerUrl()
+    public Object passDown(Url url, Object data, MiddleController upperController) throws MathlabException {
+        return this.receive(url, data); // 注意：此处不使用 url.generateLowerUrl()
     }
 
     @Override
-    public Object send(Url url, Object data) throws CalculatorException {
+    public Object send(Url url, Object data) throws MathlabException {
         return this.passUp(url, data, null);
     }
 }

@@ -1,8 +1,7 @@
-package org.wangpai.calculator.controller.junit5;
+package org.wangpai.calculator.controller;
 
 import org.junit.jupiter.api.Test;
-import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.SyntaxException;
+import org.wangpai.mathlab.exception.SyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -15,9 +14,9 @@ public class Url_Test {
 
     String lowerUrlString = "/second/third";
 
-    Url url = new Url(urlString);
+    Url url = new Url(this.urlString);
 
-    Url lowerUrl = new Url(lowerUrlString);
+    Url lowerUrl = new Url(this.lowerUrlString);
 
     String[] expectedDirectories = new String[]{"", "first", "second", "third"};
 
@@ -30,7 +29,7 @@ public class Url_Test {
 
     @Test
     public void test_toString() {
-        assertEquals(this.urlString, url.toString());
+        assertEquals(this.urlString, this.url.toString());
     }
 
     @Test
@@ -55,7 +54,7 @@ public class Url_Test {
 
     @Test
     public void test_generateLowerUrl() throws SyntaxException {
-        assertEquals(lowerUrl, url.generateLowerUrl());
+        assertEquals(this.lowerUrl, this.url.generateLowerUrl());
     }
 
 
@@ -67,7 +66,7 @@ public class Url_Test {
     @Test
     public void test_getAllLevelsDirectories_static() throws SyntaxException {
         var expected = this.expectedDirectories;
-        var actual = Url.getAllLevelsDirectories(url);
+        var actual = Url.getAllLevelsDirectories(this.url);
         var expecedLength = expected.length;
         var actualLength = actual.length;
         assertEquals(expecedLength, actualLength);

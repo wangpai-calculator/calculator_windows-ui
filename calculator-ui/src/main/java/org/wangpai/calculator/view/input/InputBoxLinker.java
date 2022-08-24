@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TerminalLinker;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * @since 2021-7-24
@@ -90,7 +90,7 @@ public final class InputBoxLinker extends TerminalLinker {
     }
 
     @Override
-    public Object receive(Url url, Object data) throws CalculatorException {
+    public Object receive(Url url, Object data) throws MathlabException {
         Object response = null;
         if (data instanceof String) {
             response = this.receive(url, (String) data);
@@ -104,34 +104,34 @@ public final class InputBoxLinker extends TerminalLinker {
         Platform.runLater(() -> {
             switch (url.getFirstLevelDirectory()) {
                 case "insert":
-                    inputBox.insert(str);
+                    this.inputBox.insert(str);
                     break;
                 case "leftShift":
-                    inputBox.leftShift();
+                    this.inputBox.leftShift();
                     break;
                 case "rightShift":
-                    inputBox.rightShift();
+                    this.inputBox.rightShift();
                     break;
                 case "delete":
-                    inputBox.delete();
+                    this.inputBox.delete();
                     break;
                 case "selectAll":
-                    inputBox.selectAll();
+                    this.inputBox.selectAll();
                     break;
                 case "setText":
-                    inputBox.setText(str);
+                    this.inputBox.setText(str);
                     break;
                 case "cleanAllContent":
-                    inputBox.cleanAllContent();
+                    this.inputBox.cleanAllContent();
                     break;
                 case "undo":
-                    inputBox.undo();
+                    this.inputBox.undo();
                     break;
                 case "redo":
-                    inputBox.redo();
+                    this.inputBox.redo();
                     break;
                 case "focus":
-                    inputBox.requestFocus();
+                    this.inputBox.requestFocus();
                     break;
 
                 default:

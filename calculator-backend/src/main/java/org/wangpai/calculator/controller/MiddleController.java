@@ -1,6 +1,6 @@
 package org.wangpai.calculator.controller;
 
-import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * 中间控制器。它分为两种：
@@ -28,11 +28,11 @@ public interface MiddleController extends Controller {
      * 对于最高层控制器，此方法只能调用自己的方法 passDown
      * 对于终端控制器，调用本方法传入的第三个实参应为 null
      */
-    Object passUp(Url url, Object data, MiddleController lowerController) throws CalculatorException;
+    Object passUp(Url url, Object data, MiddleController lowerController) throws MathlabException;
 
     /**
      * 此函数只能由上层控制器的方法 passDown，或最高层控制器的 passUp 方法来调用。
      * 对于终端控制器，此方法只能调用自己的方法 receive
      */
-    Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException;
+    Object passDown(Url url, Object data, MiddleController upperController) throws MathlabException;
 }

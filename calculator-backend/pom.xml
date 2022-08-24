@@ -9,21 +9,27 @@
     <parent>
         <groupId>org.wangpai.calculator</groupId>
         <artifactId>calculator-windows-ui</artifactId>
-        <version>3.5</version>
+        <version>4.0</version>
     </parent>
 
     <artifactId>calculator-backend</artifactId>
 
     <dependencies>
 
+        <!-- 这些依赖是笔者自己的另一个项目：mathlab-fx 的子 Maven 模块 -->
         <dependency>
-            <groupId>org.wangpai.calculator</groupId>
-            <artifactId>calculator-exception</artifactId>
+            <groupId>org.wangpai.mathlab</groupId>
+            <artifactId>exception</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wangpai.calculator</groupId>
-            <artifactId>calculator-ui-depended</artifactId>
+            <groupId>org.wangpai.mathlab</groupId>
+            <artifactId>mathexp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wangpai.mathlab</groupId>
+            <artifactId>mathlib</artifactId>
+        </dependency>
+        <!-- *************************************************************** -->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -52,12 +58,10 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>${openjfx.version.custom}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>${openjfx.version.custom}</version>
         </dependency>
 
     </dependencies>

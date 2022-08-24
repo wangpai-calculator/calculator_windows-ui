@@ -28,69 +28,65 @@
 
 10. 提供 Windows 下免安装 JDK 直接运行的 EXE 文件。此 EXE 程序拥有程序名、自制程序图标
 
-
 ---
 
 # 本次更新介绍
 
-<p align="right">——2022年8月24日</p>
+<p align="right">——2022年8月27日</p>
 
 本次更新介绍：
 
 &emsp;&emsp;本工程是在本分支的上一版本的基础之上进行的升级。
 
-&emsp;&emsp;相对于版本 `M.3.4`，本版本 `M.3.5` 的改进主要有：
+&emsp;&emsp;相对于版本 `M.3.5`，本版本 `M.4.0` 的改进主要有：
 
-* 增加求绝对值、求幂的运算。
-* 将本项目改名为 `calculator-windows-ui`。
-* 删除了大量很早以前遗留下来的被标记为 `@Deprecated` 的代码。
-* 去除了测试类中的包名后缀 `junit5`。
+* 将原来后台计算的模块抽取核心代码独立成一个新项目 `mathlab-fx_java`，并添加对此新项目的 Maven 依赖。然后使用依赖注入的方式使用新项目 `mathlab-fx_java` 的框架，从而使得本项目减少了一半以上的代码（减少了约 4500 行代码）。
+
+  **故现在运行本项目需要先将项目 `mathlab-fx_java` 安装到 Maven 仓库中之后才能运行**。
+
+* 删除模块 `calculator-ui-depended`。此模块已无用。
+
 * 优化、纠正一些代码、文本等。
 
 ---
 
-&emsp;&emsp;本版本的已知不足与预想的改进方案：
+本项目依赖的其它项目：
+
+* 【M.4.0 起】mathlab-fx_java：[https://github.com/wangpai-calculator/calculator-mathlab-fx_java](https://github.com/wangpai-calculator/calculator-mathlab-fx_java)
+
+---
+
+本版本的已知不足与预想的改进方案：
 
 * 本版暂无
 
 ---
 
-&emsp;&emsp;未来版本可能会实现的功能：
+未来版本可能会实现的功能：
 
 * 提供文本的剪切、粘贴按钮（已提供剪切、粘贴右键菜单与快捷键）
 * 提供更高级的运算符运算及语法解析
 * 提供安卓环境与 Windows 环境的连接，可通过手机局域网来控制 Windows 应用
 
+---
+
+本项目使用的开发环境：
+
+- JDK 17.0.1 2021-10-19
+- Maven 3.8.3
+- IntelliJ IDEA 2022.2.1 (Ultimate Edition)
 
 ---
 
-* 本项目使用的开发环境：
-  - JDK 17.0.1 2021-10-19
-  - Maven 3.8.3
-  - IntelliJ IDEA 2022.2.1 (Ultimate Edition)
-
----
-
-* 核心 Java 语言代码文件：
-
-* 程序启动入口 API：
-
-  >  模块 `calculator-entrance` 中的
-  >
-  >  > 包 `org.wangpai.calculator` 中的
-  >  >
-  >  > > 类  `CalculatorApplication` 中的
-  >  > >
-  >  > > > 静态方法 `main`
-
----
-
-* 总计：8015
-* Java 代码（含测试）：7165
-* 文本语言代码：850
-  - FXML：201
-  - CSS：33
-  - XML：616
+* 总计：8136
+* 本项目代码：3555
+  - Java 代码（含测试）：2757
+  - 文本语言代码：798
+    + FXML：201
+    + CSS：33
+    + XML：564
+* 依赖代码：（依赖自己其它项目的代码）（2022年8月27日）
+  - 项目 `calculator-mathlab-fx`：4186 + 395= 4581
 
 ---
 

@@ -1,6 +1,5 @@
 package org.wangpai.calculator.view.output;
 
-import java.util.Stack;
 import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
-import org.wangpai.calculator.model.symbol.enumeration.Symbol;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.TextBoxLinker;
 
@@ -73,7 +70,7 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
     /**
      * 此方法为包可见
      *
-     * @since 2021年9月25日
+     * @since 2021-9-25
      */
     void bindLinker(PromptMsgBox promptMsgBox) {
         this.promptMsgBox = promptMsgBox;
@@ -85,7 +82,7 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
      * 此方法必须要先于本类的其它方法被调用
      * 使用本方法可以免除使用方法 bindLinker、getLinker
      *
-     * @since 2021年9月26日
+     * @since 2021-9-16
      */
     static void linking(PromptMsgBox promptMsgBox) {
         PromptMsgBoxLinker.getLinker().bindLinker(promptMsgBox);
@@ -99,35 +96,6 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
             response = this.receive(url);
         } else if (data instanceof String) {
             response = this.receive(url, (String) data);
-        } else if (data instanceof CalculatorException) {
-            var exceptionMsg = ((CalculatorException) data).getExceptionMsg();
-            var exceptionData = ((CalculatorException) data).getData();
-            var msg = new StringBuilder();
-            if (exceptionMsg instanceof String) {
-                msg.append(exceptionMsg)
-                        .append(System.lineSeparator());
-            }
-            if (exceptionData instanceof String) {
-                msg.append(System.lineSeparator())
-                        .append("下面是自动纠正的结果：（供复制）")
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(((String) exceptionData).trim())
-                        .append(System.lineSeparator());
-            } else if (exceptionData instanceof Stack) {
-                msg.append(System.lineSeparator())
-                        .append("下面是自动纠正的结果：（供复制）")
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator());
-                for (var symbol : (Stack<Symbol>) exceptionData) {
-                    msg.append(symbol);
-                }
-                msg.append(System.lineSeparator());
-            }
-
-            response = this.receive(url, msg.toString());
-        } else if (data instanceof PromptMsgBoxState) {
-            response = this.receive(url, (PromptMsgBoxState) data);
         } else {
             // 敬请期待
         }
@@ -144,9 +112,6 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
                 Platform.runLater(() -> {
                     this.promptMsgBox.cleanAllContent();
                 });
-                break;
-            case "getState":
-                response = this.promptMsgBox.getState();
                 break;
 
             default:
@@ -172,25 +137,6 @@ public class PromptMsgBoxLinker extends TextBoxLinker {
                     break;
             }
         });
-        return null;
-    }
-
-    /**
-     * @since 2021-10-12
-     */
-    public Object receive(Url url, PromptMsgBoxState state) {
-        Platform.runLater(() -> {
-            switch (url.getFirstLevelDirectory()) {
-                case "setState":
-                    this.promptMsgBox.setState(state);
-                    break;
-
-                default:
-                    log.error("错误：使用了未定义的 Url");
-                    break;
-            }
-        });
-
         return null;
     }
 }

@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.view.base.SpringLinker;
 import org.wangpai.calculator.view.control.ButtonGroupLinker;
 import org.wangpai.calculator.view.input.InputBoxLinker;
 import org.wangpai.calculator.view.output.PromptMsgBoxLinker;
 import org.wangpai.calculator.view.output.ResultBoxLinker;
+import org.wangpai.mathlab.exception.MathlabException;
 
 @Lazy
 @Scope("singleton")
@@ -86,7 +86,7 @@ public class CalculatorMainFaceLinker extends SpringLinker implements MiddleCont
     }
 
     @Override
-    public Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException {
+    public Object passDown(Url url, Object data, MiddleController upperController) throws MathlabException {
         Object response = null;
         switch (url.getFirstLevelDirectory()) {
             case "inputBox":

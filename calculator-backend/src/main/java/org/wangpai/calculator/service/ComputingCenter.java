@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.TerminalController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * @since 2021-8-1
@@ -28,25 +28,25 @@ public class ComputingCenter implements TerminalController, MiddleController {
     private CalculatorService calculatorService;
 
     @Override
-    public Object passUp(Url url, Object data, MiddleController lowerController) throws CalculatorException {
-        return upperController.passUp(url, data, this);
+    public Object passUp(Url url, Object data, MiddleController lowerController) throws MathlabException {
+        return this.upperController.passUp(url, data, this);
     }
 
     /**
      * 此方法一定先被调用
      */
     @Override
-    public Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException {
-        return receive(url, data); // 注意：此处不使用 url.generateLowerUrl()
+    public Object passDown(Url url, Object data, MiddleController upperController) throws MathlabException {
+        return this.receive(url, data); // 注意：此处不使用 url.generateLowerUrl()
     }
 
     @Override
-    public Object send(Url url, Object data) throws CalculatorException {
-        return passUp(url, data, null);
+    public Object send(Url url, Object data) throws MathlabException {
+        return this.passUp(url, data, null);
     }
 
     @Override
-    public Object receive(Url url, Object data) throws CalculatorException {
+    public Object receive(Url url, Object data) throws MathlabException {
         Object response = null;
         if (data instanceof String) {
             response = this.receive(url, (String) data);
@@ -60,7 +60,7 @@ public class ComputingCenter implements TerminalController, MiddleController {
         Object response = null;
         switch (url.getFirstLevelDirectory()) {
             case "expression":
-                calculatorService.readExpression(str);
+                this.calculatorService.readExpression(str);
                 break;
 
             default:

@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.wangpai.calculator</groupId>
         <artifactId>calculator-windows-ui</artifactId>
-        <version>3.5</version>
+        <version>4.0</version>
     </parent>
 
     <artifactId>calculator-entrance</artifactId>

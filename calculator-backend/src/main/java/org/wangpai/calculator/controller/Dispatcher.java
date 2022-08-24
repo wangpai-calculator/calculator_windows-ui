@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * @since 2021-7-27
@@ -25,7 +25,7 @@ public class Dispatcher implements MiddleController {
     private MiddleController computingCenter;
 
     @Override
-    public Object passUp(Url url, Object data, MiddleController lowerController) throws CalculatorException {
+    public Object passUp(Url url, Object data, MiddleController lowerController) throws MathlabException {
         return this.passDown(url, data, null);
     }
 
@@ -34,7 +34,7 @@ public class Dispatcher implements MiddleController {
      * @lastModified 2021-8-8
      */
     @Override
-    public Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException {
+    public Object passDown(Url url, Object data, MiddleController upperController) throws MathlabException {
         Object response = null;
         switch (url.getFirstLevelDirectory()) {
             case "view":

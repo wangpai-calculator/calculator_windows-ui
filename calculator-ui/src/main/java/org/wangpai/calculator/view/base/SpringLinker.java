@@ -3,7 +3,7 @@ package org.wangpai.calculator.view.base;
 import org.springframework.beans.factory.InitializingBean;
 import org.wangpai.calculator.controller.MiddleController;
 import org.wangpai.calculator.controller.Url;
-import org.wangpai.calculator.exception.CalculatorException;
+import org.wangpai.mathlab.exception.MathlabException;
 
 /**
  * @since 2021年9月25日
@@ -19,10 +19,10 @@ public abstract class SpringLinker implements InitializingBean, MiddleController
     protected abstract MiddleController getUpperController();
 
     @Override
-    public Object passUp(Url url, Object data, MiddleController lowerController) throws CalculatorException {
+    public Object passUp(Url url, Object data, MiddleController lowerController) throws MathlabException {
         return this.getUpperController().passUp(url, data, this);
     }
 
     @Override
-    public abstract Object passDown(Url url, Object data, MiddleController upperController) throws CalculatorException;
+    public abstract Object passDown(Url url, Object data, MiddleController upperController) throws MathlabException;
 }

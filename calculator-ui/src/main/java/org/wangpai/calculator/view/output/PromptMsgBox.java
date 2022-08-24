@@ -6,32 +6,18 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.wangpai.calculator.model.universal.CentralDatabase;
 import org.wangpai.calculator.model.universal.Function;
 import org.wangpai.calculator.model.universal.Multithreading;
 import org.wangpai.calculator.view.base.TextBox;
 
-import static org.wangpai.calculator.view.output.PromptMsgBoxState.INIT;
-
 @Slf4j
 public class PromptMsgBox extends TextBox {
-
     @FXML
     private VBox textareaVBox;
 
     private TextArea textArea;
-
-    /**
-     * 提示框的状态
-     *
-     * @since 2021-10-12
-     */
-    @Setter
-    @Getter
-    private PromptMsgBoxState state = INIT;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
